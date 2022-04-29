@@ -1,4 +1,4 @@
-function Test-Copy {
+function Test-ItemCopy {
     [CmdletBinding()]
     Param(
         [String]
@@ -79,7 +79,7 @@ function Get-ItemDateTime {
     }
 }
 
-function Move-ToDatedFolders {
+function Move-ItemToDateFolder {
     [CmdletBinding()]
     Param(
         [String]
@@ -131,7 +131,7 @@ function Move-ToDatedFolders {
         }
     }
 
-    function Move-FilesToDatedFolders {
+    function Start-MoveItem {
         Param(
             [String]
             $Path,
@@ -178,5 +178,5 @@ function Move-ToDatedFolders {
         Copy-FilesToBackup -Path $Path -Dir $backup_dir -Force:$Force -WhatIf:$WhatIf
     }
 
-    Move-FilesToDatedFolders -Path $Path -Force:$Force -WhatIf:$WhatIf
+    Start-MoveItem -Path $Path -Force:$Force -WhatIf:$WhatIf
 }
