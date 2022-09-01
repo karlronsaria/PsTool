@@ -2,6 +2,8 @@
 function Send-Beep { [Console]::Beep(2000, 500) }
 
 function loc { return (Get-Location).Path }
+function gd { return Get-Date -Format yyyy_MM_dd }
+function gdt { return Get-Date -Format yyyy_MM_dd_HHmmss }
 
 <#
     .LINK
