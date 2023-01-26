@@ -68,3 +68,5 @@ function What-Object {
     }
 }
 
+New-Alias -Name 'what' -Value 'What-Object'
+
