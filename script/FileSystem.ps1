@@ -41,3 +41,38 @@ function Rename-AllSansWhiteSpace {
         }
     }
 }
+
+function New-NoteItem {
+    [Alias('nni')]
+    Param(
+        [Parameter(Position = 0)]
+        [String]
+        $Prefix,
+
+        [Parameter(Position = 1)]
+        [String]
+        $Name,
+
+        [String]
+        $Directory = (Get-Location).Path,
+
+        [String]
+        $Extension
+    )
+
+    if ($Extension) {
+        $Name = "$($Name)$($Extension)"
+    }
+
+    $Prefix = if ($Prefix) {
+        "$($Prefix)_-_"
+    } else {
+        ""
+    }
+
+    $item =
+        Join-Path $Directory "$($Prefix)$(Get-Date -f yyyy_MM_dd)_$($Name)"
+
+    New-Item $item
+}
+
