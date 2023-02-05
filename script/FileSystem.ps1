@@ -70,8 +70,12 @@ function New-NoteItem {
         ""
     }
 
+    if ($Name -match ".+\.\w(\w|\d)+$") {
+        $Name = "_$Name"
+    }
+
     $item =
-        Join-Path $Directory "$($Prefix)$(Get-Date -f yyyy_MM_dd)_$($Name)"
+        Join-Path $Directory "$($Prefix)$(Get-Date -f yyyy_MM_dd)$($Name)"
 
     New-Item $item
 }
