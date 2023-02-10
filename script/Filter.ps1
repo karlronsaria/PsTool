@@ -1,4 +1,19 @@
+function Start-Edit {
+    [Alias('Edit')]
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        [String]
+        $InputObject
+    )
+
+    $editCommand = (cat "$PsScriptRoot\..\res\setting.json" `
+        | ConvertFrom-Json).EditCommand
+
+    Invoke-Expression "$editCommand $InputObject"
+}
+
 function What-Object {
+    [Alias('What')]
     Param(
         [Parameter(ValueFromPipeline = $true)]
         $InputObject,
@@ -43,7 +58,7 @@ function What-Object {
             switch ($PsCmdlet.ParameterSetName) {
                 'Inference' {
                     switch ($Argument) {
-                        { $_ -is [Int] } {
+                        { $d = $null; [Int]::TryParse($_, [ref]$d) } {
                             return $list | What-Object `
                                 -Index $Argument
                         }
@@ -67,6 +82,3 @@ function What-Object {
         }
     }
 }
-
-New-Alias -Name 'what' -Value 'What-Object'
-
