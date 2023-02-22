@@ -2,14 +2,29 @@ function Start-Edit {
     [Alias('Edit')]
     Param(
         [Parameter(ValueFromPipeline = $true)]
-        [String]
         $InputObject
     )
 
     $editCommand = (cat "$PsScriptRoot\..\res\setting.json" `
         | ConvertFrom-Json).EditCommand
 
-    Invoke-Expression "$editCommand $InputObject"
+    $path = switch ($InputObject) {
+        { $_ -is [String] } {
+            $InputObject
+        }
+
+        { $_ -is [Microsoft.PowerShell.Commands.MatchInfo] } {
+            $InputObject.Path
+        }
+
+        { $_ -is [System.IO.FileSystemInfo] } {
+            $InputObject.FullName
+        }
+
+        default { "" }
+    }
+
+    Invoke-Expression "$editCommand $path"
 }
 
 function What-Object {
