@@ -63,10 +63,10 @@ function New-NoteItem {
     $fullFileNamePattern =
         "(?<prefix>\w+)_-_\d{4}(_\d{2}){2}_(?<description>.+)(?<extension>\.\w(\w|\d)*)"
 
-    $fullNameAttempt = if ($Prefix) {
-        $Prefix
-    } elseif ($Name) {
+    $fullNameAttempt = if ($Name) {
         $Name
+    elseif ($Prefix) {
+        $Prefix
     }
 
     $capture = [Regex]::Match($fullNameAttempt, $fullFileNamePattern)
