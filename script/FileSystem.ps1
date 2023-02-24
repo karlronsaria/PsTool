@@ -65,7 +65,7 @@ function New-NoteItem {
 
     $fullNameAttempt = if ($Name) {
         $Name
-    elseif ($Prefix) {
+    } elseif ($Prefix) {
         $Prefix
     }
 
