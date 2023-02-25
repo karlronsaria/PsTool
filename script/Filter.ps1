@@ -27,6 +27,55 @@ function Start-Edit {
     Invoke-Expression "$editCommand $path"
 }
 
+function Start-Open {
+    [Alias('Open')]
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        $InputObject,
+
+        [Switch]
+        $PassThru
+    )
+
+    Process {
+        $path = switch ($InputObject) {
+            { $_ -is [String] } {
+                $InputObject
+            }
+
+            { $_ -is [Microsoft.PowerShell.Commands.MatchInfo] } {
+                $InputObject.Path
+            }
+
+            { $_ -is [System.IO.FileSystemInfo] } {
+                $InputObject.FullName
+            }
+
+            # interact with PsMarkdown#Get-PsMarkdownLink
+            # link
+            # - url: https://github.com/karlronsaria/PsMarkdown.git
+            # - retrieved: 2023_02_24
+            { $_ -is [PsCustomObject] } {
+                $properties = $InputObject.PsObject.Properties
+
+                if ('LinkPath' -in $properties.Name) {
+                    $InputObject.LinkPath
+                } else {
+                    [String] $InputObject
+                }
+            }
+
+            default { [String] $InputObject }
+        }
+
+        if ($PassThru) {
+            Write-Output $path
+        }
+
+        Start-Process -FilePath $path
+    }
+}
+
 function What-Object {
     [Alias('What')]
     Param(
