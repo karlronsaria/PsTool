@@ -11,17 +11,23 @@ function Start-Edit {
     $path = switch ($InputObject) {
         { $_ -is [String] } {
             $InputObject
+            break
         }
 
         { $_ -is [Microsoft.PowerShell.Commands.MatchInfo] } {
             $InputObject.Path
+            break
         }
 
         { $_ -is [System.IO.FileSystemInfo] } {
             $InputObject.FullName
+            break
         }
 
-        default { "" }
+        default {
+            ""
+            break
+        }
     }
 
     Invoke-Expression "$editCommand $path"
@@ -41,14 +47,17 @@ function Start-Open {
         $path = switch ($InputObject) {
             { $_ -is [String] } {
                 $InputObject
+                break
             }
 
             { $_ -is [Microsoft.PowerShell.Commands.MatchInfo] } {
                 $InputObject.Path
+                break
             }
 
             { $_ -is [System.IO.FileSystemInfo] } {
                 $InputObject.FullName
+                break
             }
 
             # interact with PsMarkdown#Get-PsMarkdownLink
@@ -63,16 +72,20 @@ function Start-Open {
                 } else {
                     [String] $InputObject
                 }
+                break
             }
 
-            default { [String] $InputObject }
+            default {
+                [String] $InputObject
+                break
+            }
         }
 
         if ($PassThru) {
             Write-Output $path
         }
 
-        Start-Process -FilePath $path
+        Start-Process -FilePath "$path"
     }
 }
 
