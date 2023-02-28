@@ -5,8 +5,11 @@ function Start-Edit {
         $InputObject
     )
 
-    $editCommand = (cat "$PsScriptRoot\..\res\setting.json" `
-        | ConvertFrom-Json).EditCommand
+    $setting = cat "$PsScriptRoot\..\res\setting.json" `
+        | ConvertFrom-Json
+
+    $editCommand = $setting.EditCommand
+    $useVimOpen = $setting.UseVimOpenToLine
 
     $path = switch ($InputObject) {
         { $_ -is [String] } {
@@ -15,7 +18,12 @@ function Start-Edit {
         }
 
         { $_ -is [Microsoft.PowerShell.Commands.MatchInfo] } {
-            $InputObject.Path
+            if ($useVimOpen) {
+                "$($InputObject.Path) +$($InputObject.LineNumber)"
+            } else {
+                $InputObject.Path
+            }
+
             break
         }
 
