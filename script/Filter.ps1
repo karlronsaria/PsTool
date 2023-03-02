@@ -22,7 +22,7 @@ function Start-Edit {
 
         { $_ -is [Microsoft.PowerShell.Commands.MatchInfo] } {
             if ($useVimOpen) {
-                "$($InputObject.Path) +$($InputObject.LineNumber)"
+                "`"$($InputObject.Path)`" +$($InputObject.LineNumber)"
             } else {
                 $InputObject.Path
             }
