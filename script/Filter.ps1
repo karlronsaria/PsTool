@@ -104,11 +104,11 @@ function What-Object {
         $InputObject,
 
         [Parameter(ParameterSetName = 'Subscript')]
-        [Int]
+        [Int[]]
         $Index,
 
         [Parameter(ParameterSetName = 'Qualifier')]
-        [String]
+        [String[]]
         $Property,
 
         [Parameter(ParameterSetName = 'GetFirst')]
@@ -129,6 +129,14 @@ function What-Object {
     Process {
         switch ($PsCmdlet.ParameterSetName) {
             'Qualifier' {
+                if (@($Property).Count -gt 1) {
+                    foreach ($item in $Property) {
+                        Write-Output $InputObject.$item
+                    }
+
+                    return
+                }
+
                 return $InputObject.$Property
             }
 
@@ -143,6 +151,15 @@ function What-Object {
             switch ($PsCmdlet.ParameterSetName) {
                 'Inference' {
                     switch ($Argument) {
+                        { @($Argument).Count -gt 1 } {
+                            foreach ($item in $Argument) {
+                                Write-Output $list | What-Object `
+                                    -Argument $item
+                            }
+
+                            return
+                        }
+
                         { $d = $null; [Int]::TryParse($_, [ref]$d) } {
                             return $list | What-Object `
                                 -Index $Argument
@@ -159,6 +176,14 @@ function What-Object {
                     $i = switch ($PsCmdlet.ParameterSetName) {
                         'Subscript' { $Index }
                         'GetFirst' { 0 }
+                    }
+
+                    if (@($i).Count -gt 1) {
+                        foreach ($item in $i) {
+                            Write-Output $list[$item]
+                        }
+
+                        return
                     }
 
                     return $list[$i]
