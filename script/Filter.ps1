@@ -2,7 +2,10 @@ function Start-Edit {
     [Alias('Edit')]
     Param(
         [Parameter(ValueFromPipeline = $true)]
-        $InputObject
+        $InputObject,
+
+        [Switch]
+        $WhatIf
     )
 
     $setting = cat "$PsScriptRoot\..\res\setting.json" `
@@ -38,7 +41,13 @@ function Start-Edit {
         }
     }
 
-    Invoke-Expression "$editCommand $path"
+    $cmd = "$editCommand $path"
+
+    if ($WhatIf) {
+        return $cmd
+    }
+
+    Invoke-Expression $cmd
 }
 
 function Start-Open {
@@ -48,7 +57,10 @@ function Start-Open {
         $InputObject,
 
         [Switch]
-        $PassThru
+        $PassThru,
+
+        [Switch]
+        $WhatIf
     )
 
     Process {
@@ -93,7 +105,14 @@ function Start-Open {
             Write-Output $path
         }
 
-        Start-Process -FilePath "$path"
+        $cmd = "Start-Process -FilePath "$path""
+
+        if ($WhatIf) {
+            Write-Output $cmd
+        }
+        else {
+            Invoke-Expression $cmd
+        }
     }
 }
 
