@@ -105,7 +105,7 @@ function Start-Open {
             Write-Output $path
         }
 
-        $cmd = "Start-Process -FilePath "$path""
+        $cmd = "Start-Process -FilePath `"$path`""
 
         if ($WhatIf) {
             Write-Output $cmd
