@@ -116,7 +116,7 @@ function Start-Open {
     }
 }
 
-function What-Object {
+function Qualify-Object {
     [Alias('What')]
     Param(
         [Parameter(ValueFromPipeline = $true)]
