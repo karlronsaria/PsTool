@@ -172,7 +172,7 @@ function Qualify-Object {
                     switch ($Argument) {
                         { @($Argument).Count -gt 1 } {
                             foreach ($item in $Argument) {
-                                Write-Output $list | What-Object `
+                                Write-Output $list | Qualify-Object `
                                     -Argument $item
                             }
 
@@ -180,12 +180,12 @@ function Qualify-Object {
                         }
 
                         { $d = $null; [Int]::TryParse($_, [ref]$d) } {
-                            return $list | What-Object `
+                            return $list | Qualify-Object `
                                 -Index $Argument
                         }
 
                         default {
-                            return $list | What-Object `
+                            return $list | Qualify-Object `
                                 -Property $Argument
                         }
                     }
