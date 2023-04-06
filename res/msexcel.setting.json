@@ -2,5 +2,6 @@
     "GapLength": 4,
     "EmptyPatterns": [
         "false"
-    ]
+    ],
+    "DateTimeFormat": "yyyy_MM_dd_HHmmss"
 }

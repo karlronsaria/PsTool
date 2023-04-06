@@ -156,7 +156,7 @@ function ForEach-MsExcelWorksheet {
     $sheetIndex = 0
 
     foreach ($sheet in $workbook.Sheets) {
-        $caption = $sheetInfo.Name
+        $caption = $sheet.Name
 
         $outerLoopProgressParams = @{
             Activity = "Sheet: $caption"
