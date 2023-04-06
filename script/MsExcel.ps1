@@ -160,7 +160,7 @@ function ForEach-MsExcelWorksheet {
 
         $outerLoopProgressParams = @{
             Activity = "Sheet: $caption"
-            PercentComplete = $sheetIndex * 100 / $sheets.Count
+            PercentComplete = $sheetIndex * 100 / $workbook.Sheets.Count
         }
 
         Write-Progress @outerLoopProgressParams
@@ -169,12 +169,13 @@ function ForEach-MsExcelWorksheet {
     }
 
     if (-not $Destination -or $Destination -eq $File.Name) {
-        $Destination = $Destination -Replace `
+        $Destination = $File.Name -Replace `
             "(?=\.[^.]+$)", `
             "_$(Get-Date -f $setting.DateTimeFormat)"
     }
 
-    $workbook.SaveAs()
+    $Destination = Join-Path (Get-Location).Path $Destination
+    $workbook.SaveAs($Destination)
     $workbook.Save()
     $workbook.Close()
     $excel.Quit()
