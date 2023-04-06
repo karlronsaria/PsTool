@@ -8,7 +8,7 @@ function Start-Edit {
         $WhatIf
     )
 
-    $setting = cat "$PsScriptRoot\..\res\setting.json" `
+    $setting = cat "$PsScriptRoot\..\res\filter.setting.json" `
         | ConvertFrom-Json
 
     $editCommand = $setting.EditCommand
