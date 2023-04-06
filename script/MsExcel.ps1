@@ -22,13 +22,11 @@ function ConvertFrom-MsExcel {
         $EndIndex
     )
 
-    $setting = cat "$PsScriptRoot/../res/convert.setting.json" `
+    $setting = cat "$PsScriptRoot/../res/msexcel.setting.json" `
         | ConvertFrom-Json
 
     $excel = New-Object -ComObject Excel.Application
     $workbook = $excel.Workbooks.Open($File)
-    $list = @()
-    $sheetIndex = 0
 
     $sheets = switch ($PsCmdlet.ParameterSetName) {
         'SheetsBySubstring' {
@@ -59,6 +57,8 @@ function ConvertFrom-MsExcel {
     }
 
     $sheets = @($sheets)
+    $list = @()
+    $sheetIndex = 0
 
     foreach ($sheetInfo in $sheets) {
         $caption = $sheetInfo.Name
@@ -126,8 +126,57 @@ function ConvertFrom-MsExcel {
         )
     }
 
+    $workbook.Close()
+    $excel.Quit()
+
     return [PsCustomObject]@{
         FileName = $File.Name
         Sheets = $list
     }
 }
+
+function ForEach-MsExcelWorksheet {
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        [System.IO.FileSystemInfo]
+        $File,
+
+        [ScriptBlock]
+        $Do,
+
+        [String]
+        $Destination
+    )
+
+    $setting = cat "$PsScriptRoot/../res/msexcel.setting.json" `
+        | ConvertFrom-Json
+
+    $excel = New-Object -ComObject Excel.Application
+    $workbook = $excel.Workbooks.Open($File)
+    $sheetIndex = 0
+
+    foreach ($sheet in $workbook.Sheets) {
+        $caption = $sheetInfo.Name
+
+        $outerLoopProgressParams = @{
+            Activity = "Sheet: $caption"
+            PercentComplete = $sheetIndex * 100 / $sheets.Count
+        }
+
+        Write-Progress @outerLoopProgressParams
+        $sheetIndex++
+        $sheet | foreach $Do
+    }
+
+    if (-not $Destination -or $Destination -eq $File.Name) {
+        $Destination = $Destination -Replace `
+            "(?=\.[^.]+$)", `
+            "_$(Get-Date -f $setting.DateTimeFormat)"
+    }
+
+    $workbook.SaveAs()
+    $workbook.Save()
+    $workbook.Close()
+    $excel.Quit()
+}
+
