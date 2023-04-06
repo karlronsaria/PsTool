@@ -1,11 +1,11 @@
 # wish
+## complete
+- [x] better edge detection
+- [x] progress bar
 - I wish for
-  - [x] better edge detection
-  - [ ] progress bar
-  - [ ] select sheets
+  - [x] select sheets
     - based on
-      - [ ] index
-      - [ ] index range
-      - [ ] substring
-      - [ ] pattern
-
+      - [x] index
+      - [x] index range
+      - [x] substring
+      - [x] pattern

@@ -1,8 +1,25 @@
 function ConvertFrom-MsExcel {
+    [CmdletBinding(DefaultParameterSetName = 'AllSheets')]
     Param(
         [Parameter(ValueFromPipeline = $true)]
         [System.IO.FileSystemInfo]
-        $File
+        $File,
+
+        [Parameter(ParameterSetName = 'SheetsBySubstring')]
+        [String]
+        $Like,
+
+        [Parameter(ParameterSetName = 'SheetsByPattern')]
+        [String]
+        $Matching,
+
+        [Parameter(ParameterSetName = 'SheetsByIndex')]
+        [Int]
+        $Index,
+
+        [Parameter(ParameterSetName = 'SheetsByIndex')]
+        [Nullable[Int]]
+        $EndIndex
     )
 
     $setting = cat "$PsScriptRoot/../res/convert.setting.json" `
@@ -11,14 +28,54 @@ function ConvertFrom-MsExcel {
     $excel = New-Object -ComObject Excel.Application
     $workbook = $excel.Workbooks.Open($File)
     $list = @()
+    $sheetIndex = 0
 
-    foreach ($sheetInfo in $workbook.Sheets) {
+    $sheets = switch ($PsCmdlet.ParameterSetName) {
+        'SheetsBySubstring' {
+            $workbook.Sheets | where {
+                $_.Name -like $Like
+            }
+        }
+
+        'SheetsByPattern' {
+            $workbook.Sheets | where {
+                $_.Name -match $Matching
+            }
+        }
+
+        'SheetsByIndex' {
+            if ($null -eq $Index) {
+                @()
+            } elseif ($null -eq $EndIndex) {
+                $workbook.Sheets[$Index]
+            } else {
+                $workbook.Sheets[$Index .. $EndIndex]
+            }
+        }
+
+        default {
+            $workbook.Sheets
+        }
+    }
+
+    $sheets = @($sheets)
+
+    foreach ($sheetInfo in $sheets) {
+        $caption = $sheetInfo.Name
         $rows = @()
         $tableRows = $sheetInfo.UsedRange.Rows
         $header = $tableRows[1].Formula2
         $count = $header.Count
         $rowNo = 2
         $gapRows = 0
+
+        $outerLoopProgressParams = @{
+            Activity = "Sheet: $caption"
+            PercentComplete = $sheetIndex * 100 / $sheets.Count
+        }
+
+        Write-Progress @outerLoopProgressParams
+        $sheetIndex++
 
         while ($rowNo -le $tableRows.Count `
             -and $gapRows -le $setting.GapLength)
@@ -63,7 +120,7 @@ function ConvertFrom-MsExcel {
 
         $list += @(
             [PsCustomObject]@{
-                Name = $sheetInfo.Name
+                Name = $caption
                 Rows = $rows
             } `
         )
