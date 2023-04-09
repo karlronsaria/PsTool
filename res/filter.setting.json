@@ -1,0 +1,4 @@
+{
+    "EditCommand": "sudo nvim",
+    "UseVimOpenToLine": true
+}
