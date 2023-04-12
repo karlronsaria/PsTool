@@ -8,46 +8,64 @@ function Start-Edit {
         $WhatIf
     )
 
-    $setting = cat "$PsScriptRoot\..\res\filter.setting.json" `
-        | ConvertFrom-Json
+    Begin {
+        $setting = cat "$PsScriptRoot\..\res\filter.setting.json" `
+            | ConvertFrom-Json
 
-    $editCommand = $setting.EditCommand
-    $useVimOpen = $setting.UseVimOpenToLine
+        $editCommand = $setting.EditCommand
+        $useVimOpen = $setting.UseVimOpenToLine
+        $map = [Ordered]@{}
+    }
 
-    $path = switch ($InputObject) {
-        { $_ -is [String] } {
-            $InputObject
-            break
-        }
+    Process {
+        $path = ""
+        $command = ""
 
-        { $_ -is [Microsoft.PowerShell.Commands.MatchInfo] } {
-            if ($useVimOpen) {
-                "`"$($InputObject.Path)`" +$($InputObject.LineNumber)"
-            } else {
-                $InputObject.Path
+        switch ($InputObject) {
+            { $_ -is [String] } {
+                $path = $InputObject
+                break
             }
 
-            break
+            { $_ -is [Microsoft.PowerShell.Commands.MatchInfo] } {
+                $path = $InputObject.Path
+
+                if ($useVimOpen) {
+                    $command = "`"$($path)`" +$($InputObject.LineNumber)"
+                }
+
+                break
+            }
+
+            { $_ -is [System.IO.FileSystemInfo] } {
+                $path = $InputObject.FullName
+                break
+            }
+
+            default {
+                $path = ""
+                break
+            }
         }
 
-        { $_ -is [System.IO.FileSystemInfo] } {
-            $InputObject.FullName
-            break
+        if ([String]::IsNullOrEmpty($command)) {
+            $command = $path
         }
 
-        default {
-            ""
-            break
-        }
+        $map[$path] = $command
     }
 
-    $cmd = "$editCommand $path"
+    End {
+        foreach ($key in $map.Keys) {
+            $cmd = "$editCommand $($map[$key])"
 
-    if ($WhatIf) {
-        return $cmd
+            if ($WhatIf) {
+                return $cmd
+            }
+
+            Invoke-Expression $cmd
+        }
     }
-
-    Invoke-Expression $cmd
 }
 
 function Start-Open {
