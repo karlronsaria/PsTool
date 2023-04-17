@@ -179,5 +179,6 @@ function ForEach-MsExcelWorksheet {
     $workbook.Save()
     $workbook.Close()
     $excel.Quit()
+    return Get-Item $Destination
 }
 
