@@ -148,37 +148,41 @@ function ForEach-MsExcelWorksheet {
         $Destination
     )
 
-    $setting = cat "$PsScriptRoot/../res/msexcel.setting.json" `
-        | ConvertFrom-Json
+    Begin {
+        $setting = cat "$PsScriptRoot/../res/msexcel.setting.json" `
+            | ConvertFrom-Json
+    }
 
-    $excel = New-Object -ComObject Excel.Application
-    $workbook = $excel.Workbooks.Open($File)
-    $sheetIndex = 0
+    Process {
+        $excel = New-Object -ComObject Excel.Application
+        $workbook = $excel.Workbooks.Open($File)
+        $sheetIndex = 0
 
-    foreach ($sheet in $workbook.Sheets) {
-        $caption = $sheet.Name
+        foreach ($sheet in $workbook.Sheets) {
+            $caption = $sheet.Name
 
-        $outerLoopProgressParams = @{
-            Activity = "Sheet: $caption"
-            PercentComplete = $sheetIndex * 100 / $workbook.Sheets.Count
+            $outerLoopProgressParams = @{
+                Activity = "Sheet: $caption"
+                PercentComplete = $sheetIndex * 100 / $workbook.Sheets.Count
+            }
+
+            Write-Progress @outerLoopProgressParams
+            $sheetIndex++
+            $sheet | foreach $Do
         }
 
-        Write-Progress @outerLoopProgressParams
-        $sheetIndex++
-        $sheet | foreach $Do
-    }
+        if (-not $Destination -or $Destination -eq $File.Name) {
+            $Destination = $File.Name -Replace `
+                "(?=\.[^.]+$)", `
+                "_$(Get-Date -f $setting.DateTimeFormat)"
+        }
 
-    if (-not $Destination -or $Destination -eq $File.Name) {
-        $Destination = $File.Name -Replace `
-            "(?=\.[^.]+$)", `
-            "_$(Get-Date -f $setting.DateTimeFormat)"
+        $Destination = Join-Path (Get-Location).Path $Destination
+        $workbook.SaveAs($Destination)
+        $workbook.Save()
+        $workbook.Close()
+        $excel.Quit()
+        return Get-Item $Destination
     }
-
-    $Destination = Join-Path (Get-Location).Path $Destination
-    $workbook.SaveAs($Destination)
-    $workbook.Save()
-    $workbook.Close()
-    $excel.Quit()
-    return Get-Item $Destination
 }
 
