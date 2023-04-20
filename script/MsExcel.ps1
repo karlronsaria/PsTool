@@ -153,6 +153,7 @@ function ForEach-MsExcelWorksheet {
         $setting = cat "$PsScriptRoot/../res/msexcel.setting.json" `
             | ConvertFrom-Json
     }
+<<<<<<< HEAD
 
     Process {
         $excel = New-Object -ComObject Excel.Application
@@ -275,5 +276,39 @@ function New-MsExcelMonthBook {
     $excel.Quit()
     [void] [System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel)
     return Get-Item $Destination
+=======
+
+    Process {
+        $excel = New-Object -ComObject Excel.Application
+        $workbook = $excel.Workbooks.Open($File)
+        $sheetIndex = 0
+
+        foreach ($sheet in $workbook.Sheets) {
+            $caption = $sheet.Name
+
+            $outerLoopProgressParams = @{
+                Activity = "Sheet: $caption"
+                PercentComplete = $sheetIndex * 100 / $workbook.Sheets.Count
+            }
+
+            Write-Progress @outerLoopProgressParams
+            $sheetIndex++
+            $sheet | foreach $Do
+        }
+
+        if (-not $Destination -or $Destination -eq $File.Name) {
+            $Destination = $File.Name -Replace `
+                "(?=\.[^.]+$)", `
+                "_$(Get-Date -f $setting.DateTimeFormat)"
+        }
+
+        $Destination = Join-Path (Get-Location).Path $Destination
+        $workbook.SaveAs($Destination)
+        $workbook.Save()
+        $workbook.Close()
+        $excel.Quit()
+        return Get-Item $Destination
+    }
+>>>>>>> 62a03154f5875a31dfb87468a50632c9cd97d636
 }
 
