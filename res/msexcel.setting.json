@@ -3,5 +3,8 @@
     "EmptyPatterns": [
         "false"
     ],
-    "DateTimeFormat": "yyyy_MM_dd_HHmmss"
+    "DateTimeFormat": "yyyy_MM_dd_HHmmss",
+    "SheetNameDateFormat": "MMM d",
+    "MonthTableDateFormat": "MMMM_yyyy",
+    "ExcelExtension": ".xlsx"
 }

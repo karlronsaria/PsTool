@@ -128,6 +128,7 @@ function ConvertFrom-MsExcel {
 
     $workbook.Close()
     $excel.Quit()
+    [void] [System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel)
 
     return [PsCustomObject]@{
         FileName = $File.Name
@@ -172,13 +173,100 @@ function ForEach-MsExcelWorksheet {
         $Destination = $File.Name -Replace `
             "(?=\.[^.]+$)", `
             "_$(Get-Date -f $setting.DateTimeFormat)"
+
+        $Destination = Join-Path (Get-Location).Path $Destination
     }
 
-    $Destination = Join-Path (Get-Location).Path $Destination
     $workbook.SaveAs($Destination)
     $workbook.Save()
     $workbook.Close()
     $excel.Quit()
+    [void] [System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel)
+    return Get-Item $Destination
+}
+
+function New-MsExcelMonthBook {
+    Param(
+        [ValidateRange(1, 12)]
+        [Nullable[Int]]
+        $Month,
+
+        [ValidateRange(1970, 9999)]
+        [Nullable[Int]]
+        $Year,
+
+        [String[]]
+        $ColumnHeadings,
+
+        [String]
+        $SheetNameDateFormat,
+
+        [String]
+        $Destination
+    )
+
+    $setting = cat "$PsScriptRoot/../res/msexcel.setting.json" `
+        | ConvertFrom-Json
+
+    $now = Get-Date
+
+    if ($null -eq $Year) {
+        $Year = $now.Year
+    }
+
+    if ($null -eq $Month) {
+        $Month = $now.Month
+    }
+
+    if (-not $SheetNameDateFormat) {
+        $SheetNameDateFormat = $setting.SheetNameDateFormat
+    }
+
+    if (-not $Destination) {
+        $date = Get-Date `
+            -Year $Year `
+            -Month $Month
+
+        $Destination = $date.ToString($setting.MonthTableDateFormat) `
+            + "_$((Get-Date).ToString("ddHHmmss"))" `
+            + $setting.ExcelExtension
+
+        $Destination = Join-Path (Get-Location).Path $Destination
+    }
+
+    $excel = New-Object -ComObject Excel.Application
+    $workbook = $excel.Workbooks.Add()
+
+    foreach ($day in 2 .. [DateTime]::DaysInMonth($Year, $Month)) {
+        [void] $workbook.Worksheets.Add()
+    }
+
+    $day = 1
+
+    foreach ($sheet in $workbook.Worksheets) {
+        $date = Get-Date `
+            -Year $Year `
+            -Month $Month `
+            -Day $day
+
+        $sheet.Name = $date.ToString($SheetNameDateFormat)
+        [void] $sheet.Activate()
+        $colNo = 1
+
+        foreach ($item in $ColumnHeadings) {
+            $sheet.Cells(1, $colNo).Value2 = $item
+            $colNo = $colNo + 1
+        }
+
+        $day = $day + 1
+    }
+
+    [void] $workbook.Worksheets[1].Activate()
+    $workbook.SaveAs($Destination)
+    $workbook.Save()
+    $workbook.Close()
+    $excel.Quit()
+    [void] [System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel)
     return Get-Item $Destination
 }
 
