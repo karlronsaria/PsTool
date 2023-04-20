@@ -149,40 +149,47 @@ function ForEach-MsExcelWorksheet {
         $Destination
     )
 
-    $setting = cat "$PsScriptRoot/../res/msexcel.setting.json" `
-        | ConvertFrom-Json
+    Begin {
+        $setting = cat "$PsScriptRoot/../res/msexcel.setting.json" `
+            | ConvertFrom-Json
+    }
 
-    $excel = New-Object -ComObject Excel.Application
-    $workbook = $excel.Workbooks.Open($File)
-    $sheetIndex = 0
+    Process {
+        $excel = New-Object -ComObject Excel.Application
+        $workbook = $excel.Workbooks.Open($File)
+        $sheetIndex = 0
 
-    foreach ($sheet in $workbook.Sheets) {
-        $caption = $sheet.Name
+        foreach ($sheet in $workbook.Sheets) {
+            $caption = $sheet.Name
 
-        $outerLoopProgressParams = @{
-            Activity = "Sheet: $caption"
-            PercentComplete = $sheetIndex * 100 / $workbook.Sheets.Count
+            $outerLoopProgressParams = @{
+                Activity = "Sheet: $caption"
+                PercentComplete = $sheetIndex * 100 / $workbook.Sheets.Count
+            }
+
+            Write-Progress @outerLoopProgressParams
+            $sheetIndex++
+            $sheet | foreach $Do
         }
 
-        Write-Progress @outerLoopProgressParams
-        $sheetIndex++
-        $sheet | foreach $Do
+        if (-not $Destination -or $Destination -eq $File.Name) {
+            $Destination = $File.Name -Replace `
+                "(?=\.[^.]+$)", `
+                "_$(Get-Date -f $setting.DateTimeFormat)"
+
+            $Destination = Join-Path (Get-Location).Path $Destination
+        }
+
+        $workbook.SaveAs($Destination)
+        $workbook.Save()
+        $workbook.Close()
+        $excel.Quit()
+
+        [System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel) `
+            | Out-Null
+
+        return Get-Item $Destination
     }
-
-    if (-not $Destination -or $Destination -eq $File.Name) {
-        $Destination = $File.Name -Replace `
-            "(?=\.[^.]+$)", `
-            "_$(Get-Date -f $setting.DateTimeFormat)"
-
-        $Destination = Join-Path (Get-Location).Path $Destination
-    }
-
-    $workbook.SaveAs($Destination)
-    $workbook.Save()
-    $workbook.Close()
-    $excel.Quit()
-    [void] [System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel)
-    return Get-Item $Destination
 }
 
 function New-MsExcelMonthBook {
