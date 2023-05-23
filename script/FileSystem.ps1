@@ -11,10 +11,21 @@ function Rename-AllSansWhiteSpace {
         $Force,
 
         [Switch]
-        $WhatIf
+        $WhatIf,
+
+        [Switch]
+        $Reverse
     )
 
     $dir = dir $Path
+
+    if ($Reverse) {
+        $match = $Delimiter
+        $replace = ' '
+    } else {
+        $match = '\s'
+        $replace = $Delimiter
+    }
 
     Write-Output "Renaming..."
     Write-Output ""
@@ -24,8 +35,8 @@ function Rename-AllSansWhiteSpace {
         $name = $item.Name
         $parent = Split-Path $fullName -Parent
 
-        if ($name -match '\s') {
-            $newName = $name -Replace '\s', $Delimiter
+        if ($name -match $match) {
+            $newName = $name -Replace $match, $replace
 
             if (-not $WhatIf) {
                 Write-Output "  $fullName"
