@@ -130,27 +130,32 @@ function Get-ImageResize {
         $WhatIf
     )
 
-    $setting = cat "$PsScriptRoot/../res/imageprocess.setting.json" `
-        | ConvertFrom-Json
+    Begin {
+        $setting = cat "$PsScriptRoot/../res/imageprocess.setting.json" `
+            | ConvertFrom-Json
 
-    $app = $setting.AppPath
-    $cap = [Regex]::Match($Path, "^(?<name>.*)\.(?<ext>[^\.]+)$")
-    $name = $cap.Groups['name']
-    $ext = $cap.Groups['ext']
-
-    $itemName = if ($cap.Success) {
-        "$name-$Size.$ext"
-    } else {
-        "$Path-$Size"
+        $app = $setting.AppPath
     }
 
-    $cmd = "$app convert `"$Path`" -resize $Size `"$itemName`""
+    Process {
+        $cap = [Regex]::Match($Path, "^(?<name>.*)\.(?<ext>[^\.]+)$")
+        $name = $cap.Groups['name']
+        $ext = $cap.Groups['ext']
 
-    if ($WhatIf) {
-        return $cmd
+        $itemName = if ($cap.Success) {
+            "$name-$Size.$ext"
+        } else {
+            "$Path-$Size"
+        }
+
+        $cmd = "$app convert `"$Path`" -resize $Size `"$itemName`""
+
+        if ($WhatIf) {
+            return $cmd
+        }
+
+        iex $cmd
+        dir $itemName
     }
-
-    iex $cmd
-    dir $itemName
 }
 
