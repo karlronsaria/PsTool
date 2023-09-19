@@ -117,6 +117,9 @@ function ConvertFrom-ImageWebp {
 function Get-ImageResize {
     [CmdletBinding()]
     Param(
+        [Parameter(
+            ValueFromPipeline = $true
+        )]
         [String]
         $Path,
 
