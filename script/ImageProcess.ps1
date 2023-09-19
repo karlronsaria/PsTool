@@ -33,7 +33,7 @@ function ConvertFrom-ImageWebp {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot/../res/setting.json" `
+        $setting = cat "$PsScriptRoot/../res/imageprocess.setting.json" `
             | ConvertFrom-Json
 
         $cmd = $setting.AppPath
@@ -127,7 +127,7 @@ function Get-ImageResize {
         $WhatIf
     )
 
-    $setting = cat "$PsScriptRoot/../res/setting.json" `
+    $setting = cat "$PsScriptRoot/../res/imageprocess.setting.json" `
         | ConvertFrom-Json
 
     $app = $setting.AppPath
