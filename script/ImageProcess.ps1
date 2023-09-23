@@ -159,3 +159,69 @@ function Get-ImageResize {
     }
 }
 
+function New-ImageIcon {
+    [CmdletBinding()]
+    Param(
+        [String]
+        $FileName,
+
+        [Switch]
+        $RemoveTemps,
+
+        [Switch]
+        $NoExplorer
+    )
+
+    $setting = cat "$PsScriptRoot/../res/imageprocess.setting.json" `
+        | ConvertFrom-Json
+
+    $command = $setting.AppPath
+
+    if (-not (Get-Command $command -ErrorAction SilentlyContinue)) {
+        return ([PsCustomObject]@{
+            Success = $false
+            Result =
+                "This script requires $command to be available on the machine"
+            ItemPath = $FileName
+        })
+    }
+
+    if (-not (Test-Path $FileName)) {
+        return ([PsCustomObject]@{
+            Success = $false
+            Result = "File not found"
+            ItemPath = $FileName
+        })
+    }
+
+    $dir = Get-Date -Format $setting.DateTimeFormat
+    mkdir $dir -Force | Out-Null
+
+    foreach ($size in 16, 32, 48, 128, 256) {
+        . $command convert "$($FileName)" -scale $size "$dir/$size.png"
+    }
+
+    $FileName = (($FileName -Replace "\.[^\.]+$") + ".ico")
+    . $command convert "$dir/*.png" $FileName
+
+    if ($RemoveTemps) {
+        del $dir -Recurse -Force
+    }
+
+    if (-not $NoExplorer) {
+        Invoke-Item .
+    }
+
+    $result = Test-Path $FilePath
+
+    return ([PsCustomObject]@{
+        Success = $result
+        Result = if ($result) {
+                "New file created"
+            } else {
+                "File could not be created"
+            }
+        ItemPath = $FileName
+    })
+}
+

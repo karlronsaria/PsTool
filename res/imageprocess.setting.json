@@ -1,3 +1,4 @@
 {
-    "AppPath": "magick"
+    "AppPath": "magick",
+    "DateTimeFormat": "yyyy_MM_dd_HHmmss"
 }
