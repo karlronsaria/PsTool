@@ -1,12 +1,12 @@
 ﻿<#
-    .LINK
-    Link: https://evotec.xyz/remove-item-access-to-the-cloud-file-is-denied-while-deleting-files-from-onedrive/
-    Retrieved: 2021_11_02
+.LINK
+Url: https://evotec.xyz/remove-item-access-to-the-cloud-file-is-denied-while-deleting-files-from-onedrive/
+Retrieved: 2021_11_02
 #>
 function Remove-NtfsItem {
     # [CmdletBinding(SupportsShouldProcess)]
     Param(
-        [Parameter(ValueFromPipeline)]
+        [Parameter(ValueFromPipeline = $true)]
         [String[]]
         $Path
     )
@@ -19,17 +19,17 @@ function Remove-NtfsItem {
 
     Process {
         foreach ($item in $Path) {
-            $literal = Get-Item $item
+            $file = Get-Item $item
 
             <#
             if ($WhatIf) {
-                Write-Output "WhatIf: Removing $($literal.FullName)"
+                Write-Output "WhatIf: Removing $($file.FullName)"
                 continue
             }
             #>
 
-            if ($literal) {
-                $literal.Delete($true)
+            if ($file) {
+                $file.Delete($true)
             }
         }
     }
