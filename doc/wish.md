@@ -9,3 +9,6 @@
       - [x] index range
       - [x] substring
       - [x] pattern
+
+---
+[← Go Back](../readme.md)
