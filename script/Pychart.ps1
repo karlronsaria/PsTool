@@ -5,8 +5,6 @@
         Flag: Do not replace the first underscore in any label's name.
 
         Python's matplotlib.pyplot will exclude any labels from the legend that start with an underscore '_'. `Show-Pychart` evades this behavior by replacing the first underscore with a different character (a hyphen '-'). Use this flag to turn off this behavior.
-    .PARAMETER IncludeNull
-        Flag: If a value is null, include its label in the chart with a value of zero, instead of discarding it.
     .EXAMPLE
         C:\PS> Get-FolderSize | Show-Pychart -Title (Get-Location).Path -Unit "MB" -LabelProperty "FolderName" -ValueProperty "Size(MB)"
 
@@ -36,9 +34,6 @@ function Show-Pychart {
         $NoReplaceUnderscore,
 
         [Switch]
-        $IncludeNull,
-
-        [Switch]
         $PassThru,
 
         [Switch]
@@ -48,7 +43,9 @@ function Show-Pychart {
     Begin {
         $cmd = "python"
         $script = "$PsScriptRoot\..\python\piechart.py"
-        $list = $Title, $Unit
+        $table = @()
+        $other = @()
+        $total = 0
     }
 
     Process {
@@ -77,19 +74,18 @@ function Show-Pychart {
                 $label = $label -Replace "^_", "-"
             }
 
-            $label = """$label"""
-
-            if ($null -eq $value) {
-                if ($IncludeNull) {
-                    $list += $label
-                    $list += 0
-                }
-
-                continue
+            if ($null -eq $value -or $value -eq 0) {
+                $other += @($label)
             }
 
-            $list += $label
-            $list += $value
+            $table += @(
+                [PsCustomObject]@{
+                    Label = $label
+                    Value = $value
+                }
+            )
+
+            $total += $value
         }
 
         if ($PassThru) {
@@ -98,12 +94,48 @@ function Show-Pychart {
     }
 
     End {
+        $setting = cat "$PsScriptRoot\..\res\pychart.setting.json" `
+            | ConvertFrom-Json
+
+        $main = $table `
+            | sort `
+                -Property Value `
+                -Descending `
+            | select `
+                -First $setting.MaxLabels `
+            | where {
+                $_.Value / $total -gt $setting.Delta
+            }
+
+        $otherSum = ($table + @($other `
+            | foreach {
+                [PsCustomObject]@{
+                    Label = $_
+                    Value = 0
+                }
+            }) `
+            | where {
+                $_.Label -notin $main.Label
+            } `
+            | measure -Property Value -Sum `
+        ).Sum
+
+        $list = ((@($main) + @([PsCustomObject]@{
+            Label = """$($setting.MiscellaneousLabel)"""
+            Value = $otherSum
+        })) | foreach {
+            """$($_.Label)"""
+            $_.Value
+        }) -join ' '
+
+        $argsList = "$Title $Unit $list"
+
         if ($WhatIf) {
-            Write-Output "$cmd `"$script`" $list"
+            Write-Output "$cmd `"$script`" $argsList"
         } else {
             Start-Process `
                 -FilePath "$cmd" `
-                -ArgumentList "$script $list" `
+                -ArgumentList "$script $argsList" `
                 -NoNewWindow
         }
     }
@@ -113,9 +145,9 @@ function Show-FolderSizeChart {
     Param(
         $Directory,
 
-        [ValidateSet('GB', 'KB', 'MB', 'Bytes')]
+        [ValidateSet('GB', 'MB', 'KB', 'Bytes')]
         [String]
-        $Unit = 'GB',
+        $Unit,
 
         [Switch]
         $NoReplaceUnderscore,
@@ -132,20 +164,28 @@ function Show-FolderSizeChart {
 
     if ($Directory) {
         $folders = Get-FolderSize -BasePath $Directory
-        $title = (Get-Item $Directory).FullName
+        $title = (Get-Item $Directory -Force).FullName
     }
     else {
         $folders = Get-FolderSize
         $title = (Get-Location).Path
     }
 
+    if (-not $Unit) {
+        $Unit = if (($folders | measure -Property "SizeGB" -Maximum).Maximum -lt 1) {
+            'MB'
+        }
+        else {
+            'GB'
+        }
+    }
+
     $folders | Show-Pychart `
         -Title $title `
         -Unit $Unit `
-        -LabelProperty { (get-item $_.FullPath).Name } `
+        -LabelProperty { (Get-Item $_.FullPath -Force).Name } `
         -ValueProperty "Size$Unit" `
         -NoReplaceUnderscore:$NoReplaceUnderscore `
-        -IncludeNull:$IncludeNull `
         -PassThru:$PassThru `
         -WhatIf:$WhatIf
 }

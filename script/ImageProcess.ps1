@@ -60,7 +60,7 @@ function ConvertFrom-ImageWebp {
     Process {
         switch ($PsCmdlet.ParameterSetName) {
             "ByFilePath" {
-                ConvertFrom-Webp `
+                ConvertFrom-ImageWebp `
                     -File (Get-Item $Path) `
                     -Destination $Destination
             }
@@ -70,7 +70,7 @@ function ConvertFrom-ImageWebp {
                     -Path $Directory `
                     -Recurse `
                     -Include *.webp `
-                | ConvertFrom-Webp `
+                | ConvertFrom-ImageWebp `
                     -Destination $Destination
             }
 
