@@ -148,7 +148,13 @@ function Qualify-Object {
             # link
             # - url: https://stackoverflow.com/questions/65892518/tab-complete-a-parameter-value-based-on-another-parameters-already-specified-va
             # - retrieved: 2023_10_10
-            Param($cmdName, $paramName, $wordToComplete, $cmdAst, $preBoundParameters)
+            Param(
+                $cmdName,
+                $paramName,
+                $wordToComplete,
+                $cmdAst,
+                $preBoundParameters
+            )
 
             # Find out if we have pipeline input.
             $pipelineElements = $cmdAst.Parent.PipelineElements
@@ -163,8 +169,8 @@ function Qualify-Object {
             $possibleArguments = @()
 
             if ($hasPipelineInput) {
-                # If we are in a pipeline, find out if the previous pipeline element is a
-                # variable or a command.
+                # If we are in a pipeline, find out if the previous pipeline
+                # element is a variable or a command.
                 $previousPipelineElement =
                     $pipelineElements[$thisPipelinePosition - 1]
 
@@ -172,27 +178,30 @@ function Qualify-Object {
                     $previousPipelineElement.Expression.VariablePath.UserPath
 
                 if (-not [string]::IsNullOrEmpty($pipelineInputVariable)) {
-                    # If previous pipeline element is a variable, get the object.
-                    # Note that it can be a non-existent variable. In such case we simply get
-                    # nothing.
+                    # If previous pipeline element is a variable, get the
+                    # object. Note that it can be a non-existent variable.
+                    # In such case we simply get nothing.
                     $detectedInputObject = Get-Variable |
                         Where-Object {$_.Name -eq $pipelineInputVariable} |
                         ForEach-Object Value
                 } else {
-                    $pipelineInputCommand = $previousPipelineElement.CommandElements[0].Value
+                    $pipelineInputCommand =
+                        $previousPipelineElement.CommandElements[0].Value
 
                     if (-not [string]::IsNullOrEmpty($pipelineInputCommand)) {
-                        # If previous pipeline element is a command, check if it exists as a
-                        # command.
+                        # If previous pipeline element is a command, check
+                        # if it exists as a command.
                         $possibleArguments += Get-Command -CommandType All |
                             where Name -Match "^$pipelineInputCommand$" |
-                            # Collect properties for each documented output type.
+                            # Collect properties for each documented output
+                            # type.
                             foreach { $_.OutputType.Type } |
                             foreach GetProperties |
-                            # Group properties by Name to get unique ones, and sort them by
-                            # the most frequent Name first. The sorting is a perk.
-                            # A command can have multiple output types. If so, we might now
-                            # have multiple properties with identical Name.
+                            # Group properties by Name to get unique ones,
+                            # and sort them by the most frequent Name first.
+                            # The sorting is a perk. A command can have
+                            # multiple output types. If so, we might now have
+                            # multiple properties with identical Name.
                             group Name -NoElement |
                             sort Count -Descending |
                             foreach Name
@@ -200,14 +209,15 @@ function Qualify-Object {
                 }
             }
             elseif ($preBoundParameters.ContainsKey("InputObject")) {
-                # If not in pipeline, but object has been given, get the object.
+                # If not in pipeline, but object has been given, get the
+                # object.
                 $detectedInputObject = $preBoundParameters["InputObject"]
             }
 
             if ($null -ne $detectedInputObject) {
-                # The input object might be an array of objects, if so, select the first one.
-                # We (at least I) are not interested in array properties, but the object
-                # element's properties.
+                # The input object might be an array of objects, if so,
+                # select the first one. We (at least I) are not interested in
+                # array properties, but the object element's properties.
                 $sampleInputObject = if ($detectedInputObject -is [Array]) {
                     $detectedInputObject[0]
                 } else {
@@ -215,7 +225,9 @@ function Qualify-Object {
                 }
 
                 # Collect property names.
-                $possibleArguments += $sampleInputObject.PsObject.Properties.Name
+                $possibleArguments =
+                    @($sampleInputObject.PsObject.Properties.Name) +
+                    @($possibleArguments)
             }
 
             $suggestions = if ($wordToComplete) {
