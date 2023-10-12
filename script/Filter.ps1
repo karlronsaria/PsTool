@@ -68,6 +68,79 @@ function Start-Edit {
     }
 }
 
+function Start-Explore {
+    [Alias('Explore')]
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        $InputObject,
+
+        [Switch]
+        $PassThru,
+
+        [Switch]
+        $WhatIf
+    )
+
+    Begin {
+        $list = @()
+    }
+
+    Process {
+        $path = switch ($InputObject) {
+            { $_ -is [String] } {
+                $InputObject
+                break
+            }
+
+            { $_ -is [Microsoft.PowerShell.Commands.MatchInfo] } {
+                $InputObject.Path
+                break
+            }
+
+            { $_ -is [System.IO.FileSystemInfo] } {
+                $InputObject.FullName
+                break
+            }
+
+            # interact with PsMarkdown#Get-PsMarkdownLink
+            # link
+            # - url: https://github.com/karlronsaria/PsMarkdown.git
+            # - retrieved: 2023_02_24
+            { $_ -is [PsCustomObject] } {
+                $properties = $InputObject.PsObject.Properties
+
+                if ('LinkPath' -in $properties.Name) {
+                    $InputObject.LinkPath
+                } else {
+                    [String] $InputObject
+                }
+                break
+            }
+
+            default {
+                [String] $InputObject
+                break
+            }
+        }
+
+        if (Test-Path -Path $path -PathType Leaf) {
+            $path = (Get-Item $path).Directory
+        }
+
+        $list += @($path)
+    }
+
+    End {
+        foreach ($path in $list | sort -Unique) {
+            if ($PassThru) {
+                Write-Output $path
+            }
+
+            Invoke-Item -Path $path -WhatIf:$WhatIf
+        }
+    }
+}
+
 function Start-Open {
     [Alias('Open')]
     Param(
@@ -134,6 +207,107 @@ function Start-Open {
     }
 }
 
+function script:Get-ObjectProperty {
+    # link
+    # - url: https://stackoverflow.com/questions/65892518/tab-complete-a-parameter-value-based-on-another-parameters-already-specified-va
+    # - retrieved: 2023_10_10
+    Param(
+        $CommandName,
+        $ParameterName,
+        $WordToComplete,
+        $CommandAst,
+        $PreboundParameters
+    )
+
+    # Find out if we have pipeline input.
+    $pipelineElements = $CommandAst.Parent.PipelineElements
+    $thisPipelineElementAsString = $CommandAst.Extent.Text
+
+    $thisPipelinePosition = [Array]::IndexOf(
+        $pipelineElements.Extent.Text,
+        $thisPipelineElementAsString
+    )
+
+    $hasPipelineInput = $thisPipelinePosition -ne 0
+    $possibleArguments = @()
+
+    if ($hasPipelineInput) {
+        # If we are in a pipeline, find out if the previous pipeline
+        # element is a variable or a command.
+        $previousPipelineElement =
+            $pipelineElements[$thisPipelinePosition - 1]
+
+        $pipelineInputVariable =
+            $previousPipelineElement.Expression.VariablePath.UserPath
+
+        if (-not [string]::IsNullOrEmpty($pipelineInputVariable)) {
+            # If previous pipeline element is a variable, get the
+            # object. Note that it can be a non-existent variable.
+            # In such case we simply get nothing.
+            $detectedInputObject = Get-Variable |
+                where { $_.Name -eq $pipelineInputVariable } |
+                foreach Value
+        } else {
+            $pipelineInputCommand =
+                $previousPipelineElement.CommandElements[0].Value
+
+            if (-not [string]::IsNullOrEmpty($pipelineInputCommand)) {
+                # If previous pipeline element is a command, check
+                # if it exists as a command.
+                $possibleArguments += Get-Command `
+                    -Name $pipelineInputCommand |
+                    # Collect properties for each documented output
+                    # type.
+                    foreach { $_.OutputType.Type } |
+                    foreach GetProperties |
+                    # Group properties by Name to get unique ones,
+                    # and sort them by the most frequent Name first.
+                    # The sorting is a perk. A command can have
+                    # multiple output types. If so, we might now have
+                    # multiple properties with identical Name.
+                    group Name -NoElement |
+                    sort Count -Descending |
+                    foreach Name
+            }
+        }
+    }
+    elseif ($PreboundParameters.ContainsKey("InputObject")) {
+        # If not in pipeline, but object has been given, get the
+        # object.
+        $detectedInputObject = $PreboundParameters["InputObject"]
+    }
+
+    if ($null -ne $detectedInputObject) {
+        # The input object might be an array of objects, if so,
+        # select the first one. We (at least I) are not interested in
+        # array properties, but the object element's properties.
+        $sampleInputObject = if ($detectedInputObject -is [Array]) {
+            $detectedInputObject[0]
+        } else {
+            $detectedInputObject
+        }
+
+        # Collect property names.
+        $possibleArguments =
+            @($sampleInputObject.PsObject.Properties.Name) +
+            @($possibleArguments)
+    }
+
+    $suggestions = if ($WordToComplete) {
+        $possibleArguments | where { $_ -like "$WordToComplete*" }
+    }
+    else {
+        $possibleArguments
+    }
+
+    return $(if ($suggestions) {
+        $suggestions
+    }
+    else {
+        $possibleArguments
+    })
+}
+
 function Qualify-Object {
     [Alias('What')]
     Param(
@@ -144,105 +318,16 @@ function Qualify-Object {
         [Int[]]
         $Index,
 
-        [ArgumentCompleter({
-            # link
-            # - url: https://stackoverflow.com/questions/65892518/tab-complete-a-parameter-value-based-on-another-parameters-already-specified-va
-            # - retrieved: 2023_10_10
+        [ArgumentCompleter({ 
             Param(
-                $cmdName,
-                $paramName,
-                $wordToComplete,
-                $cmdAst,
-                $preBoundParameters
+                $CommandName,
+                $ParameterName,
+                $WordToComplete,
+                $CommandAst,
+                $PreboundParameters
             )
 
-            # Find out if we have pipeline input.
-            $pipelineElements = $cmdAst.Parent.PipelineElements
-            $thisPipelineElementAsString = $cmdAst.Extent.Text
-
-            $thisPipelinePosition = [Array]::IndexOf(
-                $pipelineElements.Extent.Text,
-                $thisPipelineElementAsString
-            )
-
-            $hasPipelineInput = $thisPipelinePosition -ne 0
-            $possibleArguments = @()
-
-            if ($hasPipelineInput) {
-                # If we are in a pipeline, find out if the previous pipeline
-                # element is a variable or a command.
-                $previousPipelineElement =
-                    $pipelineElements[$thisPipelinePosition - 1]
-
-                $pipelineInputVariable =
-                    $previousPipelineElement.Expression.VariablePath.UserPath
-
-                if (-not [string]::IsNullOrEmpty($pipelineInputVariable)) {
-                    # If previous pipeline element is a variable, get the
-                    # object. Note that it can be a non-existent variable.
-                    # In such case we simply get nothing.
-                    $detectedInputObject = Get-Variable |
-                        Where-Object {$_.Name -eq $pipelineInputVariable} |
-                        ForEach-Object Value
-                } else {
-                    $pipelineInputCommand =
-                        $previousPipelineElement.CommandElements[0].Value
-
-                    if (-not [string]::IsNullOrEmpty($pipelineInputCommand)) {
-                        # If previous pipeline element is a command, check
-                        # if it exists as a command.
-                        $possibleArguments += Get-Command -CommandType All |
-                            where Name -Match "^$pipelineInputCommand$" |
-                            # Collect properties for each documented output
-                            # type.
-                            foreach { $_.OutputType.Type } |
-                            foreach GetProperties |
-                            # Group properties by Name to get unique ones,
-                            # and sort them by the most frequent Name first.
-                            # The sorting is a perk. A command can have
-                            # multiple output types. If so, we might now have
-                            # multiple properties with identical Name.
-                            group Name -NoElement |
-                            sort Count -Descending |
-                            foreach Name
-                    }
-                }
-            }
-            elseif ($preBoundParameters.ContainsKey("InputObject")) {
-                # If not in pipeline, but object has been given, get the
-                # object.
-                $detectedInputObject = $preBoundParameters["InputObject"]
-            }
-
-            if ($null -ne $detectedInputObject) {
-                # The input object might be an array of objects, if so,
-                # select the first one. We (at least I) are not interested in
-                # array properties, but the object element's properties.
-                $sampleInputObject = if ($detectedInputObject -is [Array]) {
-                    $detectedInputObject[0]
-                } else {
-                    $detectedInputObject
-                }
-
-                # Collect property names.
-                $possibleArguments =
-                    @($sampleInputObject.PsObject.Properties.Name) +
-                    @($possibleArguments)
-            }
-
-            $suggestions = if ($wordToComplete) {
-                $possibleArguments | where { $_ -like "$wordToComplete*" }
-            }
-            else {
-                $possibleArguments
-            }
-
-            return $(if ($suggestions) {
-                $suggestions
-            }
-            else {
-                $possibleArguments
-            })
+            return Get-ObjectProperty @PsBoundParameters
         })]
         [Parameter(ParameterSetName = 'Qualifier')]
         [String[]]
@@ -252,6 +337,17 @@ function Qualify-Object {
         [Switch]
         $First,
 
+        [ArgumentCompleter({
+            Param(
+                $CommandName,
+                $ParameterName,
+                $WordToComplete,
+                $CommandAst,
+                $PreboundParameters
+            )
+
+            return Get-ObjectProperty @PsBoundParameters
+        })]
         [Parameter(
             ParameterSetName = 'Inference',
             Position = 0

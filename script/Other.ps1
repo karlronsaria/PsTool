@@ -125,3 +125,16 @@ function Get-ShortName {
         }
     }
 }
+
+function Set-Title {
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        [String]
+        $Title
+    )
+
+    Process {
+        $host.UI.RawUi.WindowTitle = $Title
+    }
+}
+
