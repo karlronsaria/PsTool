@@ -207,13 +207,11 @@ function Start-Open {
     }
 }
 
-function script:Get-ObjectProperty {
+function Get-PipelinePropertySuggestion {
     # link
     # - url: https://stackoverflow.com/questions/65892518/tab-complete-a-parameter-value-based-on-another-parameters-already-specified-va
     # - retrieved: 2023_10_10
     Param(
-        $CommandName,
-        $ParameterName,
         $WordToComplete,
         $CommandAst,
         $PreboundParameters
@@ -229,14 +227,14 @@ function script:Get-ObjectProperty {
     )
 
     $hasPipelineInput = $thisPipelinePosition -ne 0
-    $possibleArguments = @()
+    $possibleArgs = @()
 
     if ($hasPipelineInput) {
         # If we are in a pipeline, find out if the previous pipeline
         # element is a variable or a command.
         $previousPipelineElement =
             $pipelineElements[$thisPipelinePosition - 1]
-
+ 
         $pipelineInputVariable =
             $previousPipelineElement.Expression.VariablePath.UserPath
 
@@ -244,17 +242,18 @@ function script:Get-ObjectProperty {
             # If previous pipeline element is a variable, get the
             # object. Note that it can be a non-existent variable.
             # In such case we simply get nothing.
-            $detectedInputObject = Get-Variable |
-                where { $_.Name -eq $pipelineInputVariable } |
+            $detectedInputObject = Get-Variable `
+                -Name $pipelineInputVariable |
                 foreach Value
-        } else {
+        }
+        else {
             $pipelineInputCommand =
                 $previousPipelineElement.CommandElements[0].Value
 
             if (-not [string]::IsNullOrEmpty($pipelineInputCommand)) {
                 # If previous pipeline element is a command, check
                 # if it exists as a command.
-                $possibleArguments += Get-Command `
+                $possibleArgs += Get-Command `
                     -Name $pipelineInputCommand |
                     # Collect properties for each documented output
                     # type.
@@ -272,8 +271,7 @@ function script:Get-ObjectProperty {
         }
     }
     elseif ($PreboundParameters.ContainsKey("InputObject")) {
-        # If not in pipeline, but object has been given, get the
-        # object.
+        # If not in pipeline, but object has been given, get the object.
         $detectedInputObject = $PreboundParameters["InputObject"]
     }
 
@@ -288,23 +286,23 @@ function script:Get-ObjectProperty {
         }
 
         # Collect property names.
-        $possibleArguments =
+        $possibleArgs =
             @($sampleInputObject.PsObject.Properties.Name) +
-            @($possibleArguments)
+            @($possibleArgs)
     }
 
     $suggestions = if ($WordToComplete) {
-        $possibleArguments | where { $_ -like "$WordToComplete*" }
+        $possibleArgs | where { $_ -like "$WordToComplete*" }
     }
     else {
-        $possibleArguments
+        $possibleArgs
     }
 
     return $(if ($suggestions) {
         $suggestions
     }
     else {
-        $possibleArguments
+        $possibleArgs
     })
 }
 
@@ -327,7 +325,7 @@ function Qualify-Object {
                 $PreboundParameters
             )
 
-            return Get-ObjectProperty @PsBoundParameters
+            return Get-PipelinePropertySuggestion @PsBoundParameters
         })]
         [Parameter(ParameterSetName = 'Qualifier')]
         [String[]]
@@ -346,7 +344,7 @@ function Qualify-Object {
                 $PreboundParameters
             )
 
-            return Get-ObjectProperty @PsBoundParameters
+            return Get-PipelinePropertySuggestion @PsBoundParameters
         })]
         [Parameter(
             ParameterSetName = 'Inference',
