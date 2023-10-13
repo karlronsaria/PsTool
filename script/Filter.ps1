@@ -423,3 +423,83 @@ function Qualify-Object {
         }
     }
 }
+
+<#
+.SYNOPSIS
+A string replacer that preserves casing
+#>
+function Get-StringReplace {
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        [String]
+        $InputObject,
+
+        [String]
+        $Pattern,
+
+        [String]
+        $Replace
+    )
+
+    Process {
+        $captures = [Regex]::Matches($InputObject, $Pattern)
+        $index = 0
+        $objects = @()
+
+        $objects += @(foreach ($capture in $captures) {
+            $prefix = if ($capture.Index -ne 0) {
+                $InputObject[$index .. ($capture.Index - 1)] -join ""
+            }
+
+            $index = $capture.Index + $capture.Length
+
+            [PsCustomObject]@{
+                Prefix = $prefix
+                Capture = $capture
+            }
+        })
+
+        if ($index -lt $InputObject.Length) {
+            $objects += @([PsCustomObject]@{
+                Prefix = $InputObject[$index .. ($InputObject.Length - 1)]
+                Capture = $null
+            })
+        }
+
+        ($objects | foreach {
+            $caseSlice = ""
+            $remainder = ""
+
+            if ($null -ne $_.Capture) {
+                $value = $_.Capture.Value
+                $min = [Math]::Min($value.Length, $Replace.Length)
+
+                $caseSlice = foreach ($i in (0 .. $min)) {
+                    $c = $value[$i]
+
+                    if ($c -cmatch "[A-Z]") {
+                        [Char]::ToUpper($Replace[$i])
+                    }
+                    elseif ($c -cmatch "[a-z]") {
+                        [Char]::ToLower($Replace[$i])
+                    }
+                    else {
+                        $Replace[$i]
+                    }
+                }
+
+                $remainder = if ($Replace.Length -gt $min) {
+                    $Replace[($min + 1) .. ($Replace.Length - 1)]
+                }
+            }
+
+            "$(
+                $_.Prefix -join ''
+            )$(
+                $caseSlice -join ''
+            )$(
+                $remainder -join ''
+            )"
+        }) -join ""
+    }
+}
