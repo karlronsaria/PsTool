@@ -246,7 +246,7 @@ function Get-PipelinePropertySuggestion {
                 -Name $pipelineInputVariable |
                 foreach Value
         }
-        else {
+        elseif ($previousPipelineElement.CommandElements.Count -gt 0) {
             $pipelineInputCommand =
                 $previousPipelineElement.CommandElements[0].Value
 
@@ -268,6 +268,44 @@ function Get-PipelinePropertySuggestion {
                     sort Count -Descending |
                     foreach Name
             }
+        }
+        else {
+            $obj = $previousPipelineElement.Expression
+
+            $possibleArgs += @(switch ($obj.StaticType) {
+                { $_ -eq [PsCustomObject] } {
+                    $obj.Child.KeyValuePairs.Item1.Value
+                }
+
+                { $_ -eq [Hashtable] } {
+                    $obj.KeyValuePairs.Item1.Value
+                }
+
+                { $_ -eq [Object[]] } {
+                    Set-Variable `
+                        -Scope Global `
+                        -Name MyPipelineArray `
+                        -Value $obj
+
+                    foreach ($element in $obj.
+                        Subexpression.
+                        Statements.
+                        PipelineElements.
+                        Expression.
+                        Elements
+                    ) {
+                        switch ($element.StaticType) {
+                            { $_ -eq [PsCustomObject] } {
+                                $element.Child.KeyValuePairs.Item1.Value
+                            }
+
+                            { $_ -eq [Hashtable] } {
+                                $element.KeyValuePairs.Item1.Value
+                            }
+                        }
+                    }
+                }
+            })
         }
     }
     elseif ($PreboundParameters.ContainsKey("InputObject")) {
