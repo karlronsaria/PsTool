@@ -393,6 +393,25 @@ function Qualify-Object {
 
     Begin {
         $list = @()
+
+        function Get-Subelement {
+            Param(
+                $InputObject,
+
+                [String]
+                $ElementName
+            )
+
+            switch ($InputObject) {
+                { $_ -is [Hashtable] } {
+                    $InputObject[$ElementName]
+                }
+
+                default {
+                    $InputObject.$ElementName
+                }
+            }
+        }
     }
 
     Process {
@@ -400,13 +419,17 @@ function Qualify-Object {
             'Qualifier' {
                 if (@($Property).Count -gt 1) {
                     foreach ($item in $Property) {
-                        Write-Output $InputObject.$item
+                        Get-Subelement `
+                            -InputObject $InputObject `
+                            -ElementName $item
                     }
 
                     return
                 }
 
-                return $InputObject.$Property
+                Get-Subelement `
+                    -InputObject $InputObject `
+                    -ElementName $Property
             }
 
             default {
