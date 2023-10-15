@@ -234,7 +234,7 @@ function Get-PipelinePropertySuggestion {
         # element is a variable or a command.
         $previousPipelineElement =
             $pipelineElements[$thisPipelinePosition - 1]
- 
+
         $pipelineInputVariable =
             $previousPipelineElement.Expression.VariablePath.UserPath
 
@@ -255,17 +255,9 @@ function Get-PipelinePropertySuggestion {
                 # if it exists as a command.
                 $possibleArgs += Get-Command `
                     -Name $pipelineInputCommand |
-                    # Collect properties for each documented output
-                    # type.
                     foreach { $_.OutputType.Type } |
                     foreach GetProperties |
-                    # Group properties by Name to get unique ones,
-                    # and sort them by the most frequent Name first.
-                    # The sorting is a perk. A command can have
-                    # multiple output types. If so, we might now have
-                    # multiple properties with identical Name.
                     group Name -NoElement |
-                    sort Count -Descending |
                     foreach Name
             }
         }
@@ -282,11 +274,6 @@ function Get-PipelinePropertySuggestion {
                 }
 
                 { $_ -eq [Object[]] } {
-                    Set-Variable `
-                        -Scope Global `
-                        -Name MyPipelineArray `
-                        -Value $obj
-
                     foreach ($element in $obj.
                         Subexpression.
                         Statements.
