@@ -163,7 +163,7 @@ function New-ImageIcon {
     [CmdletBinding()]
     Param(
         [String]
-        $FileName,
+        $FilePath,
 
         [Switch]
         $RemoveTemps,
@@ -182,15 +182,15 @@ function New-ImageIcon {
             Success = $false
             Result =
                 "This script requires $command to be available on the machine"
-            ItemPath = $FileName
+            ItemPath = $FilePath
         })
     }
 
-    if (-not (Test-Path $FileName)) {
+    if (-not (Test-Path $FilePath)) {
         return ([PsCustomObject]@{
             Success = $false
             Result = "File not found"
-            ItemPath = $FileName
+            ItemPath = $FilePath
         })
     }
 
@@ -198,11 +198,11 @@ function New-ImageIcon {
     mkdir $dir -Force | Out-Null
 
     foreach ($size in 16, 32, 48, 128, 256) {
-        . $command convert "$($FileName)" -scale $size "$dir/$size.png"
+        . $command convert "$($FilePath)" -scale $size "$dir/$size.png"
     }
 
-    $FileName = (($FileName -Replace "\.[^\.]+$") + ".ico")
-    . $command convert "$dir/*.png" $FileName
+    $FilePath = (($FilePath -Replace "\.[^\.]+$") + ".ico")
+    . $command convert "$dir/*.png" $FilePath
 
     if ($RemoveTemps) {
         del $dir -Recurse -Force
@@ -221,7 +221,7 @@ function New-ImageIcon {
             } else {
                 "File could not be created"
             }
-        ItemPath = $FileName
+        ItemPath = $FilePath
     })
 }
 
