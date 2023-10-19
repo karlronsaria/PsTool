@@ -126,6 +126,8 @@ function ConvertFrom-MsExcel {
         )
     }
 
+    Write-Progress -Activity "Sheets" -Complete
+
     $workbook.Close()
     $excel.Quit()
     [void] [System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel)
@@ -171,6 +173,8 @@ function ForEach-MsExcelWorksheet {
             $sheetIndex++
             $sheet | foreach $Do
         }
+
+        Write-Progress -Activity "Sheets" -Complete
 
         if (-not $Destination -or $Destination -eq $File.Name) {
             $Destination = $File.Name -Replace `
