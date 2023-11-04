@@ -1,5 +1,10 @@
 # wish
+
+- ``Qualify-Object``
+  - [ ] index range
+
 ## complete
+
 - [x] better edge detection
 - [x] progress bar
 - I wish for
