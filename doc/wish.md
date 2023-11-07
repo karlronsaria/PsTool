@@ -1,7 +1,19 @@
 # wish
 
 - ``Qualify-Object``
-  - [ ] index range
+  - [x] index range
+    - solution
+      - example
+
+        ```powershell
+        dir \note\*.md -Recurse |
+            Qualify-Object -Index (2 .. 10)
+        ```
+
+        ```powershell
+        dir \note\*.md -Recurse |
+            what (2 .. 10)
+        ```
 
 ## complete
 
