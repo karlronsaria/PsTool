@@ -323,12 +323,21 @@ function Get-PipelinePropertySuggestion {
         $possibleArgs
     }
 
-    return $(if ($suggestions) {
+    $suggestions = if ($suggestions) {
         $suggestions
     }
     else {
         $possibleArgs
-    })
+    }
+
+    return $suggestions | foreach {
+        if ($_ -match "\s") {
+            "`"$_`""
+        }
+        else {
+            $_
+        }
+    }
 }
 
 function Qualify-Object {
@@ -549,5 +558,25 @@ function Get-StringReplace {
                 $remainder -join ''
             )"
         }) -join ""
+    }
+}
+
+function ConvertTo-List {
+    [Alias('List')]
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        [PsCustomObject[]]
+        $InputObject
+    )
+
+    Process {
+        return $InputObject | foreach {
+            $_.PsObject.Properties | foreach {
+                [PsCustomObject]@{
+                    Name = $_.Name
+                    Value = $_.Value
+                }
+            }
+        }
     }
 }
