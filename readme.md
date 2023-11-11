@@ -1,20 +1,30 @@
-# Getting Started
-## Setup
+# PsTool
+
+## Getting Started
+
+### Requires
+- PsQuickform
+
+### Setup
 1. Run elevated 
+
    ```
    ./python/install.bat
    ```
+
 2. Run elevated
+
     ```powershell
     Install-Module -Name PSFolderSize -RequiredVersion 1.6.5
     ```
 
-# Externals
-### PsFolderSize
+## Externals
+
+#### PsFolderSize
 - url: https://github.com/gngrninja/PSFolderSize
 - retrieved: 2023_10_06
 
-### matplotlib
+#### matplotlib
 - url
   - https://github.com/matplotlib/matplotlib
   - https://matplotlib.org/

@@ -1,3 +1,5 @@
+#Requires -Module PsQuickform
+
 function Rename-AllSansWhiteSpace {
     Param(
         [Parameter(Position = 0)]
@@ -106,5 +108,190 @@ function New-NoteItem {
         Join-Path $Directory "$($Prefix)$(Get-Date -f yyyy_MM_dd)$($Name)"
 
     New-Item $item
+}
+
+function Rename-Item {
+    [CmdletBinding(
+        DefaultParameterSetName = 'ByPath',
+        SupportsShouldProcess = $true,
+        ConfirmImpact = 'Medium',
+        SupportsTransactions = $true,
+        HelpUri = 'https://go.microsoft.com/fwlink/?LinkID=113382'
+    )]
+    param(
+        [Parameter(
+            ParameterSetName = 'ByPath',
+            Mandatory = $true,
+            Position = 0,
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true
+        )]
+        [string]
+        ${Path},
+
+        [Parameter(
+            ParameterSetName = 'ByLiteralPath',
+            Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true
+        )]
+        [Alias('PSPath')]
+        [string]
+        ${LiteralPath},
+
+        [Parameter(
+            Position = 1,
+            ValueFromPipelineByPropertyName = $true
+        )]
+        [string]
+        ${NewName},
+
+        [switch]
+        ${Force},
+
+        [switch]
+        ${PassThru},
+
+        [Parameter(
+            ValueFromPipelineByPropertyName = $true
+        )]
+        [pscredential]
+        [System.Management.Automation.CredentialAttribute()]
+        ${Credential}
+    )
+
+    dynamicparam {
+        try {
+            $targetCmd = $ExecutionContext.InvokeCommand.GetCommand(
+                'Microsoft.PowerShell.Management\Rename-Item',
+                [System.Management.Automation.CommandTypes]::Cmdlet,
+                $PSBoundParameters
+            )
+
+            $dynamicParams = @($targetCmd.Parameters.GetEnumerator() |
+                Microsoft.PowerShell.Core\Where-Object {
+                    $_.Value.IsDynamic
+                }
+            )
+
+            if ($dynamicParams.Length -gt 0) {
+                $paramDictionary =
+                [Management.Automation.RuntimeDefinedParameterDictionary]::
+                new()
+
+                foreach ($param in $dynamicParams) {
+                    $param = $param.Value
+
+                    if (-not $MyInvocation.MyCommand.Parameters.ContainsKey(
+                        $param.Name
+                    )) {
+                        $dynParam =
+                        [Management.Automation.RuntimeDefinedParameter]::new(
+                            $param.Name,
+                            $param.ParameterType,
+                            $param.Attributes
+                        )
+
+                        $paramDictionary.Add($param.Name, $dynParam)
+                    }
+                }
+
+                return $paramDictionary
+            }
+        } catch {
+            throw
+        }
+    }
+
+    begin {
+        try {
+            $continue = $true
+
+            if (-not $NewName) {
+                $name = switch ($PsCmdlet.ParameterSetName) {
+                    'ByPath' { $Path }
+                    'ByLiteralPath' { $LiteralPath }
+                }
+
+                $menu = @"
+{
+    "Preferences": { "Caption": "Rename-Item: $name" },
+    "MenuSpecs": [
+        {
+            "Name": "NewName",
+            "Type": "Field",
+            "Default": "$name"
+        }
+    ]
+}
+"@
+
+                $result = $menu | ConvertFrom-Json | Show-QformMenu
+
+                if (-not $result.Confirm) {
+                    $continue = $false
+                    return
+                }
+
+                $answer = $result.MenuAnswers.NewName
+
+                if (-not $answer -or $answer -eq $name) {
+                    $continue = $false
+                    return
+                }
+
+                $PSBoundParameters['NewName'] = $answer
+            }
+
+            $outBuffer = $null
+
+            if ($PSBoundParameters.TryGetValue(
+                'OutBuffer',
+                [ref]$outBuffer
+            )) {
+                $PSBoundParameters['OutBuffer'] = 1
+            }
+
+            $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand(
+                'Microsoft.PowerShell.Management\Rename-Item',
+                [System.Management.Automation.CommandTypes]::Cmdlet
+            )
+
+            $scriptCmd = { & $wrappedCmd @PSBoundParameters }
+            $steppablePipeline =
+                $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
+            $steppablePipeline.Begin($PSCmdlet)
+        } catch {
+            throw
+        }
+    }
+
+    process {
+        try {
+            if (-not $continue) {
+                return
+            }
+
+            $steppablePipeline.Process($_)
+        } catch {
+            throw
+        }
+    }
+
+    end {
+        try {
+            if (-not $continue) {
+                return
+            }
+
+            $steppablePipeline.End()
+        } catch {
+            throw
+        }
+    }
+
+<#
+.ForwardHelpTargetName Microsoft.PowerShell.Management\Rename-Item
+.ForwardHelpCategory Cmdlet
+#>
 }
 
