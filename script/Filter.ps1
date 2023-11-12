@@ -369,6 +369,9 @@ function Qualify-Object {
         [Switch]
         $First,
 
+        [Switch]
+        $Numbered,
+
         [ArgumentCompleter({
             Param(
                 $CommandName,
@@ -435,49 +438,69 @@ function Qualify-Object {
     }
 
     End {
-        if ($list.Count -gt 0) {
-            switch ($PsCmdlet.ParameterSetName) {
-                'Inference' {
-                    switch ($Argument) {
-                        { @($Argument).Count -gt 1 } {
-                            foreach ($item in $Argument) {
-                                Write-Output $list | Qualify-Object `
-                                    -Argument $item
-                            }
+        if ($list.Count -eq 0) {
+            return
+        }
 
-                            return
+        $list = switch ($PsCmdlet.ParameterSetName) {
+            'Inference' {
+                switch ($Argument) {
+                    { @($Argument).Count -gt 1 } {
+                        foreach ($item in $Argument) {
+                            $list | Qualify-Object `
+                                -Argument $item
                         }
 
-                        { $d = $null; [Int]::TryParse($_, [ref]$d) } {
-                            return $list | Qualify-Object `
-                                -Index $Argument
-                        }
+                        break
+                    }
 
-                        default {
-                            return $list | Qualify-Object `
-                                -Property $Argument
-                        }
+                    { $d = $null; [Int]::TryParse($_, [ref]$d) } {
+                        $list | Qualify-Object `
+                            -Index $Argument
+
+                        break
+                    }
+
+                    default {
+                        $list | Qualify-Object `
+                            -Property $Argument
+
+                        break
                     }
                 }
+            }
 
-                default {
-                    $i = switch ($PsCmdlet.ParameterSetName) {
-                        'Subscript' { $Index }
-                        'GetFirst' { 0 }
+            default {
+                $i = switch ($PsCmdlet.ParameterSetName) {
+                    'Subscript' { $Index }
+                    'GetFirst' { 0 }
+                }
+
+                if (@($i).Count -gt 1) {
+                    foreach ($item in $i) {
+                        $list[$item]
                     }
 
-                    if (@($i).Count -gt 1) {
-                        foreach ($item in $i) {
-                            Write-Output $list[$item]
-                        }
+                    return
+                }
 
-                        return
-                    }
+                $list[$i]
+            }
+        }
 
-                    return $list[$i]
+        return $(if ($Numbered) {
+            $list | foreach -Begin {
+                $count = 0
+            } -Process {
+                [PsCustomObject]@{
+                    Id = ++$count
+                    Object = $_
                 }
             }
         }
+        else {
+            $list
+        })
     }
 }
 
