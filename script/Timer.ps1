@@ -12,19 +12,59 @@ function Start-Timer {
         $Seconds = 0,
 
         [Switch]
-        $Bell
+        $Bell,
+
+        [Switch]
+        $InConsole
     )
 
     $Seconds += 60 * $Minutes
     $blank = " " * 20
 
+    $action = if ($InConsole) {
+        {
+            Param([Int] $Total, [Int] $Remaining, [String] $Spinner)
+
+            Write-Host `
+                "`rSeconds left: [$Spinner] $Remaining$blank" -NoNewLine
+        }
+    }
+    else {
+        {
+            Param([Int] $Total, [Int] $Remaining, [String] $Spinner)
+
+            Write-Progress `
+                -Activity "Countdown" `
+                -Status "`rSeconds left: [$Spinner] $Remaining$blank" `
+                -PercentComplete `
+                    (100 * (($Total - $Remaining) / $Total) + 1)
+        }
+    }
+
+    $total = $Seconds
+
     while ($Seconds -gt 0) {
-        Write-Host "`rSeconds left: $Seconds$blank" -NoNewLine
-        Start-Sleep -Seconds 1
+        & $action -Total $total -Remaining $Seconds -Spinner "-"
+        Start-Sleep -Milliseconds 250
+        & $action -Total $total -Remaining $Seconds -Spinner "\"
+        Start-Sleep -Milliseconds 250
+        & $action -Total $total -Remaining $Seconds -Spinner "|"
+        Start-Sleep -Milliseconds 250
+        & $action -Total $total -Remaining $Seconds -Spinner "/"
+        Start-Sleep -Milliseconds 250
         $Seconds--
     }
 
-    Write-Host "`rSeconds left: $Seconds$blank" -NoNewLine
+    if (-not $InConsole) {
+        Write-Progress `
+            -Activity "Countdown" `
+            -Status "`rSeconds left: [-] $Seconds$blank" `
+            -PercentComplete 100 `
+            -Complete
+    }
+    else {
+        Write-Host "`rSeconds left: $Seconds$blank" -NoNewLine
+    }
 
     if ($Bell) {
         # (karlr 2023_09_22_200523) The bell escape sequence does not seem
