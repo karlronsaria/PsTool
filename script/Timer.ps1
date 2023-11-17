@@ -36,6 +36,7 @@ function Start-Timer {
             Write-Progress `
                 -Activity "Countdown" `
                 -Status "`rSeconds left: [$Spinner] $Remaining$blank" `
+                -SecondsRemaining $Remaining `
                 -PercentComplete `
                     (100 * (($Total - $Remaining) / $Total) + 1)
         }
