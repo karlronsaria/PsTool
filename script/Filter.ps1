@@ -350,7 +350,7 @@ function Qualify-Object {
         [Int[]]
         $Index,
 
-        [ArgumentCompleter({ 
+        [ArgumentCompleter({
             Param(
                 $CommandName,
                 $ParameterName,
