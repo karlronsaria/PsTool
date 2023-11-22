@@ -18,146 +18,34 @@ function Out-Toast {
 
     Add-Type -AssemblyName System.Windows.Forms
     $global:balloon = New-Object System.Windows.Forms.NotifyIcon
-    $path = (Get-Process -id $pid).Path
+    $path = (Get-Process -Id $PID).Path
     $balloon.Icon = [System.Drawing.Icon]::ExtractAssociatedIcon($path)
-    $balloon.BalloonTipText = ($InputObject | Out-String)
+    $balloon.BalloonTipText = $InputObject | Out-String
     $balloon.BalloonTipTitle = $Title
 
     if ($Type) {
-        $balloon.BalloonTipIcon = switch ($Type) {
-            "None"     { [System.Windows.Forms.ToolTipIcon]::None }
-            "Error"    { [System.Windows.Forms.ToolTipIcon]::Error }
-            "Info"     { [System.Windows.Forms.ToolTipIcon]::Info }
-            "Warning"  { [System.Windows.Forms.ToolTipIcon]::Warning }
-        }
+        $balloon.BalloonTipIcon = [System.Windows.Forms.ToolTipIcon]::$Type
     }
 
     $balloon.Visible = $true
     $balloon.ShowBalloonTip($SuggestedTimeout)
 }
 
-<#
-    .LINK
-        https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/out-notepad-send-information-to-notepad
-#>
-function Out-Notepad {
-    [CmdletBinding(DefaultParameterSetName = "ByObject")]
-    Param(
-        [Parameter(
-            ParameterSetName = "ByObject",
-            ValueFromPipeline = $true)]
-        [PSObject[]]
-        $InputObject,
-
-        [Parameter(
-            ParameterSetName = "ByStream",
-            ValueFromPipeline = $true)]
-        $Stream,
-
-        [Switch]
-        $NoNewLine
-    )
-
-    Begin {
-        $buf = New-Object System.Text.StringBuilder
-    }
-
-    Process {
-        if ($PsCmdlet.ParameterSetName -eq "ByStream") {
-            $InputObject = $Stream | Out-String
-        }
-
-        foreach ($subobject in $InputObject) {
-            if ($NoNewLine) {
-                $null = $buf.Append($subobject.ToString())
-            } else {
-                $null = $buf.AppendLine($subobject.ToString())
-            }
-        }
-    }
-
-    End {
-        $text = $buf.ToString()
-        $process = Start-Process notepad -PassThru
-        [void] $process.WaitForInputIdle()
-
-        $sig = '
-            [DllImport("user32.dll", EntryPoint = "FindWindowEx")]
-            public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
-
-            [DllImport("user32.dll")]
-            public static extern int SendMessage(IntPtr hWnd, int uMsg, int wParam, string lParam);
-        '
-
-        $type = Add-Type -MemberDefinition $sig -Name APISendMessage -PassThru
-        $hwnd = $process.MainWindowHandle
-        [IntPtr]$child = $type::FindWindowEx($hwnd, [IntPtr]::Zero, "Edit", $null)
-        $null = $type::SendMessage($child, 0x000C, 0, $text)
-    }
-}
-
-<#
-.ISSUE
-Command
-```powershell
-dir \note | Out-NotepadPlusPlus
-```
-Expected
-```
-    Directory: C:\note
-
-
-Mode                 LastWriteTime         Length Name
-----                 -------------         ------ ----
-d-----         5/24/2021   4:30 AM                banter
-d-----         5/18/2021   8:08 PM                dev
-d-----         5/25/2021  12:54 AM                howto
-```
-Actual
-```
-    Directory: C:\note
-
-
-Mode                 LastWriteTime         Length Name
-----                 -------------         ------ ----
-d-----         5/24/2021   4:30 AM                banter
-
-
-
-
-
-    Directory: C:\note
-
-
-Mode                 LastWriteTime         Length Name
-----                 -------------         ------ ----
-d-----         5/18/2021   8:08 PM                dev
-
-
-
-
-
-    Directory: C:\note
-
-
-Mode                 LastWriteTime         Length Name
-----                 -------------         ------ ----
-d-----         5/25/2021  12:54 AM                howto
-```
-#>
 function Out-NotepadPlusPlus {
     [Alias("Out-Npp")]
     [CmdletBinding(DefaultParameterSetName = "ByObject")]
     Param(
         [Parameter(
             ParameterSetName = "ByObject",
-            ValueFromPipeline = $true)]
-        [PSObject[]]
+            ValueFromPipeline = $true
+        )]
+        [Object[]]
         $InputObject,
 
         [Parameter(
             ParameterSetName = "ByStream",
-            ValueFromPipeline = $true)]
+            ValueFromPipeline = $true
+        )]
         $Stream,
 
         [Switch]
@@ -165,7 +53,7 @@ function Out-NotepadPlusPlus {
     )
 
     Begin {
-        $buf = New-Object System.Text.StringBuilder
+        $list = @()
     }
 
     Process {
@@ -173,27 +61,23 @@ function Out-NotepadPlusPlus {
             $InputObject = $Stream | Out-String
         }
 
-        foreach ($subobject in $InputObject) {
-            if ($NoNewLine) {
-                $null = $buf.Append($subobject.ToString())
-            }
-            else {
-                $null = $buf.AppendLine($subobject.ToString())
-            }
+        foreach ($item in $InputObject) {
+            $list += @($list)
         }
     }
 
     End {
-        $text = $buf.ToString()
-        $command = "notepad++ -qt=`"$text`" -qSpeed3 -multiInst"
+        $command =
+            "notepad++ -qt=`"$($list | Out-String)`" -qSpeed3 -multiInst"
 
         if ($WhatIf) {
-            "InputObject: $InputObject"
-            "Command: $command"
+            return [PsCustomObject]@{
+                InputObject = $list
+                Command = $command
+            }
         }
-        else {
-            Write-Verbose "Command: $command"
-            Invoke-Expression -Command $command
-        }
+
+        Write-Verbose "Command: $command"
+        Invoke-Expression -Command $command
     }
 }

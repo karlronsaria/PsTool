@@ -2,6 +2,49 @@
 
 ## complete
 
+- [x] 2023_11_21_232252
+  - where: ``Out-#Out-NotepadPlusPlus``
+  - howto
+
+    ```powershell
+    dir \note | Out-NotepadPlusPlus
+    ```
+
+  - actual
+
+    ```text
+        Directory: C:\note
+
+    Mode                 LastWriteTime         Length Name
+    ----                 -------------         ------ ----
+    d-----         5/24/2021   4:30 AM                banter
+
+        Directory: C:\note
+
+    Mode                 LastWriteTime         Length Name
+    ----                 -------------         ------ ----
+    d-----         5/18/2021   8:08 PM                dev
+
+        Directory: C:\note
+
+    Mode                 LastWriteTime         Length Name
+    ----                 -------------         ------ ----
+    d-----         5/25/2021  12:54 AM                howto
+    ```
+
+  - expected
+
+    ```
+        Directory: C:\note
+
+
+    Mode                 LastWriteTime         Length Name
+    ----                 -------------         ------ ----
+    d-----         5/24/2021   4:30 AM                banter
+    d-----         5/18/2021   8:08 PM                dev
+    d-----         5/25/2021  12:54 AM                howto
+    ```
+
 - [x] 2022_03_23_230129
   - solution: DEPRECATE
   - where: ``Out-#Out-Notepad``
