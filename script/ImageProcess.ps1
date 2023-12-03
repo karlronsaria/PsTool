@@ -1,9 +1,11 @@
 <#
-    .LINK
-        https://www.reddit.com/r/webdev/comments/fzsb5k/any_way_to_convert_webp_to_gif_or_jpg_locally_on/g26vdds/?context=3
+.LINK
+Url: <https://www.reddit.com/r/webdev/comments/fzsb5k/any_way_to_convert_webp_to_gif_or_jpg_locally_on/g26vdds/?context=3>
+Retrieved: 2023_10_16
 
-    .LINK
-        https://www.reddit.com/user/earthiverse/
+.LINK
+Url: <https://www.reddit.com/user/earthiverse/>
+Retrieved: 2023_10_16
 #>
 function ConvertFrom-ImageWebp {
     [CmdletBinding()]
