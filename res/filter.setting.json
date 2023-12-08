@@ -1,14 +1,20 @@
 {
     "DefaultEditor": "Neovim",
-    "Neovim": {
-        "EditCommand": "start nvim \"<path><line>\"",
-        "ElevatedEditCommand": "sudo nvim \"<path>\"<line>",
-        "GotoLineSequence": " +",
-    },
-    "VsCode": {
-        "Enabled": true,
-        "EditCommand": "code --goto \"<path><line>\"",
-        "ElevatedEditCommand": "sudo code --goto \"<path><line>\"",
-        "GotoLineSequence": ":",
+    "Editor": {
+        "Neovim": {
+            "Command": "start nvim \"<path><line>\"",
+            "ElevatedCommand": "sudo nvim \"<path>\"<line>",
+            "GotoLineSequence": " +",
+        },
+        "VsCode": {
+            "Command": "code --goto \"<path><line>\"",
+            "ElevatedCommand": "sudo code --goto \"<path><line>\"",
+            "GotoLineSequence": ":",
+        },
+        "Other": {
+            "Command": "start <app> \"<path>\"",
+            "ElevatedCommand": "sudo <app> \"<path>\"",
+            "GotoLineSequence": ":",
+        }
     },
 }

@@ -7,6 +7,46 @@ function Start-Edit {
         [Switch]
         $Sudo,
 
+        [ArgumentCompleter({
+            Param(
+                $cmdName,
+                $paramName,
+                $wordToComplete,
+                $cmdAst,
+                $preBoundParameter
+            )
+
+            $items = (cat "$PsScriptRoot\..\res\filter.setting.json" |
+                ConvertFrom-Json).
+                Editor.
+                PsObject.
+                Properties.
+                Name |
+                where {
+                    $_ -ne 'Other'
+                }
+
+            $suggestions = if ($wordToComplete) {
+                $items | where { $_ -like "$wordToComplete*" }
+            }
+            else {
+                $items
+            }
+
+            return $(if ($suggestions) {
+                $suggestions
+            }
+            else {
+                $items
+            })
+        })]
+        [String]
+        $Editor,
+
+        [AllowNull()]
+        [Int]
+        $LineNumber,
+
         [Switch]
         $WhatIf
     )
@@ -15,25 +55,54 @@ function Start-Edit {
         $setting = cat "$PsScriptRoot\..\res\filter.setting.json" `
             | ConvertFrom-Json
 
+        $editors =
+            $setting.
+            Editor
+
+        $editorNames =
+            $editors.
+            PsObject.
+            Properties.
+            Name
+
         # link
         # - url: <https://stackoverflow.com/questions/57788150/can-i-detect-in-powershell-that-i-am-running-in-vs-codes-integrated-terminal>
         # - retrieved: 2023_12_07
-        $editor = if (
-            $setting.VsCode.Enabled -and
-            $env:TERM_PROGRAM -eq 'vscode'
-        ) {
-            "VsCode"
+        $name = if ($Editor) {
+            $Editor
+        }
+        elseif ($env:TERM_PROGRAM -eq 'vscode') {
+            'VsCode'
         }
         else {
             $setting.DefaultEditor
         }
 
-        $editCommand =
-            $setting.
-            $editor.
-            "$(if ($Sudo) { "Elevated" })EditCommand"
+        $editorInfo = if ($name -in $editorNames) {
+            $editors.$name
+        }
+        else {
+            $info =
+                $editors.
+                Other
 
-        $goto = $setting.$editor.GotoLineSequence
+            $info.
+                PsObject.
+                Properties |
+                foreach {
+                    $_.Value = $_.Value.Replace('<app>', $name)
+                }
+
+            $info
+        }
+
+        $editCommand =
+            $editorInfo.
+            "$(if ($Sudo) { "Elevated" })Command"
+
+        $goto =
+            $editorInfo.
+            GotoLineSequence
 
         # Using a map instead of a list ensures that each possible unique
         # path is opened exactly once.
@@ -45,7 +114,7 @@ function Start-Edit {
             { $_ -is [String] } {
                 [PsCustomObject]@{
                     Path = $InputObject
-                    Line = ""
+                    Line = $LineNumber
                 }
 
                 break
@@ -54,7 +123,12 @@ function Start-Edit {
             { $_ -is [Microsoft.PowerShell.Commands.MatchInfo] } {
                 [PsCustomObject]@{
                     Path = $InputObject.Path
-                    Line = "$goto$($InputObject.LineNumber)"
+                    Line = if ($null -eq $LineNumber) {
+                        "$goto$($InputObject.LineNumber)"
+                    }
+                    else {
+                        $LineNumber
+                    }
                 }
 
                 break
@@ -63,7 +137,7 @@ function Start-Edit {
             { $_ -is [System.IO.FileSystemInfo] } {
                 [PsCustomObject]@{
                     Path = $InputObject.FullName
-                    Line = ""
+                    Line = $LineNumber
                 }
 
                 break
@@ -71,8 +145,8 @@ function Start-Edit {
 
             default {
                 [PsCustomObject]@{
-                    Path = ""
-                    Line = ""
+                    Path = $InputObject | Out-String
+                    Line = $LineNumber
                 }
 
                 break
@@ -85,11 +159,12 @@ function Start-Edit {
     End {
         foreach ($key in $map.Keys) {
             $cmd = $editCommand.
-                Replace("<path>", $map[$key].Path).
-                Replace("<line>", $map[$key].Line)
+                Replace('<path>', "$($map[$key].Path)").
+                Replace('<line>', "$($map[$key].Line)")
 
             if ($WhatIf) {
-                return $cmd
+                $cmd
+                continue
             }
 
             Invoke-Expression $cmd
@@ -324,9 +399,9 @@ function Get-PipelinePropertySuggestion {
             })
         }
     }
-    elseif ($PreboundParameters.ContainsKey("InputObject")) {
+    elseif ($PreboundParameters.ContainsKey('InputObject')) {
         # If not in pipeline, but object has been given, get the object.
-        $detectedInputObject = $PreboundParameters["InputObject"]
+        $detectedInputObject = $PreboundParameters['InputObject']
     }
 
     if ($null -ne $detectedInputObject) {
@@ -557,7 +632,7 @@ function Get-StringReplace {
 
         $objects += @(foreach ($capture in $captures) {
             $prefix = if ($capture.Index -ne 0) {
-                $InputObject[$index .. ($capture.Index - 1)] -join ""
+                $InputObject[$index .. ($capture.Index - 1)] -join ''
             }
 
             $index = $capture.Index + $capture.Length
@@ -576,8 +651,8 @@ function Get-StringReplace {
         }
 
         ($objects | foreach {
-            $caseSlice = ""
-            $remainder = ""
+            $caseSlice = ''
+            $remainder = ''
 
             if ($null -ne $_.Capture) {
                 $value = $_.Capture.Value
@@ -609,7 +684,7 @@ function Get-StringReplace {
             )$(
                 $remainder -join ''
             )"
-        }) -join ""
+        }) -join ''
     }
 }
 
