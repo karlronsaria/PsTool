@@ -5,6 +5,9 @@ function Start-Edit {
         $InputObject,
 
         [Switch]
+        $Sudo,
+
+        [Switch]
         $WhatIf
     )
 
@@ -12,52 +15,78 @@ function Start-Edit {
         $setting = cat "$PsScriptRoot\..\res\filter.setting.json" `
             | ConvertFrom-Json
 
-        $editCommand = $setting.EditCommand
-        $useVimOpen = $setting.UseVimOpenToLine
+        # link
+        # - url: <https://stackoverflow.com/questions/57788150/can-i-detect-in-powershell-that-i-am-running-in-vs-codes-integrated-terminal>
+        # - retrieved: 2023_12_07
+        $editor = if (
+            $setting.VsCode.Enabled -and
+            $env:TERM_PROGRAM -eq 'vscode'
+        ) {
+            "VsCode"
+        }
+        else {
+            $setting.DefaultEditor
+        }
+
+        $editCommand =
+            $setting.
+            $editor.
+            "$(if ($Sudo) { "Elevated" })EditCommand"
+
+        $goto = $setting.$editor.GotoLineSequence
+
+        # Using a map instead of a list ensures that each possible unique
+        # path is opened exactly once.
         $map = [Ordered]@{}
     }
 
     Process {
-        $path = ""
-        $command = ""
-
-        switch ($InputObject) {
+        $info = switch ($InputObject) {
             { $_ -is [String] } {
-                $path = $InputObject
+                [PsCustomObject]@{
+                    Path = $InputObject
+                    Line = ""
+                }
+
                 break
             }
 
             { $_ -is [Microsoft.PowerShell.Commands.MatchInfo] } {
-                $path = $InputObject.Path
-
-                if ($useVimOpen) {
-                    $command = "`"$($path)`" +$($InputObject.LineNumber)"
+                [PsCustomObject]@{
+                    Path = $InputObject.Path
+                    Line = "$goto$($InputObject.LineNumber)"
                 }
 
                 break
             }
 
             { $_ -is [System.IO.FileSystemInfo] } {
-                $path = $InputObject.FullName
+                [PsCustomObject]@{
+                    Path = $InputObject.FullName
+                    Line = ""
+                }
+
                 break
             }
 
             default {
-                $path = ""
+                [PsCustomObject]@{
+                    Path = ""
+                    Line = ""
+                }
+
                 break
             }
         }
 
-        if ([String]::IsNullOrEmpty($command)) {
-            $command = $path
-        }
-
-        $map[$path] = $command
+        $map[$info.Path] = $info
     }
 
     End {
         foreach ($key in $map.Keys) {
-            $cmd = "$editCommand $($map[$key])"
+            $cmd = $editCommand.
+                Replace("<path>", $map[$key].Path).
+                Replace("<line>", $map[$key].Line)
 
             if ($WhatIf) {
                 return $cmd
