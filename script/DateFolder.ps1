@@ -27,21 +27,28 @@ function Test-ItemCopy {
     }
 }
 
-$global:DateTimeProperties = @(
-      "CreationTime"
-    , "CreationTimeUtc"
-    , "LastAccessTime"
-    , "LastAccessTimeUtc"
-    , "LastWriteTime"
-    , "LastWriteTimeUtc"
-)
-
 function Get-ItemDateTime {
     Param(
         [Parameter(ValueFromPipeline = $true)]
         $Path,
 
-        [ArgumentCompleter({ return $global:DateTimeProperties })]
+        [ArgumentCompleter({
+            return ConvertTo-Suggestion `
+                -WordToComplete $args[2] `
+                -List $(
+                    [System.IO.FileSystemInfo].
+                    GetProperties() |
+                    foreach { $_.Name } |
+                    where { $_ -like "*Time*" }
+                )
+        })]
+        [ValidateScript({
+            $_ -in $(
+                [System.IO.FileSystemInfo].
+                GetProperties() |
+                foreach { $_.Name } | where { $_ -like "*Time*" }
+            )
+        })]
         [String[]]
         $Property
     )
@@ -85,7 +92,24 @@ function Move-ItemToDateFolder {
         [String]
         $Path,
 
-        [ArgumentCompleter({ return $global:DateTimeProperties })]
+        [ArgumentCompleter({
+            return ConvertTo-Suggestion `
+                -WordToComplete $args[2] `
+                -List $(
+                    [System.IO.FileSystemInfo].
+                    GetProperties() |
+                    foreach { $_.Name } |
+                    where { $_ -like "*Time*" }
+                )
+        })]
+        [ValidateScript({
+            $_ -in $(
+                [System.IO.FileSystemInfo].
+                GetProperties() |
+                foreach { $_.Name } |
+                where { $_ -like "*Time*" }
+            )
+        })]
         [String]
         $GroupBy = "CreationTime",
 
@@ -136,7 +160,24 @@ function Move-ItemToDateFolder {
             [String]
             $Path,
 
-            [ValidateSet({ $_ -in $global:DateTimeProperties })]
+            [ArgumentCompleter({
+                return ConvertTo-Suggestion `
+                    -WordToComplete $args[2] `
+                    -List $(
+                        [System.IO.FileSystemInfo].
+                        GetProperties() |
+                        foreach { $_.Name } |
+                        where { $_ -like "*Time*" }
+                    )
+            })]
+            [ValidateScript({
+                $_ -in $(
+                    [System.IO.FileSystemInfo].
+                    GetProperties() |
+                    foreach { $_.Name } |
+                    where { $_ -like "*Time*" }
+                )
+            })]
             [String]
             $GroupBy = "CreationTime",
 

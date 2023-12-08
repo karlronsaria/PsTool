@@ -8,44 +8,25 @@ function Start-Edit {
         $Sudo,
 
         [ArgumentCompleter({
-            Param(
-                $cmdName,
-                $paramName,
-                $wordToComplete,
-                $cmdAst,
-                $preBoundParameter
-            )
-
-            $items = (cat "$PsScriptRoot\..\res\filter.setting.json" |
-                ConvertFrom-Json).
-                Editor.
-                PsObject.
-                Properties.
-                Name |
-                where {
-                    $_ -ne 'Other'
-                }
-
-            $suggestions = if ($wordToComplete) {
-                $items | where { $_ -like "$wordToComplete*" }
-            }
-            else {
-                $items
-            }
-
-            return $(if ($suggestions) {
-                $suggestions
-            }
-            else {
-                $items
-            })
+            return ConvertTo-Suggestion `
+                -WordToComplete $args[2] `
+                -List $(
+                    (cat "$PsScriptRoot\..\res\filter.setting.json" |
+                    ConvertFrom-Json).
+                    Editor.
+                    PsObject.
+                    Properties.
+                    Name |
+                    where {
+                        $_ -ne 'Other'
+                    }
+                )
         })]
         [String]
         $Editor,
 
-        [AllowNull()]
         [Int]
-        $LineNumber,
+        $LineNumber = 0,
 
         [Switch]
         $WhatIf
@@ -100,9 +81,12 @@ function Start-Edit {
             $editorInfo.
             "$(if ($Sudo) { "Elevated" })Command"
 
-        $goto =
-            $editorInfo.
-            GotoLineSequence
+        $line = if ($LineNumber -eq 0) {
+            ""
+        }
+        else {
+            "$LineNumber"
+        }
 
         # Using a map instead of a list ensures that each possible unique
         # path is opened exactly once.
@@ -114,7 +98,7 @@ function Start-Edit {
             { $_ -is [String] } {
                 [PsCustomObject]@{
                     Path = $InputObject
-                    Line = $LineNumber
+                    Line = $line
                 }
 
                 break
@@ -123,11 +107,11 @@ function Start-Edit {
             { $_ -is [Microsoft.PowerShell.Commands.MatchInfo] } {
                 [PsCustomObject]@{
                     Path = $InputObject.Path
-                    Line = if ($null -eq $LineNumber) {
-                        "$goto$($InputObject.LineNumber)"
+                    Line = if ([String]::IsNullOrEmpty($line)) {
+                        "$($InputObject.LineNumber)"
                     }
                     else {
-                        $LineNumber
+                        $line
                     }
                 }
 
@@ -137,7 +121,7 @@ function Start-Edit {
             { $_ -is [System.IO.FileSystemInfo] } {
                 [PsCustomObject]@{
                     Path = $InputObject.FullName
-                    Line = $LineNumber
+                    Line = $line
                 }
 
                 break
@@ -146,11 +130,15 @@ function Start-Edit {
             default {
                 [PsCustomObject]@{
                     Path = $InputObject | Out-String
-                    Line = $LineNumber
+                    Line = $line
                 }
 
                 break
             }
+        }
+
+        if ($info.Line) {
+            $info.Line = "$($editorInfo.GotoLineSequence)$($info.Line)"
         }
 
         $map[$info.Path] = $info
@@ -218,6 +206,7 @@ function Start-Explore {
                 } else {
                     [String] $InputObject
                 }
+
                 break
             }
 
@@ -311,9 +300,30 @@ function Start-Open {
     }
 }
 
+function ConvertTo-Suggestion {
+    Param(
+        $List,
+        $WordToComplete
+    )
+
+    $suggestions = if ($wordToComplete) {
+        $List | where { $_ -like "$WordToComplete*" }
+    }
+    else {
+        $List
+    }
+
+    return $(if ($suggestions) {
+        $suggestions
+    }
+    else {
+        $List
+    })
+}
+
 function Get-PipelinePropertySuggestion {
     # link
-    # - url: https://stackoverflow.com/questions/65892518/tab-complete-a-parameter-value-based-on-another-parameters-already-specified-va
+    # - url: <https://stackoverflow.com/questions/65892518/tab-complete-a-parameter-value-based-on-another-parameters-already-specified-va>
     # - retrieved: 2023_10_10
     Param(
         $WordToComplete,

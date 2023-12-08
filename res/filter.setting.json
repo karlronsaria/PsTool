@@ -4,17 +4,17 @@
         "Neovim": {
             "Command": "start nvim \"<path><line>\"",
             "ElevatedCommand": "sudo nvim \"<path>\"<line>",
-            "GotoLineSequence": " +",
+            "GotoLineSequence": " +"
         },
         "VsCode": {
             "Command": "code --goto \"<path><line>\"",
             "ElevatedCommand": "sudo code --goto \"<path><line>\"",
-            "GotoLineSequence": ":",
+            "GotoLineSequence": ":"
         },
         "Other": {
             "Command": "start <app> \"<path>\"",
             "ElevatedCommand": "sudo <app> \"<path>\"",
-            "GotoLineSequence": ":",
+            "GotoLineSequence": ":"
         }
-    },
+    }
 }
