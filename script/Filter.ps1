@@ -82,18 +82,18 @@ function Start-Edit {
             $editors.$name
         }
         else {
-            $info =
+            $editor =
                 $editors.
                 Other
 
-            $info.
+            $editor.
                 PsObject.
                 Properties |
                 foreach {
                     $_.Value = $_.Value.Replace('<app>', $name)
                 }
 
-            $info
+            $editor
         }
 
         $editCommand =
@@ -446,6 +446,7 @@ function Get-PipelinePropertySuggestion {
 
 function Qualify-Object {
     [Alias('What')]
+    [CmdletBinding(DefaultParameterSetName = 'PassAllThru')]
     Param(
         [Parameter(ValueFromPipeline = $true)]
         $InputObject,
@@ -547,6 +548,10 @@ function Qualify-Object {
         }
 
         $list = switch ($PsCmdlet.ParameterSetName) {
+            'PassAllThru' {
+                $list
+            }
+
             'Inference' {
                 switch ($Argument) {
                     { @($Argument).Count -gt 1 } {
