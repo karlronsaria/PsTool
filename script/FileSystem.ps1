@@ -1,5 +1,3 @@
-#Requires -Module PsQuickform
-
 function Rename-AllSansWhiteSpace {
     Param(
         [Parameter(Position = 0)]
@@ -225,6 +223,7 @@ function Rename-Item {
 }
 "@
 
+                Import-Module -Name PsQuickform
                 $result = $menu | ConvertFrom-Json | Show-QformMenu
 
                 if (-not $result.Confirm) {
