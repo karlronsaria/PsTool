@@ -7,24 +7,11 @@ function Get-DemandScript {
                 cat "$PsScriptRoot\..\res\demandscript.setting.json" |
                 ConvertFrom-Json
 
-            $dir = Get-DemandScript
-
             return $(
-                $setting.
-                Patterns.
-                Value |
-                foreach {
-                    $dir | sls $_
-                } |
-                foreach {
-                    $_.Matches |
-                    foreach {
-                        $_ -split "\s"
-                    }
-                } |
-                where {
-                    $_ -like "$C*"
-                }
+                Get-DemandScript |
+                sls $setting.Patterns.Value |
+                foreach { $_.Matches -split "\s" } |
+                where { $_ -like "$C*" }
             )
         })]
         [Parameter(Position = 0)]
@@ -102,16 +89,15 @@ function Get-DemandScript {
 
     Get-DemandScript |
     Get-DemandMatch |
+    group Capture.Path |
     where {
-        $diff = diff $_.Matches $InputObject
+        $diff = diff $_.Group.Matches $InputObject
 
         ($Mode -eq 'Or' -or
             $diff.SideIndicator -notcontains '=>') -and
-            $diff.Count -lt ($_.Matches.Count + $InputObject.Count)
+            $diff.Count -lt ($_.Group.Matches.Count + $InputObject.Count)
     } |
-    foreach {
-        $_.Capture.Path
-    } |
+    foreach { $_.Group.Capture.Path } |
     select -Unique |
     foreach {
         if ($Source) { . $_ }
