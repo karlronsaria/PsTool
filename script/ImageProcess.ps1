@@ -31,7 +31,10 @@ function ConvertFrom-ImageWebp {
         $File,
 
         [String]
-        $Destination
+        $Destination,
+
+        [Switch]
+        $WhatIf
     )
 
     Begin {
@@ -106,7 +109,15 @@ function ConvertFrom-ImageWebp {
                 -Status "$src  ->  $dst" `
                 -PercentComplete (100 * $count/$list.Count)
 
-            & $cmd $src $dst
+            $command = "$cmd $src $dst"
+
+            if ($WhatIf) {
+                $command
+            }
+            else {
+                & $command
+            }
+
             $count = $count + 1
         }
 

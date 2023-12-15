@@ -1,4 +1,13 @@
 {
     "AppPath": "magick",
-    "DateTimeFormat": "yyyy_MM_dd_HHmmss"
+    "DateTimeFormat": "yyyy_MM_dd_HHmmss",
+    "Processes": [
+        {
+            "Name": "WindowsExplorer",
+            "Convert":
+                "-trim +repage -alpha set -channel A -evaluate Divide 2",
+            "Mogrify":
+                "-resize x500"
+        }
+    ]
 }
