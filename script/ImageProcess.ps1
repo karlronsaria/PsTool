@@ -115,7 +115,7 @@ function ConvertFrom-ImageWebp {
                 $command
             }
             else {
-                & $command
+                iex $command
             }
 
             $count = $count + 1

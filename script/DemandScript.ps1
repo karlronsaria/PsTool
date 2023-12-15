@@ -23,9 +23,6 @@ function Get-DemandScript {
         $Mode = 'Or',
 
         [Switch]
-        $Source,
-
-        [Switch]
         $AllProfiles
     )
 
@@ -66,18 +63,18 @@ function Get-DemandScript {
     $setting = cat "$PsScriptRoot/../res/demandscript.setting.json" |
         ConvertFrom-Json
 
-    $profiles = $(if ($AllProfiles) {
-        $setting.Profiles
-    }
-    else {
-        $setting.Profiles |
-        where {
-            $_.Version -eq $setting.DefaultVersion
-        }
-    }).
-    Location
-
     if ($InputObject.Count -eq 0) {
+        $profiles = $(if ($AllProfiles) {
+            $setting.Profiles
+        }
+        else {
+            $setting.Profiles |
+            where {
+                $_.Version -eq $setting.DefaultVersion
+            }
+        }).
+        Location
+
         return $(
             $profiles |
             foreach {
@@ -87,7 +84,8 @@ function Get-DemandScript {
         )
     }
 
-    Get-DemandScript |
+    Get-DemandScript `
+        -AllProfiles:$AllProfiles |
     Get-DemandMatch |
     group Capture.Path |
     where {
@@ -95,14 +93,12 @@ function Get-DemandScript {
 
         ($Mode -eq 'Or' -or
             $diff.SideIndicator -notcontains '=>') -and
-            $diff.Count -lt ($_.Group.Matches.Count + $InputObject.Count)
+            $diff.Count -lt `
+            ($_.Group.Matches.Count + $InputObject.Count)
     } |
-    foreach { $_.Group.Capture.Path } |
-    select -Unique |
     foreach {
-        if ($Source) { . $_ }
-
-        $_
-    }
+        $_.Group.Capture.Path
+    } |
+    select -Unique
 }
 
