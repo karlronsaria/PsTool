@@ -1,0 +1,23 @@
+{
+    "Profiles": [
+        {
+            "Version": 5,
+            "Location": "WindowsPowerShell"
+        },
+        {
+            "Version": 7,
+            "Location": "PowerShell"
+        }
+    ],
+    "Patterns": [
+        {
+            "Name": "Tag",
+            "Value": "(?<=^tags:\\s).+$"
+        },
+        {
+            "Name": "Function",
+            "Value": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*\\{$)"
+        }
+    ],
+    "DefaultVersion": 5
+}

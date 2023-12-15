@@ -3,8 +3,8 @@
 Generates images by batch-conversion using ImageMagick, useful for background images themes
 Requires ImageMagick
 
-.TAGS
-imagemagick batch convert windows explorer profile theme
+.Description
+Tags: imagemagick batch convert windows explorer profile theme
 #>
 function New-WindowsExplorerTheme {
     Param(
