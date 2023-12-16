@@ -1,3 +1,43 @@
+function Get-DemandMatch {
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        [System.IO.FileSystemInfo[]]
+        $InputObject,
+
+        [String[]]
+        $Pattern
+    )
+
+    if ($Pattern.Count -eq 0) {
+        $Pattern =
+            (cat "$PsScriptRoot\..\res\demandscript.setting.json" |
+            ConvertFrom-Json).
+            Patterns.
+            Value
+    }
+
+    if ($InputObject.Count -eq 0) {
+        $InputObject = Get-DemandScript
+    }
+
+    foreach ($item in $Pattern) {
+        $InputObject |
+        sls $item |
+        foreach {
+            [PsCustomObject]@{
+                Matches =
+                    $_.Matches |
+                    foreach {
+                        $_ -split "\s"
+                    } |
+                    select -Unique
+                ItemName = Split-Path $_.Path -Leaf
+                Capture = $_
+            }
+        }
+    }
+}
+
 function Get-DemandScript {
     Param(
         [ArgumentCompleter({
@@ -11,6 +51,7 @@ function Get-DemandScript {
                 Get-DemandScript |
                 sls $setting.Patterns.Value |
                 foreach { $_.Matches -split "\s" } |
+                select -Unique |
                 where { $_ -like "$C*" }
             )
         })]
@@ -25,40 +66,6 @@ function Get-DemandScript {
         [Switch]
         $AllProfiles
     )
-
-    function Get-DemandMatch {
-        Param(
-            [Parameter(ValueFromPipeline = $true)]
-            [System.IO.FileSystemInfo]
-            $InputObject,
-
-            [String[]]
-            $Pattern
-        )
-
-        if ($Pattern.Count -eq 0) {
-            $Pattern =
-                (cat "$PsScriptRoot\..\res\demandscript.setting.json" |
-                ConvertFrom-Json).
-                Patterns.
-                Value
-        }
-
-        foreach ($item in $Pattern) {
-            $InputObject |
-            sls $item |
-            foreach {
-                [PsCustomObject]@{
-                    Capture = $_
-                    Matches =
-                        $_.Matches |
-                        foreach {
-                            $_ -split "\s"
-                        }
-                }
-            }
-        }
-    }
 
     $setting = cat "$PsScriptRoot/../res/demandscript.setting.json" |
         ConvertFrom-Json
