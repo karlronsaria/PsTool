@@ -269,7 +269,7 @@ Requires ImageMagick
 .Description
 Tags: imagemagick batch convert windows explorer profile theme
 #>
-function New-WindowsExplorerTheme {
+function New-ImageWindowsExplorerTheme {
     Param(
         [Parameter(ValueFromPipeline = $true)]
         [Object[]]
@@ -307,16 +307,35 @@ function New-WindowsExplorerTheme {
 
         mkdir $folders -ErrorAction SilentlyContinue
         $dateTime = Get-Date -f yyyy_MM_dd_HHmmss
+        $list = @()
     }
 
     Process {
-        dir $Directory -File |
-        foreach {
+        $list += @(dir $Directory -File)
+    }
+
+    End {
+        $list |
+        foreach -Begin {
+          $count = 0
+        } -Progress {
           $dst =
           "$Destination/$($folders[0])/$($_.BaseName)_$dateTime.png"
 
           $cmd =
           "$app convert $($process.Convert) `"$($_.Name)`" `"$dst`""
+
+          $progress = @{
+              Activity =
+                  "Converting item $($count + 1) of $($list.Count)"
+              Status =
+                  "$(Split-Path $src -Leaf)"
+              PercentComplete =
+                  (100 * $count/($list.Count + 2))
+          }
+
+          Write-Progress @progress
+          $count = $count + 1
 
           if ($WhatIf) {
               $cmd
@@ -330,11 +349,27 @@ function New-WindowsExplorerTheme {
         $dst = $folders[1]
         $cmd = "$app mogrify -path `"$dst`" $($process.Mogrify) `"$src`""
 
+        $progress = @{
+            Activity =
+                "Mogrifying items in $dst"
+            Status =
+                "$(Split-Path $dst -Leaf)"
+            PercentComplete =
+                (100 * $count/($list.Count + 2))
+        }
+
+        Write-Progress @progress
+
         if ($WhatIf) {
             $cmd
         }
         else {
             iex $cmd
         }
+
+        Write-Progress `
+            -Activity $progress `
+            -PercentComplete 100 `
+            -Complete
     }
 }
