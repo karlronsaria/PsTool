@@ -37,7 +37,10 @@ function ConvertFrom-ImageWebp {
         $Destination,
 
         [Switch]
-        $WhatIf
+        $WhatIf,
+
+        [Switch]
+        $PassThru
     )
 
     Begin {
@@ -107,11 +110,16 @@ function ConvertFrom-ImageWebp {
                 "$Destination\$($file.BaseName).gif"
             }
 
-            Write-Progress `
-                -Activity "Converting item $($count + 1) of $($list.Count)" `
-                -Status "$src  ->  $dst" `
-                -PercentComplete (100 * $count/$list.Count)
+            $progress = @{
+                Activity =
+                    "Converting item $($count + 1) of $($list.Count)"
+                Status =
+                    "$src  ->  $dst"
+                PercentComplete =
+                    (100 * $count/$list.Count)
+            }
 
+            Write-Progress @progress
             $command = "$cmd $src $dst"
 
             if ($WhatIf) {
@@ -119,6 +127,10 @@ function ConvertFrom-ImageWebp {
             }
             else {
                 iex $command
+            }
+
+            if ($PassThru) {
+                $dst
             }
 
             $count = $count + 1
