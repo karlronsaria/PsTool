@@ -33,8 +33,8 @@ function Start-Edit {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot\..\res\filter.setting.json" `
-            | ConvertFrom-Json
+        $setting = cat "$PsScriptRoot\..\res\filter.setting.json" |
+        ConvertFrom-Json
 
         $editors =
             $setting.
@@ -63,18 +63,18 @@ function Start-Edit {
             $editors.$name
         }
         else {
-            $editor =
+            $myEditor =
                 $editors.
                 Other
 
-            $editor.
+            $myEditor.
                 PsObject.
                 Properties |
                 foreach {
                     $_.Value = $_.Value.Replace('<app>', $name)
                 }
 
-            $editor
+            $myEditor
         }
 
         $editCommand =
@@ -276,6 +276,7 @@ function Start-Open {
                 } else {
                     [String] $InputObject
                 }
+
                 break
             }
 
@@ -307,7 +308,9 @@ function ConvertTo-Suggestion {
     )
 
     $suggestions = if ($wordToComplete) {
-        $List | where { $_ -like "$WordToComplete*" }
+        $List | where {
+            $_ -like "$WordToComplete*"
+        }
     }
     else {
         $List
@@ -506,8 +509,6 @@ function Qualify-Object {
     )
 
     Begin {
-        $list = @()
-
         function Get-Subelement {
             Param(
                 $InputObject,
@@ -526,6 +527,8 @@ function Qualify-Object {
                 }
             }
         }
+
+        $list = @()
     }
 
     Process {
@@ -665,7 +668,7 @@ function Get-StringReplace {
             })
         }
 
-        ($objects | foreach {
+        @($objects | foreach {
             $caseSlice = ''
             $remainder = ''
 
@@ -712,13 +715,16 @@ function ConvertTo-List {
     )
 
     Process {
-        return $InputObject | foreach {
-            $_.PsObject.Properties | foreach {
+        return $(
+            $InputObject |
+            foreach {
+                $_.PsObject.Properties
+            } | foreach {
                 [PsCustomObject]@{
                     Name = $_.Name
                     Value = $_.Value
                 }
             }
-        }
+        )
     }
 }

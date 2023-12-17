@@ -1,6 +1,7 @@
 <#
-    .LINK
-        https://livebook.manning.com/book/powershell-in-depth/chapter-37/15
+.LINK
+Url: <https://livebook.manning.com/book/powershell-in-depth/chapter-37/15>
+Retrieved: 2023_04_09
 #>
 function Get-ProxyFunction {
     Param(
@@ -11,10 +12,13 @@ function Get-ProxyFunction {
     )
 
     try {
-        if ($Name) {
-            $metadata = New-Object System.Management.Automation.CommandMetaData(Get-Command $Name)
-            return [System.Management.Automation.ProxyCommand]::Create($metadata)
+        if ([String]::IsNullOrWhiteSpace($Name)) {
+            return
         }
+
+        [System.Management.Automation.ProxyCommand]::Create((
+            New-Object System.Management.Automation.CommandMetaData(Get-Command $Name)
+        ))
     }
     catch {
         throw

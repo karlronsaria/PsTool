@@ -318,7 +318,7 @@ function New-ImageWindowsExplorerTheme {
         $list |
         foreach -Begin {
           $count = 0
-        } -Progress {
+        } -Process {
           $dst =
           "$Destination/$($folders[0])/$($_.BaseName)_$dateTime.png"
 
@@ -326,22 +326,22 @@ function New-ImageWindowsExplorerTheme {
           "$app convert $($process.Convert) `"$($_.Name)`" `"$dst`""
 
           $progress = @{
-              Activity =
-                  "Converting item $($count + 1) of $($list.Count)"
-              Status =
-                  "$(Split-Path $src -Leaf)"
-              PercentComplete =
-                  (100 * $count/($list.Count + 2))
+            Activity =
+              "Converting item $($count + 1) of $($list.Count)"
+            Status =
+              $_.Name
+            PercentComplete =
+              (100 * $count/($list.Count + 2))
           }
 
           Write-Progress @progress
           $count = $count + 1
 
           if ($WhatIf) {
-              $cmd
+            $cmd
           }
           else {
-              iex $cmd
+            iex $cmd
           }
         }
 

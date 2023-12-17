@@ -1,9 +1,9 @@
 <#
-    .LINK
-        https://stackoverflow.com/questions/58783530/powershell-script-to-list-all-open-explorer-windows
+.LINK
+Url: <https://stackoverflow.com/questions/58783530/powershell-script-to-list-all-open-explorer-windows>
 
-    .LINK
-        https://stackoverflow.com/users/45375/mklement0
+.LINK
+Url: <https://stackoverflow.com/users/45375/mklement0>
 #>
 function Get-ExplorerInstance {
     [CmdletBinding()]
@@ -15,7 +15,7 @@ function Get-ExplorerInstance {
         $Path,
 
         [ValidateSet(
-            'File folder',
+            'File Folder',
             'System Folder',
             'CD Drive',
             'USB Drive'
@@ -24,9 +24,10 @@ function Get-ExplorerInstance {
         $Type
     )
 
-    $windows = (New-Object -ComObject 'Shell.Application').Windows()
-    $windows = $windows | foreach { $_.Document.Folder.Self }
-    $windows = $windows | select Name, Path, Type, ModifyDate
+    $windows = (New-Object -ComObject 'Shell.Application').
+        Windows() |
+        foreach { $_.Document.Folder.Self } |
+        select Name, Path, Type, ModifyDate
 
     if ($Name) {
         $windows = $windows | where { $_.Name -like $Name }

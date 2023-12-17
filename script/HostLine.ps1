@@ -1,23 +1,21 @@
 <#
-    .LINK
-    https://www.reddit.com/r/PowerShell/comments/7a4yl9/clearhost_light_delete_only_the_last_x_lines_of/
+.LINK
+Url: <https://www.reddit.com/r/PowerShell/comments/7a4yl9/clearhost_light_delete_only_the_last_x_lines_of/>
+Retrieved: 2023_04_09
 #>
-function Clear-HostLine
-{
+function Clear-HostLine {
     [CmdletBinding()]
-    Param
-    (
+    Param(
         [Parameter(Position = 0)]
-        [Int32]
+        [Int]
         $Count = 1
     )
 
     $CurrentLine  = $Host.UI.RawUI.CursorPosition.Y
     $ConsoleWidth = $Host.UI.RawUI.BufferSize.Width
 
-    for ($i = 1; $i -le $Count; ++$i)
-    {
-        [Console]::SetCursorPosition(0, ($CurrentLine - $i))
+    1 .. $Count | foreach {
+        [Console]::SetCursorPosition(0, ($CurrentLine - $_))
         [Console]::Write("{0, -$ConsoleWidth}" -f " ")
     }
 

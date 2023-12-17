@@ -1,19 +1,20 @@
-
 function Send-Beep { [Console]::Beep(2000, 500) }
-
 function loc { return (Get-Location).Path }
 function gd { return Get-Date -Format yyyy_MM_dd }
 function gdt { return Get-Date -Format yyyy_MM_dd_HHmmss }
 
 <#
-    .LINK
-        https://stackoverflow.com/questions/20886243/press-any-key-to-continue
+.LINK
+Url: <https://stackoverflow.com/questions/20886243/press-any-key-to-continue>
+Retrieved: 2023_10_11
 
-    .LINK
-        https://stackoverflow.com/users/2092588/jerry-g
+.LINK
+Url: <https://stackoverflow.com/users/2092588/jerry-g>
+Retrieved: 2023_10_11
 
-    .LINK
-        https://stackoverflow.com/users/3437608/cullub
+.LINK
+Url: <https://stackoverflow.com/users/3437608/cullub>
+Retrieved: 2023_10_11
 #>
 function Start-Pause {
     Param(
@@ -60,7 +61,7 @@ function ConvertTo-Hashtable {
 
     switch ($InputObject.GetType().Name) {
         'PsObject' {
-            $InputObject | % {
+            $InputObject | foreach {
                 $table[$_.Name] = $_.Value
             }
         }
@@ -75,8 +76,9 @@ function ConvertTo-Hashtable {
 }
 
 <#
-    .LINK
-        https://devblogs.microsoft.com/scripting/use-powershell-to-display-short-file-and-folder-names/
+.LINK
+Url: <https://devblogs.microsoft.com/scripting/use-powershell-to-display-short-file-and-folder-names/>
+Retrieved: 2023_10_11
 #>
 function Get-ShortName {
     [Alias("ShortName", "Short")]

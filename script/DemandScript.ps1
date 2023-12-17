@@ -8,33 +8,51 @@ function Get-DemandMatch {
         $Pattern
     )
 
-    if ($Pattern.Count -eq 0) {
-        $Pattern =
-            (cat "$PsScriptRoot\..\res\demandscript.setting.json" |
-            ConvertFrom-Json).
-            Patterns.
-            Value
-    }
-
-    if ($InputObject.Count -eq 0) {
-        $InputObject = Get-DemandScript
-    }
-
-    foreach ($item in $Pattern) {
-        $InputObject |
-        sls $item |
-        foreach {
-            [PsCustomObject]@{
-                Matches =
-                    $_.Matches |
-                    foreach {
-                        $_ -split "\s"
-                    } |
-                    select -Unique
-                ItemName = Split-Path $_.Path -Leaf
-                Capture = $_
-            }
+    Begin {
+        if ($Pattern.Count -eq 0) {
+            $Pattern =
+                (cat "$PsScriptRoot\..\res\demandscript.setting.json" |
+                ConvertFrom-Json).
+                Patterns.
+                Value
         }
+
+        $list = @()
+    }
+
+    Process {
+        $list += @(foreach ($item in $Pattern) {
+            $InputObject |
+            sls $item |
+            foreach {
+                [PsCustomObject]@{
+                    Matches =
+                        $_.Matches |
+                        foreach {
+                            $_ -split "\s"
+                        } |
+                        select -Unique
+                    ItemName = Split-Path $_.Path -Leaf
+                    ScriptModule =
+                        $_.Path |
+                        Split-Path -Parent |
+                        Split-Path -Parent |
+                        Split-Path -Leaf
+                    Path = $_.Path
+                    Capture = $_
+                }
+            }
+        })
+    }
+
+    End {
+        return $(if ($list.Count -eq 0) {
+            Get-DemandScript |
+                Get-DemandMatch
+        }
+        else {
+            $list | sort -Property ScriptModule
+        })
     }
 }
 
@@ -47,12 +65,22 @@ function Get-DemandScript {
                 cat "$PsScriptRoot\..\res\demandscript.setting.json" |
                 ConvertFrom-Json
 
-            return $(
+            $strings =
                 Get-DemandScript |
                 sls $setting.Patterns.Value |
-                foreach { $_.Matches -split "\s" } |
+                foreach { $_.Matches -split "\s" }
+
+            $modules =
+                Get-DemandScript |
+                Split-Path -Parent |
+                Split-Path -Parent |
+                Split-Path -Leaf
+
+            return $(
+                (@($strings) + @($modules)) |
                 select -Unique |
-                where { $_ -like "$C*" }
+                where { $_ -like "$C*" } |
+                sort
             )
         })]
         [Parameter(Position = 0)]
@@ -71,19 +99,17 @@ function Get-DemandScript {
         ConvertFrom-Json
 
     if ($InputObject.Count -eq 0) {
-        $profiles = $(if ($AllProfiles) {
-            $setting.Profiles
-        }
-        else {
-            $setting.Profiles |
-            where {
-                $_.Version -eq $setting.DefaultVersion
-            }
-        }).
-        Location
-
         return $(
-            $profiles |
+            $(if ($AllProfiles) {
+                $setting.Profiles
+            }
+            else {
+                $setting.Profiles |
+                where {
+                    $_.Version -eq $setting.DefaultVersion
+                }
+            }).
+            Location |
             foreach {
                 "$env:OneDrive/Documents/$_/Scripts/*/demand/*.ps1"
             } |
@@ -94,9 +120,15 @@ function Get-DemandScript {
     Get-DemandScript `
         -AllProfiles:$AllProfiles |
     Get-DemandMatch |
-    group Capture.Path |
+    group Path |
     where {
-        $diff = diff $_.Group.Matches $InputObject
+        $scriptModule =
+            $_.Group.ScriptModule |
+            select -Unique
+
+        $diff = diff `
+            ($_.Group.Matches + @($scriptModule)) `
+            $InputObject
 
         ($Mode -eq 'Or' -or
             $diff.SideIndicator -notcontains '=>') -and
@@ -104,7 +136,7 @@ function Get-DemandScript {
             ($_.Group.Matches.Count + $InputObject.Count)
     } |
     foreach {
-        $_.Group.Capture.Path
+        $_.Group.Path
     } |
     select -Unique
 }

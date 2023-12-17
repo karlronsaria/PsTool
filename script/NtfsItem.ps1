@@ -1,6 +1,6 @@
 ﻿<#
 .LINK
-Url: https://evotec.xyz/remove-item-access-to-the-cloud-file-is-denied-while-deleting-files-from-onedrive/
+Url: <https://evotec.xyz/remove-item-access-to-the-cloud-file-is-denied-while-deleting-files-from-onedrive/>
 Retrieved: 2021_11_02
 #>
 function Remove-NtfsItem {

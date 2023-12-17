@@ -1,3 +1,5 @@
+# Tags: windows installed programs
+
 function Get-LocalPackage {
     [OutputType([PsCustomObject[]])]
     Param(

@@ -3,11 +3,11 @@
 Replace all registry key values and/or registry key names under a given path.
 
 .LINK
-Url: https://stackoverflow.com/questions/26680410/powershell-find-and-replace-on-registry-values
+Url: <https://stackoverflow.com/questions/26680410/powershell-find-and-replace-on-registry-values>
 Retrieved: 2020_04_09
 
 .LINK
-Url: https://stackoverflow.com/users/684576/david-maisonave
+Url: <https://stackoverflow.com/users/684576/david-maisonave>
 Retrieved: 2020_04_09
 
 .EXAMPLE
@@ -32,6 +32,8 @@ Flag: Specifies that the entire value must match OldValue, and partial replaceme
 Flag: Specifies that registry key names will be replaced
 
 .PARAMETER ReplaceValues
+Flag: Specifies that registry key values will be replaced
+
 .PARAMETER Verbose
 #>
 function Rename-ItemProperty {
@@ -46,7 +48,7 @@ function Rename-ItemProperty {
         [Switch] $ReplaceValues,
         [Switch] $Verbose
     )
-    
+
     function Test-Match {
         Param(
             $InputObject,
@@ -55,7 +57,7 @@ function Rename-ItemProperty {
             [Switch] $ExactMatch,
             [Switch] $CaseSensitive
         )
-        
+
         return $(if ($ExactMatch) {
             $InputObject -clike $OldValue
         }
@@ -68,27 +70,33 @@ function Rename-ItemProperty {
             }
         })
     }
-    
-    $powershellRegPrefix = 'Microsoft.PowerShell.Core\Registry::'
-    
+
+    $powershellRegPrefix =
+        'Microsoft.PowerShell.Core\Registry::'
+
     $pattern = if ($WholeWord) {
         ".*\b$OldValue\b.*"
     }
     else {
         ".*$OldValue.*"
     }
-    
+
     if ($ItemPath -NotLike "$powershellRegPrefix*") {
         $ItemPath = $powershellRegPrefix + $ItemPath
     }
-    
+
     $worklist =
         @(Get-Item -ErrorAction SilentlyContinue -Path $ItemPath) + `
         @(Get-ChildItem -Recurse $ItemPath -ErrorAction SilentlyContinue)
 
-    foreach ($item in ($worklist | foreach { Get-ItemProperty -Path "$powershellRegPrefix$_" })) {
+    foreach ($item in (
+        $worklist |
+        foreach {
+            Get-ItemProperty -Path "$powershellRegPrefix$_"
+        }
+    )) {
         $psPath = $item.PSPath
-        
+
         foreach ($property in $item.PsObject.Properties) {
             $found = $property.Name -cne "PSChildName" `
                 -and (Test-Match `
@@ -106,18 +114,18 @@ function Rename-ItemProperty {
             $createNewValue = $property.Value
             $subkeyName = $property.Name
             $keyName = "$psPath->$subkeyName"
-    
+
             $createNewValue = if ($CaseSensitive) {
                 $createNewValue -creplace $OldValue, $NewValue
             }
             else {
                 $createNewValue -replace $OldValue, $NewValue
             }
-            
+
             if ($property.Name -eq "PSPath" -and $property.Value -eq $psPath) {
                 if ($ReplaceKeyNames) {
                     Move-Item -Path $psPath -Destination $createNewValue
-                    
+
                     if ($Verbose) {
                         Write-Output "Renamed registry key '$psPath' to '$createNewValue'"
                     }
@@ -129,8 +137,11 @@ function Rename-ItemProperty {
                 }
             } else {
                 if ($ReplaceValues) {
-                    Set-ItemProperty -Path $psPath -Name $property.Name -Value $createNewValue
-                    
+                    Set-ItemProperty `
+                        -Path $psPath `
+                        -Name $property.Name `
+                        -Value $createNewValue
+
                     if ($Verbose) {
                         Write-Output "Renamed '$original' to '$createNewValue' for registry key '$keyName'"
                     }

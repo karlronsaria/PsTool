@@ -1,6 +1,6 @@
 <#
 .LINK
-Url: https://superuser.com/questions/1623573/powershell-how-to-play-different-system-sounds
+Url: <https://superuser.com/questions/1623573/powershell-how-to-play-different-system-sounds>
 Retrieved: 2023_09_22
 #>
 function Start-Timer {
@@ -72,7 +72,7 @@ function Start-Timer {
         # to work, at least not as well as I want it to
         #
         # link
-        # - url: https://superuser.com/questions/1623573/powershell-how-to-play-different-system-sounds
+        # - url: <https://superuser.com/questions/1623573/powershell-how-to-play-different-system-sounds>
         [System.Console]::Beep(1000,300)
 
         # # old (karlr 2023_09_22_200426)

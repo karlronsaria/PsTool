@@ -1,11 +1,24 @@
 function Set-Location {
-    [CmdletBinding(DefaultParameterSetName='Path', SupportsTransactions=$true, HelpUri='https://go.microsoft.com/fwlink/?LinkID=113397')]
-    param(
-        [Parameter(ParameterSetName='Path', Position=0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+    [CmdletBinding(
+        DefaultParameterSetName = 'Path',
+        SupportsTransactions = $true,
+        HelpUri = 'https://go.microsoft.com/fwlink/?LinkID=113397'
+    )]
+    Param(
+        [Parameter(
+            ParameterSetName = 'Path',
+            Position = 0,
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true
+        )]
         [string]
         ${Path},
 
-        [Parameter(ParameterSetName='LiteralPath', Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+        [Parameter(
+            ParameterSetName = 'LiteralPath',
+            Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true
+        )]
         [Alias('PSPath')]
         [string]
         ${LiteralPath},
@@ -13,25 +26,46 @@ function Set-Location {
         [switch]
         ${PassThru},
 
-        [Parameter(ParameterSetName='Stack', ValueFromPipelineByPropertyName=$true)]
+        [Parameter(
+            ParameterSetName = 'Stack',
+            ValueFromPipelineByPropertyName = $true
+        )]
         [string]
         ${StackName}
     )
 
-    dynamicparam {
+    DynamicParam {
         try {
-            $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('Microsoft.PowerShell.Management\Set-Location', [System.Management.Automation.CommandTypes]::Cmdlet, $PSBoundParameters)
-            $dynamicParams = @($targetCmd.Parameters.GetEnumerator() | Microsoft.PowerShell.Core\Where-Object { $_.Value.IsDynamic })
+            $targetCmd = $ExecutionContext.InvokeCommand.GetCommand(
+                'Microsoft.PowerShell.Management\Set-Location',
+                [System.Management.Automation.CommandTypes]::Cmdlet,
+                $PSBoundParameters
+            )
+
+            $dynamicParams = @(
+                $targetCmd.Parameters.GetEnumerator() |
+                Microsoft.PowerShell.Core\Where-Object { $_.Value.IsDynamic }
+            )
+
             if ($dynamicParams.Length -gt 0) {
-                $paramDictionary = [Management.Automation.RuntimeDefinedParameterDictionary]::new()
+                $paramDictionary =
+                [Management.Automation.RuntimeDefinedParameterDictionary]::new()
+
                 foreach ($param in $dynamicParams) {
                     $param = $param.Value
 
                     if(-not $MyInvocation.MyCommand.Parameters.ContainsKey($param.Name)) {
-                        $dynParam = [Management.Automation.RuntimeDefinedParameter]::new($param.Name, $param.ParameterType, $param.Attributes)
+                        $dynParam =
+                            [Management.Automation.RuntimeDefinedParameter]::new(
+                                $param.Name,
+                                $param.ParameterType,
+                                $param.Attributes
+                            )
+
                         $paramDictionary.Add($param.Name, $dynParam)
                     }
                 }
+
                 return $paramDictionary
             }
         }
@@ -40,17 +74,23 @@ function Set-Location {
         }
     }
 
-    begin {
+    Begin {
         try {
             $outBuffer = $null
+
             if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer)) {
                 $PSBoundParameters['OutBuffer'] = 1
             }
 
-            $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('Microsoft.PowerShell.Management\Set-Location', [System.Management.Automation.CommandTypes]::Cmdlet)
-            $scriptCmd = {& $wrappedCmd @PSBoundParameters}
+            $wrappedCmd =
+                $ExecutionContext.InvokeCommand.GetCommand(
+                    'Microsoft.PowerShell.Management\Set-Location',
+                    [System.Management.Automation.CommandTypes]::Cmdlet
+                )
 
-            $steppablePipeline = $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
+            $scriptCmd = { & $wrappedCmd @PSBoundParameters }
+            $steppablePipeline =
+                $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
             $steppablePipeline.Begin($PSCmdlet)
         }
         catch {
@@ -58,7 +98,7 @@ function Set-Location {
         }
     }
 
-    process {
+    Process {
         try {
             $steppablePipeline.Process($_)
         }
@@ -67,7 +107,7 @@ function Set-Location {
         }
     }
 
-    end {
+    End {
         try {
             if ($PSBoundParameters.Count -eq 0) {
                 (Get-Location).Path
@@ -79,8 +119,9 @@ function Set-Location {
             throw
         }
     }
-    <#
-        .ForwardHelpTargetName Microsoft.PowerShell.Management\Set-Location
-        .ForwardHelpCategory Cmdlet
-    #>
+
+<#
+.ForwardHelpTargetName Microsoft.PowerShell.Management\Set-Location
+.ForwardHelpCategory Cmdlet
+#>
 }

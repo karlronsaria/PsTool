@@ -1,4 +1,8 @@
-function Test-ItemCopy {
+<#
+.DESCRIPTION
+Tags: compare copy
+#>
+function Compare-ItemCopy {
     [CmdletBinding()]
     Param(
         [String]
@@ -8,25 +12,25 @@ function Test-ItemCopy {
         $Destination
     )
 
-    $ErrorActionPreference = "Stop"
-
-    if ([String]::IsNullOrWhiteSpace($Source)) {
-        $Source = (Get-Location).Path
-    } else {
-        $Source = (Get-Item -Path $Source).FullName
+    $Source = if ([String]::IsNullOrWhiteSpace($Source)) {
+        (Get-Location).Path
+    }
+    else {
+        (Get-Item -Path $Source).FullName
     }
 
     $Source = $Source.TrimEnd("\")
     $Destination = $Destination.TrimEnd("\")
-    $list = (dir $Source -Recurse).FullName
 
-    return $list | % {
-        $_.Replace($Source, $Destination) | ? {
-            -not (Test-Path $_)
-        }
-    }
+    Compare-Object `
+        (dir $Source -Recurse).FullName `
+        (dir $Destination -Recurse).FullName
 }
 
+<#
+.DESCRIPTION
+Tags: date time
+#>
 function Get-ItemDateTime {
     Param(
         [Parameter(ValueFromPipeline = $true)]
@@ -46,7 +50,8 @@ function Get-ItemDateTime {
             $_ -in $(
                 [System.IO.FileSystemInfo].
                 GetProperties() |
-                foreach { $_.Name } | where { $_ -like "*Time*" }
+                foreach { $_.Name } |
+                where { $_ -like "*Time*" }
             )
         })]
         [String[]]
@@ -57,35 +62,43 @@ function Get-ItemDateTime {
         return
     }
 
-    switch ($Path.GetType().Name) {
-        "String" {
+    switch ($Path) {
+        { $_ -is [String] } {
             $Path = Get-Item -Path $Path
         }
     }
 
-    $objProperties = $Path.PsObject.Properties | where {
-        $_.TypeNameOfValue -eq 'System.DateTime'
-    }
+    $objProperties =
+        $Path.
+        PsObject.
+        Properties |
+        where {
+            $_.TypeNameOfValue -eq 'System.DateTime'
+        }
 
     if ($Property) {
-        foreach ($subitem in $Property) {
+        return $(foreach ($subitem in $Property) {
             $objProperties | where {
                 $_.Name -like $subitem
             } | foreach {
-                Write-Output $Path.($_.Name)
+                $Path.($_.Name)
             }
-        }
-    } else {
-        $table = [Ordered]@{}
-
-        $objProperties | foreach {
-            $table[$_.Name] = $Path.($_.Name)
-        }
-
-        Write-Output $table
+        })
     }
+
+    $table = [Ordered]@{}
+
+    $objProperties | foreach {
+        $table[$_.Name] = $Path.($_.Name)
+    }
+
+    $table
 }
 
+<#
+.DESCRIPTION
+Tags: move date folder
+#>
 function Move-ItemToDateFolder {
     [CmdletBinding()]
     Param(
@@ -147,11 +160,19 @@ function Move-ItemToDateFolder {
         )
 
         if (-not (Test-Path $Dir)) {
-            mkdir $Dir -Force:$Force -WhatIf:$WhatIf
+            mkdir `
+                -Path $Dir `
+                -Force:$Force `
+                -WhatIf:$WhatIf
         }
 
-        gci $Path -File | % {
-            copy -Path $_.FullName -Destination "$Dir\$($_.Name)" -Force:$Force -WhatIf:$WhatIf
+        gci $Path -File |
+        foreach {
+            copy `
+                -Path $_.FullName `
+                -Destination "$Dir\$($_.Name)" `
+                -Force:$Force `
+                -WhatIf:$WhatIf
         }
     }
 
@@ -190,34 +211,50 @@ function Move-ItemToDateFolder {
 
         $Path = $Path.TrimEnd("\")
 
-        gci $Path -File | % {
+        dir $Path -File | foreach {
             $date = $_."$GroupBy".Date
-            $subdir = Get-Date -Date $date -Format "yyyy_MM_dd"
 
-            if (-not (Test-Path $Path\$subdir)) {
-                mkdir $Path\$subdir -Force:$Force -WhatIf:$WhatIf
+            $subdir = Get-Date `
+                -Date $date `
+                -Format "yyyy_MM_dd"
+
+            if (-not (Test-Path "$Path\$subdir")) {
+                mkdir `
+                    -Path "$Path\$subdir" `
+                    -Force:$Force `
+                    -WhatIf:$WhatIf
             }
 
             $dest = "$Path\$subdir\$_"
             $properties = $_ | Get-ItemDateTime
             move $_.FullName $dest -Force:$Force -WhatIf:$WhatIf
-            $item = gci -Path $dest
+            $item = dir -Path $dest
 
             if ($item) {
-                $properties.Keys | % {
-                    if ((Get-Member -InputObject $item).Name -contains $_) {
-                        $item.$_ = $properties[$_]
-                    }
+                $properties.Keys |
+                where {
+                    (Get-Member -InputObject $item).Name -contains $_
+                } |
+                foreach {
+                    $item.$_ = $properties[$_]
                 }
             }
         }
     }
 
-    $backup_dir = $backup_dir + "_" + (Get-Date -Format "yyyy_MM_dd_HHmmss")
+    $backup_dir =
+        "$($backup_dir)_$(Get-Date -Format "yyyy_MM_dd_HHmmss")"
 
     if ($Backup) {
-        Copy-FilesToBackup -Path $Path -Dir $backup_dir -Force:$Force -WhatIf:$WhatIf
+        Copy-FilesToBackup `
+            -Path $Path `
+            -Dir $backup_dir `
+            -Force:$Force `
+            -WhatIf:$WhatIf
     }
 
-    Start-MoveItem -Path $Path -Force:$Force -WhatIf:$WhatIf
+    Start-MoveItem `
+        -Path $Path `
+        -Force:$Force `
+        -WhatIf:$WhatIf
 }

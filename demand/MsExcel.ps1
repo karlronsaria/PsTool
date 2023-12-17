@@ -1,3 +1,5 @@
+# Tags: excel spreadsheet
+
 function ConvertFrom-MsExcel {
     [CmdletBinding(DefaultParameterSetName = 'AllSheets')]
     Param(

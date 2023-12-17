@@ -1,18 +1,22 @@
 #Requires -Module PSFolderSize
 
 <#
-    .PARAMETER NoReplaceUnderscore
-        Flag: Do not replace the first underscore in any label's name.
+.DESCRIPTION
+Tags: python pie chart
 
-        Python's matplotlib.pyplot will exclude any labels from the legend that start with an underscore '_'. `Show-Pychart` evades this behavior by replacing the first underscore with a different character (a hyphen '-'). Use this flag to turn off this behavior.
-    .EXAMPLE
-        C:\PS> Get-FolderSize | Show-Pychart -Title (Get-Location).Path -Unit "MB" -LabelProperty "FolderName" -ValueProperty "Size(MB)"
+.PARAMETER NoReplaceUnderscore
+Flag: Do not replace the first underscore in any label's name.
 
-        Description
+Python's matplotlib.pyplot will exclude any labels from the legend that start with an underscore '_'. `Show-Pychart` evades this behavior by replacing the first underscore with a different character (a hyphen '-'). Use this flag to turn off this behavior.
 
-        -----------
+.EXAMPLE
+C:\PS> Get-FolderSize | Show-Pychart -Title (Get-Location).Path -Unit "MB" -LabelProperty "FolderName" -ValueProperty "Size(MB)"
 
-        This command creates a piechart of folder sizes in the working directory using the PSFolderSize module.
+Description
+
+-----------
+
+This command creates a piechart of folder sizes in the working directory using the PSFolderSize module.
 #>
 function Show-Pychart {
     Param(
@@ -141,6 +145,10 @@ function Show-Pychart {
     }
 }
 
+<#
+.DESCRIPTION
+Tags: folder size pie chart PsFolderSize
+#>
 function Show-FolderSizeChart {
     Param(
         $Directory,
