@@ -560,13 +560,13 @@ function Qualify-Object {
             return
         }
 
-        $list = foreach ($a in $Argument) {
-            switch ($PsCmdlet.ParameterSetName) {
-                'PassAllThru' {
-                    $list
-                }
+        $list = switch ($PsCmdlet.ParameterSetName) {
+            'PassAllThru' {
+                $list
+            }
 
-                'Inference' {
+            'Inference' {
+                foreach ($a in $Argument) {
                     switch ($a) {
                         { @($_).Count -gt 1 } {
                             foreach ($item in $_) {
@@ -616,23 +616,23 @@ function Qualify-Object {
                         }
                     }
                 }
+            }
 
-                default {
-                    $i = switch ($PsCmdlet.ParameterSetName) {
-                        'Subscript' { $Index }
-                        'GetFirst' { 0 }
-                    }
-
-                    if (@($i).Count -gt 1) {
-                        foreach ($item in $i) {
-                            $list[$item]
-                        }
-
-                        return
-                    }
-
-                    $list[$i]
+            default {
+                $i = switch ($PsCmdlet.ParameterSetName) {
+                    'Subscript' { $Index }
+                    'GetFirst' { 0 }
                 }
+
+                if (@($i).Count -gt 1) {
+                    foreach ($item in $i) {
+                        $list[$item]
+                    }
+
+                    return
+                }
+
+                $list[$i]
             }
         }
 
