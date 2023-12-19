@@ -102,8 +102,14 @@ function New-NoteItem {
         $Name = "_$Name"
     }
 
-    $item =
-        Join-Path $Directory "$($Prefix)$(Get-Date -f yyyy_MM_dd)$($Name)"
+    $Prefix = if ($Prefix -match "^(\w+:)?\\") {
+        $Prefix
+    }
+    else {
+        Join-Path $Directory $Prefix
+    }
+
+    $item = "$($Prefix)$(Get-Date -f yyyy_MM_dd)$($Name)"
 
     New-Item $item
 }
