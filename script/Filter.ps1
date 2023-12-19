@@ -560,53 +560,79 @@ function Qualify-Object {
             return
         }
 
-        $list = switch ($PsCmdlet.ParameterSetName) {
-            'PassAllThru' {
-                $list
-            }
+        $list = foreach ($a in $Argument) {
+            switch ($PsCmdlet.ParameterSetName) {
+                'PassAllThru' {
+                    $list
+                }
 
-            'Inference' {
-                switch ($Argument) {
-                    { @($Argument).Count -gt 1 } {
-                        foreach ($item in $Argument) {
-                            $list | Qualify-Object `
-                                -Argument $item
+                'Inference' {
+                    switch ($a) {
+                        { @($_).Count -gt 1 } {
+                            foreach ($item in $_) {
+                                $list | Qualify-Object `
+                                    -Argument $item
+                            }
+
+                            break
                         }
 
-                        break
-                    }
+                        { $_ -is [Hashtable] } {
+                            foreach ($key in $_.Keys) {
+                                foreach ($item in $list) {
+                                    $item.$key |
+                                    Qualify-Object `
+                                        -Argument $a[$key]
+                                }
+                            }
 
-                    { $d = $null; [Int]::TryParse($_, [ref]$d) } {
-                        $list | Qualify-Object `
-                            -Index $Argument
+                            break
+                        }
 
-                        break
-                    }
+                        { $_ -is [PsCustomObject] } {
+                            foreach ($prop in $_.PsObject.Properties) {
+                                foreach ($item in $list) {
+                                    $item.($prop.Name) |
+                                    Qualify-Object `
+                                        -Argument $prop.Value
+                                }
+                            }
 
-                    default {
-                        $list | Qualify-Object `
-                            -Property $Argument
+                            break
+                        }
 
-                        break
+                        { $d = $null; [Int]::TryParse($_, [ref]$d) } {
+                            $list | Qualify-Object `
+                                -Index $_
+
+                            break
+                        }
+
+                        default {
+                            $list | Qualify-Object `
+                                -Property $_
+
+                            break
+                        }
                     }
                 }
-            }
 
-            default {
-                $i = switch ($PsCmdlet.ParameterSetName) {
-                    'Subscript' { $Index }
-                    'GetFirst' { 0 }
-                }
-
-                if (@($i).Count -gt 1) {
-                    foreach ($item in $i) {
-                        $list[$item]
+                default {
+                    $i = switch ($PsCmdlet.ParameterSetName) {
+                        'Subscript' { $Index }
+                        'GetFirst' { 0 }
                     }
 
-                    return
-                }
+                    if (@($i).Count -gt 1) {
+                        foreach ($item in $i) {
+                            $list[$item]
+                        }
 
-                $list[$i]
+                        return
+                    }
+
+                    $list[$i]
+                }
             }
         }
 
