@@ -141,3 +141,64 @@ function Get-DemandScript {
     select -Unique
 }
 
+function Import-DemandModule {
+    Param(
+        [ArgumentCompleter({
+            Param($A, $B, $C)
+
+            $setting =
+                cat "$PsScriptRoot\..\res\demandscript.setting.json" |
+                ConvertFrom-Json
+
+            $strings =
+                Get-DemandScript |
+                sls $setting.Patterns.Value |
+                foreach { $_.Matches -split "\s" }
+
+            $modules =
+                Get-DemandScript |
+                Split-Path -Parent |
+                Split-Path -Parent |
+                Split-Path -Leaf
+
+            return $(
+                (@($strings) + @($modules)) |
+                select -Unique |
+                where { $_ -like "$C*" } |
+                sort
+            )
+        })]
+        [Parameter(Position = 0)]
+        [String[]]
+        $InputObject,
+
+        [ValidateSet('Or', 'And')]
+        [String]
+        $Mode = 'Or',
+
+        [Switch]
+        $AllProfiles,
+
+        [Switch]
+        $PassThru
+    )
+
+    [void]$PsBoundParameters.Remove('PassThru')
+
+    Get-DemandScript @PsBoundParameters |
+    foreach {
+        if ($PassThru) {
+            $_
+        }
+
+        New-Module `
+            -ScriptBlock $(
+                [ScriptBlock]::Create((
+                    cat $_ | Out-String
+                ))
+            ) `
+            -Name "ModuleOnDemand_$((dir $_).BaseName)" |
+        Import-Module
+    }
+}
+
