@@ -1,6 +1,38 @@
 # wish
 
 - ``Qualify-Object``
+  - [ ] consider renaming to "``Query-Object``"
+  - [ ] index would narrow the results of other queries
+
+    - example
+
+      ```powershell
+      cat .\res\package.json |
+          ConvertFrom-Json |
+          Qualify-Object -Index 2, 9 -Property Name, Version
+      ```
+
+      ```powershell
+      cat .\res\package.json |
+          ConvertFrom-Json |
+          Qualify-Object 2, 9 -Property Name, Version
+      ```
+
+      ```powershell
+      cat .\res\package.json |
+          ConvertFrom-Json |
+          Qualify-Object 2, 9, Name, Version
+      ```
+
+      ```powershell
+      cat .\res\package.json |
+          ConvertFrom-Json |
+          Qualify-Object 2, Name, 9, Version
+      ```
+
+      All of the above would get the name and version info of
+      packages 3 and 10.
+
   - [x] index range
     - solution
       - example

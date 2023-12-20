@@ -490,6 +490,11 @@ function Qualify-Object {
         [Switch]
         $Numbered,
 
+        [Parameter(ParameterSetName = 'Inference')]
+        [Alias('Flat')]
+        [Switch]
+        $NoHeadings,
+
         [ArgumentCompleter({
             Param(
                 $CommandName,
@@ -580,9 +585,22 @@ function Qualify-Object {
                         { $_ -is [Hashtable] } {
                             foreach ($key in $_.Keys) {
                                 foreach ($item in $list) {
-                                    $item.$key |
-                                    Qualify-Object `
-                                        -Argument $a[$key]
+                                    $name = $key
+
+                                    $value =
+                                        $item.$key |
+                                        Qualify-Object `
+                                            -Argument $a[$key] `
+                                            -NoHeadings:$NoHeadings
+
+                                    if ($NoHeadings) {
+                                        $value
+                                    }
+                                    else {
+                                        [PsCustomObject]@{
+                                            $name = $value
+                                        }
+                                    }
                                 }
                             }
 
@@ -592,9 +610,22 @@ function Qualify-Object {
                         { $_ -is [PsCustomObject] } {
                             foreach ($prop in $_.PsObject.Properties) {
                                 foreach ($item in $list) {
-                                    $item.($prop.Name) |
-                                    Qualify-Object `
-                                        -Argument $prop.Value
+                                    $name = $prop.Name
+
+                                    $value =
+                                        $item.$name |
+                                        Qualify-Object `
+                                            -Argument $prop.Value `
+                                            -NoHeadings:$NoHeadings
+
+                                    if ($NoHeadings) {
+                                        $value
+                                    }
+                                    else {
+                                        [PsCustomObject]@{
+                                            $name = $value
+                                        }
+                                    }
                                 }
                             }
 
