@@ -8,7 +8,10 @@ function Remove-NtfsItem {
     Param(
         [Parameter(ValueFromPipeline = $true)]
         [String[]]
-        $Path
+        $Path,
+
+        [Switch]
+        $Recurse
     )
 
     <#
@@ -29,7 +32,7 @@ function Remove-NtfsItem {
             #>
 
             if ($file) {
-                $file.Delete($true)
+                $file.Delete($Recurse)
             }
         }
     }
