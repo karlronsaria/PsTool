@@ -2,6 +2,13 @@
 
 ## complete
 
+- [ ] 2023_12_20_223459
+  - where: Demand#Install-DemandModule
+  - actual
+    - every instance of ``$PsScriptRoot`` evaluates to ``C:\``
+  - expacted
+    - every instance of ``$PsScriptRoot`` evaluates to module script location
+
 - [x] 2023_11_21_232252
   - where: ``Out-#Out-NotepadPlusPlus``
   - howto

@@ -1,5 +1,8 @@
 # wish
 
+- Demand
+  - [ ] a cmdlet that imports on-demand scripts requested by a local json file
+
 - ``Qualify-Object``
   - [ ] consider renaming to "``Query-Object``"
   - [ ] index would narrow the results of other queries
