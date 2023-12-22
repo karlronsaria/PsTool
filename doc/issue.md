@@ -2,7 +2,7 @@
 
 ## complete
 
-- [ ] 2023_12_20_223459
+- [x] 2023_12_20_223459
   - where: Demand#Install-DemandModule
   - actual
     - every instance of ``$PsScriptRoot`` evaluates to ``C:\``

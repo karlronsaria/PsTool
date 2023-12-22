@@ -180,25 +180,42 @@ function Import-DemandModule {
         $AllProfiles,
 
         [Switch]
-        $PassThru
+        $PassThru,
+
+        [Switch]
+        $WhatIf
     )
 
-    [void]$PsBoundParameters.Remove('PassThru')
-
-    Get-DemandScript @PsBoundParameters |
+    'PassThru', 'WhatIf' |
     foreach {
+        [void]$PsBoundParameters.Remove($_)
+    }
+
+    foreach ($file in (Get-DemandScript @PsBoundParameters)) {
         if ($PassThru) {
-            $_
+            $file
         }
 
-        New-Module `
+        $dir = (dir $file).Directory
+
+        $script = New-Module `
             -ScriptBlock $(
                 [ScriptBlock]::Create((
-                    cat $_ | Out-String
+                    cat $file |
+                    foreach {
+                        $_ -replace "\`$PsScriptRoot", $dir
+                    } |
+                    Out-String
                 ))
             ) `
-            -Name "ModuleOnDemand_$((dir $_).BaseName)" |
-        Import-Module
+            -Name "ModuleOnDemand_$((Get-Item $file).BaseName)"
+
+        if ($WhatIf) {
+            $script
+        }
+        else {
+            Import-Module $script
+        }
     }
 }
 
