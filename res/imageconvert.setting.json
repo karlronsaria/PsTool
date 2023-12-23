@@ -4,10 +4,18 @@
     "Processes": [
         {
             "Name": "WindowsExplorer",
+            "Tags": [ "windows", "explorer", "background" ],
             "Convert":
                 "-trim +repage -alpha set -channel A -evaluate Divide 2",
             "Mogrify":
                 "-resize x500"
+        },
+        {
+            "Name": "VsCode",
+            "Tags": [ "vscode", "background" ],
+            "Convert":
+                "-background transparent -gravity west -extent 960x768 -geometry +0+0",
+            "Mogrify": ""
         }
     ]
 }

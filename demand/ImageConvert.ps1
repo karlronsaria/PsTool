@@ -49,21 +49,14 @@ function ConvertFrom-ImageWebp {
 
         $cmd = $setting.AppPath
         $list = @()
-        $proceed = $true
 
         if (-not (Get-Command $cmd -ea Silent)) {
             Write-Output "Requires ImageMagick to be installed on this device."
-            $proceed = $false
+            return
         }
 
-        if ($Destination) {
-            if (-not (Test-Path $Destination)) {
-                Write-Output "Destination directory not found."
-                $proceed = $false
-            }
-        }
-
-        if (-not $proceed) {
+        if ($Destination -and -not (Test-Path $Destination)) {
+            Write-Output "Destination directory not found."
             return
         }
     }
@@ -267,13 +260,35 @@ Generates images by batch-conversion using ImageMagick, useful for background im
 Requires ImageMagick
 
 .Description
-Tags: imagemagick batch convert windows explorer profile theme
+Tags: imagemagick batch convert profile theme ``(cat "$PsScriptRoot/../res/imageconvert.setting.json" | ConvertFrom-Json).Processes.Tags``
 #>
-function New-ImageWindowsExplorerTheme {
+function New-ImageConvert {
     Param(
         [Parameter(ValueFromPipeline = $true)]
         [Object[]]
         $Directory,
+
+        [ArgumentCompleter({
+            Param($A, $B, $C)
+
+            return $(
+                (cat "$PsScriptRoot/../res/imageconvert.setting.json" |
+                ConvertFrom-Json).
+                Processes.
+                Name |
+                where { $_ -like "$C*" }
+            )
+        })]
+        [ValidateScript({
+            return $($_ -in (
+                (cat "$PsScriptRoot/../res/imageconvert.setting.json" |
+                ConvertFrom-Json).
+                Processes.
+                Name
+            ))
+        })]
+        [String]
+        $Profile,
 
         [String]
         $Destination,
@@ -290,7 +305,7 @@ function New-ImageWindowsExplorerTheme {
 
         $process = $setting.
             Processes |
-            where { $_.Name -eq "WindowsExplorer" }
+            where { $_.Name -eq $Profile }
 
         if ($Directory.Count -eq 0) {
             $Directory = Get-Location
@@ -315,60 +330,68 @@ function New-ImageWindowsExplorerTheme {
     }
 
     End {
-        $list |
-        foreach -Begin {
-          $count = 0
-        } -Process {
-          $dst =
-          "$Destination/$($folders[0])/$($_.BaseName)_$dateTime.png"
+        if ($process.Convert) {
+            $list |
+            foreach -Begin {
+              $count = 0
+            } -Process {
+              $dst =
+              "$Destination/$($folders[0])/$($_.BaseName)_$dateTime.png"
 
-          $cmd =
-          "$app convert $($process.Convert) `"$($_.Name)`" `"$dst`""
+              $cmd =
+              "$app convert $($process.Convert) `"$($_.Name)`" `"$dst`""
 
-          $progress = @{
-            Activity =
-              "Converting item $($count + 1) of $($list.Count)"
-            Status =
-              $_.Name
-            PercentComplete =
-              (100 * $count/($list.Count + 2))
-          }
+              $progress = @{
+                Id = 1
+                Activity =
+                  "Converting item $($count + 1) of $($list.Count)"
+                Status =
+                  $_.Name
+                PercentComplete =
+                  (100 * $count/($list.Count + 2))
+              }
 
-          Write-Progress @progress
-          $count = $count + 1
+              Write-Progress @progress
+              $count = $count + 1
 
-          if ($WhatIf) {
-            $cmd
-          }
-          else {
-            iex $cmd
-          }
+              if ($WhatIf) {
+                $cmd
+              }
+              else {
+                iex $cmd
+              }
+            }
         }
 
-        $src = "$Destination/$($folders[0])/*.png"
-        $dst = $folders[1]
-        $cmd = "$app mogrify -path `"$dst`" $($process.Mogrify) `"$src`""
+        if ($process.Mogrify) {
+            $src = "$Destination/$($folders[0])/*.png"
+            $dst = $folders[1]
+            $cmd = "$app mogrify -path `"$dst`" $($process.Mogrify) `"$src`""
 
-        $progress = @{
-            Activity =
+            $progress = @{
+              Id = 1
+              Activity =
                 "Mogrifying items in $dst"
-            Status =
+              Status =
                 "$(Split-Path $dst -Leaf)"
-            PercentComplete =
+              PercentComplete =
                 (100 * $count/($list.Count + 2))
-        }
+            }
 
-        Write-Progress @progress
+            Write-Progress @progress
 
-        if ($WhatIf) {
-            $cmd
-        }
-        else {
-            iex $cmd
+            if ($WhatIf) {
+              $cmd
+            }
+            else {
+              iex $cmd
+            }
         }
 
         Write-Progress `
-            -Activity $progress `
+            -Id 1 `
+            -Activity "Image convert" `
+            -Status "Complete" `
             -PercentComplete 100 `
             -Complete
     }

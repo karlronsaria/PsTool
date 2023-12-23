@@ -1,6 +1,7 @@
 # wish
 
 - Demand
+  - [x] ability to add tags programatically
   - [ ] a cmdlet that imports on-demand scripts requested by a local json file
 
 - ``Qualify-Object``

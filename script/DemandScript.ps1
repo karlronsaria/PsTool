@@ -1,4 +1,5 @@
 function Get-DemandMatch {
+    [OutputType([String])]
     Param(
         [Parameter(ValueFromPipeline = $true)]
         [System.IO.FileSystemInfo[]]
@@ -25,22 +26,44 @@ function Get-DemandMatch {
             $InputObject |
             sls $item |
             foreach {
-                [PsCustomObject]@{
-                    Matches =
-                        $_.Matches |
-                        foreach {
-                            $_ -split "\s"
-                        } |
-                        select -Unique
-                    ItemName = Split-Path $_.Path -Leaf
-                    ScriptModule =
-                        $_.Path |
-                        Split-Path -Parent |
-                        Split-Path -Parent |
-                        Split-Path -Leaf
-                    Path = $_.Path
-                    Capture = $_
-                }
+              $file = $_.Path
+
+              [PsCustomObject]@{
+                Matches =
+                  $_.Matches |
+                  foreach {
+                    [Regex]::Matches(
+                      $_,
+                      "(?<=\s+)(?<word>\w+)|````(?<script>[^``]+)````"
+                    ) |
+                    foreach {
+                      $script = $_.Groups['script']
+
+                      if ($script.Success) {
+                        iex $(
+                          $script.Value -replace `
+                            "\`$PsScriptRoot",
+                            "`$(`"$(Split-Path $file -Parent)`")"
+                        )
+                      }
+
+                      $word = $_.Groups['word']
+
+                      if ($word.Success) {
+                        $word.Value
+                      }
+                    }
+                  } |
+                  select -Unique -CaseInsensitive
+                ItemName = Split-Path $_.Path -Leaf
+                ScriptModule =
+                  $_.Path |
+                  Split-Path -Parent |
+                  Split-Path -Parent |
+                  Split-Path -Leaf
+                Path = $_.Path
+                Capture = $_
+              }
             }
         })
     }
@@ -57,6 +80,7 @@ function Get-DemandMatch {
 }
 
 function Get-DemandScript {
+    [OutputType([System.IO.FileInfo])]
     Param(
         [ArgumentCompleter({
             Param($A, $B, $C)
@@ -68,7 +92,31 @@ function Get-DemandScript {
             $strings =
                 Get-DemandScript |
                 sls $setting.Patterns.Value |
-                foreach { $_.Matches -split "\s" }
+                foreach {
+                  $file = $_.Path
+
+                  [Regex]::Matches(
+                    $_,
+                    "(?<=\s+)(?<word>\w+)|````(?<script>[^``]+)````"
+                  ) |
+                  foreach {
+                    $script = $_.Groups['script']
+
+                    if ($script.Success) {
+                      iex $(
+                        $script.Value -replace `
+                          "\`$PsScriptRoot",
+                          "`$(`"$(Split-Path $file -Parent)`")"
+                      )
+                    }
+
+                    $word = $_.Groups['word']
+
+                    if ($word.Success) {
+                      $word.Value
+                    }
+                  }
+                }
 
             $modules =
                 Get-DemandScript |
@@ -78,7 +126,7 @@ function Get-DemandScript {
 
             return $(
                 (@($strings) + @($modules)) |
-                select -Unique |
+                select -Unique -CaseInsensitive |
                 where { $_ -like "$C*" } |
                 sort
             )
@@ -124,7 +172,7 @@ function Get-DemandScript {
     where {
         $scriptModule =
             $_.Group.ScriptModule |
-            select -Unique
+            select -Unique -CaseInsensitive
 
         $diff = diff `
             ($_.Group.Matches + @($scriptModule)) `
@@ -138,10 +186,11 @@ function Get-DemandScript {
     foreach {
         $_.Group.Path
     } |
-    select -Unique
+    select -Unique -CaseInsensitive
 }
 
 function Import-DemandModule {
+    [OutputType([System.Management.Automation.PsModuleInfo])]
     Param(
         [ArgumentCompleter({
             Param($A, $B, $C)
@@ -163,7 +212,7 @@ function Import-DemandModule {
 
             return $(
                 (@($strings) + @($modules)) |
-                select -Unique |
+                select -Unique -CaseInsensitive |
                 where { $_ -like "$C*" } |
                 sort
             )
@@ -203,7 +252,7 @@ function Import-DemandModule {
                 [ScriptBlock]::Create((
                     cat $file |
                     foreach {
-                        $_ -replace "\`$PsScriptRoot", $dir
+                        $_ -replace "\`$PsScriptRoot", "`$(`"$dir`")"
                     } |
                     Out-String
                 ))
