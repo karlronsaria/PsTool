@@ -2,7 +2,8 @@
 
 - Demand
   - [x] ability to add tags programatically
-  - [ ] a cmdlet that imports on-demand scripts requested by a local json file
+  - [x] a cmdlet that imports on-demand scripts requested by a local json file
+    - solution: ``res/demandscript.setting.json#LocalDemandFile``
 
 - ``Qualify-Object``
   - [ ] consider renaming to "``Query-Object``"

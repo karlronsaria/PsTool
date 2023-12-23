@@ -112,6 +112,9 @@ function Set-Location {
             if ($PSBoundParameters.Count -eq 0) {
                 (Get-Location).Path
             }
+            else {
+                Import-DemandModule
+            }
 
             $steppablePipeline.End()
         }

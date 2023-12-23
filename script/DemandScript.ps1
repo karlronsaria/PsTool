@@ -70,7 +70,7 @@ function Get-DemandMatch {
 
     End {
         return $(if ($list.Count -eq 0) {
-            Get-DemandScript |
+            Get-DemandScript -All |
                 Get-DemandMatch
         }
         else {
@@ -80,6 +80,7 @@ function Get-DemandMatch {
 }
 
 function Get-DemandScript {
+    [CmdletBinding(DefaultParameterSetName = 'SomeFiles')]
     [OutputType([System.IO.FileInfo])]
     Param(
         [ArgumentCompleter({
@@ -90,7 +91,7 @@ function Get-DemandScript {
                 ConvertFrom-Json
 
             $strings =
-                Get-DemandScript |
+                Get-DemandScript -All |
                 sls $setting.Patterns.Value |
                 foreach {
                   $file = $_.Path
@@ -119,7 +120,7 @@ function Get-DemandScript {
                 }
 
             $modules =
-                Get-DemandScript |
+                Get-DemandScript -All |
                 Split-Path -Parent |
                 Split-Path -Parent |
                 Split-Path -Leaf
@@ -131,42 +132,78 @@ function Get-DemandScript {
                 sort
             )
         })]
-        [Parameter(Position = 0)]
+        [Parameter(
+            ParameterSetName = 'SomeFiles',
+            Position = 0
+        )]
         [String[]]
         $InputObject,
 
+        [Parameter(
+            ParameterSetName = 'SomeFiles'
+        )]
         [ValidateSet('Or', 'And')]
         [String]
         $Mode = 'Or',
 
         [Switch]
-        $AllProfiles
+        $AllProfiles,
+
+        [Parameter(ParameterSetName = 'AllFiles')]
+        [Switch]
+        $All
     )
 
     $setting = cat "$PsScriptRoot/../res/demandscript.setting.json" |
         ConvertFrom-Json
 
-    if ($InputObject.Count -eq 0) {
-        return $(
-            $(if ($AllProfiles) {
-                $setting.Profiles
-            }
-            else {
-                $setting.Profiles |
-                where {
-                    $_.Version -eq $setting.DefaultVersion
+    switch ($PsCmdlet.ParameterSetName) {
+        'AllFiles' {
+            return $(
+                $(if ($AllProfiles) {
+                    $setting.Profiles
                 }
-            }).
-            Location |
+                else {
+                    $setting.Profiles |
+                    where {
+                        $_.Version -eq $setting.DefaultVersion
+                    }
+                }).
+                Location |
+                foreach {
+                    "$env:OneDrive/Documents/$_/Scripts/*/demand/*.ps1"
+                } |
+                dir
+            )
+        }
+    }
+
+    if ($InputObject.Count -eq 0) {
+        $path = (Get-Location).Path
+        $prefix = $setting.LocalDemandFile.Prefix
+        $suffix = $setting.LocalDemandFile.Suffix
+
+        $InputObject =
+            $($prefix |
             foreach {
-                "$env:OneDrive/Documents/$_/Scripts/*/demand/*.ps1"
+                Join-Path $path "$_$suffix"
             } |
-            dir
-        )
+            where {
+                Test-Path $_
+            } |
+            dir |
+            cat |
+            ConvertFrom-Json).
+            Import
+    }
+
+    if ($InputObject.Count -eq 0) {
+        return
     }
 
     Get-DemandScript `
-        -AllProfiles:$AllProfiles |
+        -AllProfiles:$AllProfiles `
+        -All |
     Get-DemandMatch |
     group Path |
     where {
@@ -199,13 +236,13 @@ function Import-DemandModule {
                 cat "$PsScriptRoot\..\res\demandscript.setting.json" |
                 ConvertFrom-Json
 
-            $strings =
-                Get-DemandScript |
+            $all = Get-DemandScript -All
+
+            $strings = $all |
                 sls $setting.Patterns.Value |
                 foreach { $_.Matches -split "\s" }
 
-            $modules =
-                Get-DemandScript |
+            $modules = $all |
                 Split-Path -Parent |
                 Split-Path -Parent |
                 Split-Path -Leaf

@@ -19,5 +19,11 @@
             "Value": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*\\{$)"
         }
     ],
-    "DefaultVersion": 5
+    "DefaultVersion": 5,
+    "LocalDemandFile": {
+        "Suffix": "pstool.demand.json",
+        "Prefix": [
+            "", ".", "_", "__", "res/", "res/.", "res/_", "res/__"
+        ]
+    }
 }
