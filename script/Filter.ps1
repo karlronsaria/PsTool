@@ -480,7 +480,6 @@ function Qualify-Object {
             return Get-PipelinePropertySuggestion @PsBoundParameters
         })]
         [Parameter(ParameterSetName = 'Qualifier')]
-        [String[]]
         $Property,
 
         [Parameter(ParameterSetName = 'GetFirst')]
@@ -490,7 +489,6 @@ function Qualify-Object {
         [Switch]
         $Numbered,
 
-        [Parameter(ParameterSetName = 'Inference')]
         [Alias('Flat')]
         [Switch]
         $NoHeadings,
@@ -514,21 +512,102 @@ function Qualify-Object {
     )
 
     Begin {
-        function Get-Subelement {
+        function Get-Subobject {
             Param(
                 $InputObject,
 
                 [String]
-                $ElementName
+                $Name
             )
 
             switch ($InputObject) {
-                { $_ -is [Hashtable] } {
-                    $InputObject[$ElementName]
+                { $_ -is [Ordered] -or $_ -is [Hashtable] } {
+                    $_[$Name]
                 }
 
                 default {
-                    $InputObject.$ElementName
+                    $_.$Name
+                }
+            }
+        }
+
+        function Get-Subelement {
+            Param(
+                $InputObject,
+
+                $ElementStruct,
+
+                [Switch]
+                $NoHeadings
+            )
+
+            foreach ($element in @($ElementStruct)) {
+                switch ($element) {
+                    { $_ -is [Ordered] -or $_ -is [Hashtable] } {
+                        foreach ($key in $_.Keys) {
+                            $name = $key
+
+                            foreach ($item in $InputObject) {
+                                $value = Get-Subelement `
+                                    -InputObject ( `
+                                        Get-Subobject `
+                                            -InputObject $item `
+                                            -Name $name `
+                                    ) `
+                                    -ElementStruct $_[$name] `
+                                    -NoHeadings:$NoHeadings
+
+                                if ($NoHeadings) {
+                                    $value
+                                }
+                                else {
+                                    [PsCustomObject]@{
+                                        $name = $value
+                                    }
+                                }
+                            }
+                        }
+
+                        break
+                    }
+
+                    { $_ -is [PsCustomObject] } {
+                        foreach ($prop in $_.PsObject.Properties) {
+                            $name = $prop.Name
+
+                            foreach ($item in $InputObject) {
+                                $value = Get-Subelement `
+                                    -InputObject ( `
+                                        Get-Subobject `
+                                            -InputObject $item `
+                                            -Name $name `
+                                    ) `
+                                    -ElementStruct $prop.Value `
+                                    -NoHeadings:$NoHeadings
+
+                                if ($NoHeadings) {
+                                    $value
+                                }
+                                else {
+                                    [PsCustomObject]@{
+                                        $name = $value
+                                    }
+                                }
+                            }
+                        }
+
+                        break
+                    }
+
+                    { $_ -is [String] } {
+                        foreach ($item in $InputObject) {
+                            Get-Subobject `
+                                -InputObject $item `
+                                -Name $ElementStruct
+                        }
+
+                        break
+                    }
                 }
             }
         }
@@ -543,7 +622,8 @@ function Qualify-Object {
                     foreach ($item in $InputObject) {
                         Get-Subelement `
                             -InputObject $item `
-                            -ElementName $prop
+                            -ElementStruct $prop `
+                            -NoHeadings:$NoHeadings
                     }
                 }
             }
@@ -562,102 +642,112 @@ function Qualify-Object {
         $list = switch ($PsCmdlet.ParameterSetName) {
             'PassAllThru' {
                 $list
+                break
+            }
+
+            'GetFirst' {
+                $list[0]
+                break
+            }
+
+            'Subscript' {
+                $Index | foreach {
+                    $list[$_]
+                }
+
+                break
             }
 
             'Inference' {
                 foreach ($a in $Argument) {
                     switch ($a) {
-                        { $_ -is [Hashtable] } {
-                            foreach ($key in $_.Keys) {
-                                foreach ($item in $list) {
-                                    $name = $key
-
-                                    $value =
-                                        $item.$key |
-                                        Qualify-Object `
-                                            -Argument $a[$key] `
-                                            -NoHeadings:$NoHeadings
-
-                                    if ($NoHeadings) {
-                                        $value
-                                    }
-                                    else {
-                                        [PsCustomObject]@{
-                                            $name = $value
-                                        }
-                                    }
-                                }
-                            }
-
-                            break
-                        }
-
-                        { $_ -is [PsCustomObject] } {
-                            foreach ($prop in $_.PsObject.Properties) {
-                                foreach ($item in $list) {
-                                    $name = $prop.Name
-
-                                    $value =
-                                        $item.$name |
-                                        Qualify-Object `
-                                            -Argument $prop.Value `
-                                            -NoHeadings:$NoHeadings
-
-                                    if ($NoHeadings) {
-                                        $value
-                                    }
-                                    else {
-                                        [PsCustomObject]@{
-                                            $name = $value
-                                        }
-                                    }
-                                }
-                            }
-
-                            break
-                        }
-
-                        { $d = $null; [Int]::TryParse($_, [ref]$d) } {
+                        { $_ -is [Int] -or "$_" -match "^\s*\d+\s*$" } {
                             $list | Qualify-Object `
                                 -Index $_
 
                             break
                         }
 
+                        # { $_ -is [Hashtable] } {
+                        #     foreach ($key in $_.Keys) {
+                        #         foreach ($item in $list) {
+                        #             $name = $key
+
+                        #             $value =
+                        #                 $item.$key |
+                        #                 Qualify-Object `
+                        #                     -Argument $a[$key] `
+                        #                     -NoHeadings:$NoHeadings
+
+                        #             if ($NoHeadings) {
+                        #                 $value
+                        #             }
+                        #             else {
+                        #                 [PsCustomObject]@{
+                        #                     $name = $value
+                        #                 }
+                        #             }
+                        #         }
+                        #     }
+
+                        #     break
+                        # }
+
+                        # { $_ -is [PsCustomObject] } {
+                        #     foreach ($prop in $_.PsObject.Properties) {
+                        #         foreach ($item in $list) {
+                        #             $name = $prop.Name
+
+                        #             $value =
+                        #                 $item.$name |
+                        #                 Qualify-Object `
+                        #                     -Argument $prop.Value `
+                        #                     -NoHeadings:$NoHeadings
+
+                        #             if ($NoHeadings) {
+                        #                 $value
+                        #             }
+                        #             else {
+                        #                 [PsCustomObject]@{
+                        #                     $name = $value
+                        #                 }
+                        #             }
+                        #         }
+                        #     }
+
+                        #     break
+                        # }
+
                         default {
                             $list | Qualify-Object `
-                                -Property $_
+                                -Property $_ `
+                                -NoHeadings:$NoHeadings
 
                             break
                         }
                     }
                 }
-            }
 
-            default {
-                $(switch ($PsCmdlet.ParameterSetName) {
-                    'Subscript' { $Index }
-                    'GetFirst' { 0 }
-                }) |
-                foreach {
-                    $list[$_]
-                }
+                break
             }
         }
 
-        return $(if ($Numbered) {
-            $list | foreach -Begin {
-                $count = 0
-            } -Process {
-                [PsCustomObject]@{
-                    Id = ++$count
-                    Object = $_
+        return $(
+            if ($Numbered) {
+                $list |
+                foreach -Begin {
+                    $count = 0
+                } -Process {
+                    [PsCustomObject]@{
+                        Id = ++$count
+                        Object = $_
+                    }
                 }
             }
-        }
-        else {
-            $list
-        })
+            else {
+                $list
+            }
+        )
     }
 }
 

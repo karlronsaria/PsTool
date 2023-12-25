@@ -3492,7 +3492,8 @@
         "Run": [
           "Qualify-Object -InputObject $InputObject.Tree -Property BaseName",
           "$InputObject.Tree | Qualify-Object -Property BaseName",
-          "$InputObject.Tree | Qualify-Object BaseName"
+          "$InputObject.Tree | Qualify-Object BaseName",
+          "$InputObject | Qualify-Object ([PsCustomObject]@{ Tree = 'BaseName' }) -NoHeadings"
         ],
         "Value": [
           "__DEPRECATED",

@@ -5,7 +5,8 @@ Describe 'Qualify-Object' {
         iex "$PsScriptRoot\..\Get-Scripts.ps1" | foreach { . $_ }
 
         $stuff = cat "$PsScriptRoot\res\Qualify-Object.Mock.json" |
-            ConvertFrom-Json -AsHashtable
+            ConvertFrom-Json `
+            -AsHashtable
 
         $InputObject = $stuff.Mock
     }
@@ -34,7 +35,6 @@ Describe 'Qualify-Object' {
 
                 $actual | Should Not Be $null
                 $actual.Count | Should Be $Value.Count
-
                 diff ($actual) ($Value) | Should Be $null
             }
         }
