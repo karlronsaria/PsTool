@@ -539,19 +539,13 @@ function Qualify-Object {
     Process {
         switch ($PsCmdlet.ParameterSetName) {
             'Qualifier' {
-                if (@($Property).Count -gt 1) {
-                    foreach ($item in $Property) {
+                foreach ($prop in $Property) {
+                    foreach ($item in $InputObject) {
                         Get-Subelement `
-                            -InputObject $InputObject `
-                            -ElementName $item
+                            -InputObject $item `
+                            -ElementName $prop
                     }
-
-                    return
                 }
-
-                Get-Subelement `
-                    -InputObject $InputObject `
-                    -ElementName $Property
             }
 
             default {
@@ -573,15 +567,6 @@ function Qualify-Object {
             'Inference' {
                 foreach ($a in $Argument) {
                     switch ($a) {
-                        { @($_).Count -gt 1 } {
-                            foreach ($item in $_) {
-                                $list | Qualify-Object `
-                                    -Argument $item
-                            }
-
-                            break
-                        }
-
                         { $_ -is [Hashtable] } {
                             foreach ($key in $_.Keys) {
                                 foreach ($item in $list) {
@@ -650,20 +635,13 @@ function Qualify-Object {
             }
 
             default {
-                $i = switch ($PsCmdlet.ParameterSetName) {
+                $(switch ($PsCmdlet.ParameterSetName) {
                     'Subscript' { $Index }
                     'GetFirst' { 0 }
+                }) |
+                foreach {
+                    $list[$_]
                 }
-
-                if (@($i).Count -gt 1) {
-                    foreach ($item in $i) {
-                        $list[$item]
-                    }
-
-                    return
-                }
-
-                $list[$i]
             }
         }
 

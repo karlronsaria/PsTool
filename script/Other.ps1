@@ -50,29 +50,38 @@ function ConvertTo-Hashtable {
     [CmdletBinding()]
     Param(
         [Parameter(ValueFromPipeline = $true)]
-        $InputObject
+        $InputObject,
+
+        [Switch]
+        $Ordered
     )
 
-    if ($null -eq $InputObject) {
-        return $null
-    }
+    Process {
+        if ($null -eq $InputObject) {
+            return $null
+        }
 
-    $table = @{}
+        $table = if ($Ordered) {
+            [Ordered]@{}
+        }
+        else {
+            @{}
+        }
 
-    switch ($InputObject.GetType().Name) {
-        'PsObject' {
-            $InputObject | foreach {
-                $table[$_.Name] = $_.Value
+        switch ($InputObject) {
+            { $_ -is [PsCustomObject] } {
+                $_.PsObject.Properties | foreach {
+                    $table[$_.Name] = $_.Value
+                }
+
+                return $table
+            }
+
+            default {
+                return $_
             }
         }
-
-        'PsCustomObject' {
-            $table = ConvertTo-Hashtable `
-                -InputObject $InputObject.PsObject
-        }
     }
-
-    return $table
 }
 
 <#
