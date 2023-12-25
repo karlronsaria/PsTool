@@ -458,7 +458,7 @@ function Get-PipelinePropertySuggestion {
 }
 
 function Query-Object {
-    [Alias('What')]
+    [Alias('What', 'Query')]
     [CmdletBinding(DefaultParameterSetName = 'GetAny')]
     Param(
         [Parameter(ValueFromPipeline = $true)]
