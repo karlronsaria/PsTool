@@ -123,7 +123,10 @@ function ConvertFrom-ImageWebp {
             }
 
             if ($PassThru) {
-                $dst
+                [PsCustomObject]@{
+                    Source = $src
+                    Destination = $dst
+                }
             }
 
             $count = $count + 1
