@@ -84,6 +84,8 @@ function Get-DemandScript {
     [OutputType([System.IO.FileInfo])]
     Param(
         [ArgumentCompleter({
+            # todo: Repetetive. Consider cleaning up.
+            # note: Does not work in PowerShell 5.
             Param($A, $B, $C)
 
             $setting =
@@ -230,19 +232,45 @@ function Import-DemandModule {
     [OutputType([System.Management.Automation.PsModuleInfo])]
     Param(
         [ArgumentCompleter({
+            # todo: Repetetive. Consider cleaning up.
+            # note: Does not work in PowerShell 5.
             Param($A, $B, $C)
 
             $setting =
                 cat "$PsScriptRoot\..\res\demandscript.setting.json" |
                 ConvertFrom-Json
 
-            $all = Get-DemandScript -All
-
-            $strings = $all |
+            $strings =
+                Get-DemandScript -All |
                 sls $setting.Patterns.Value |
-                foreach { $_.Matches -split "\s" }
+                foreach {
+                  $file = $_.Path
 
-            $modules = $all |
+                  [Regex]::Matches(
+                    $_,
+                    "(?<=\s+)(?<word>\w+)|````(?<script>[^``]+)````"
+                  ) |
+                  foreach {
+                    $script = $_.Groups['script']
+
+                    if ($script.Success) {
+                      iex $(
+                        $script.Value -replace `
+                          "\`$PsScriptRoot",
+                          "`$(`"$(Split-Path $file -Parent)`")"
+                      )
+                    }
+
+                    $word = $_.Groups['word']
+
+                    if ($word.Success) {
+                      $word.Value
+                    }
+                  }
+                }
+
+            $modules =
+                Get-DemandScript -All |
                 Split-Path -Parent |
                 Split-Path -Parent |
                 Split-Path -Leaf

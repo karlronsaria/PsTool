@@ -1,5 +1,11 @@
 # issue
 
+- [ ] 2023_12_25_033119
+  - where: Demand#Install-DemandModule
+  - howto: use ``InputObject`` argument completer in PowerShell 5 terminal
+  - actual
+    - fails
+
 ## complete
 
 - [x] 2023_12_20_223459
