@@ -1,13 +1,15 @@
 # wish
 
+## complete
+
 - Demand
   - [x] ability to add tags programatically
   - [x] a cmdlet that imports on-demand scripts requested by a local json file
     - solution: ``res/demandscript.setting.json#LocalDemandFile``
 
 - ``Qualify-Object``
-  - [ ] consider renaming to "``Query-Object``"
-  - [ ] index would narrow the results of other queries
+  - [x] consider renaming to "``Query-Object``"
+  - [x] index would narrow the results of other queries
 
     - example
 
@@ -51,8 +53,6 @@
         dir \note\*.md -Recurse |
             what (2 .. 10)
         ```
-
-## complete
 
 - [x] better edge detection
 - [x] progress bar

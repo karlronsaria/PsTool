@@ -457,14 +457,14 @@ function Get-PipelinePropertySuggestion {
     }
 }
 
-function Qualify-Object {
+function Query-Object {
     [Alias('What')]
-    [CmdletBinding(DefaultParameterSetName = 'PassAllThru')]
+    [CmdletBinding(DefaultParameterSetName = 'GetAny')]
     Param(
         [Parameter(ValueFromPipeline = $true)]
         $InputObject,
 
-        [Parameter(ParameterSetName = 'Subscript')]
+        [Parameter(ParameterSetName = 'GetAny')]
         [Int[]]
         $Index,
 
@@ -479,7 +479,6 @@ function Qualify-Object {
 
             return Get-PipelinePropertySuggestion @PsBoundParameters
         })]
-        [Parameter(ParameterSetName = 'Qualifier')]
         $Property,
 
         [Parameter(ParameterSetName = 'GetFirst')]
@@ -504,11 +503,10 @@ function Qualify-Object {
 
             return Get-PipelinePropertySuggestion @PsBoundParameters
         })]
-        [Parameter(
-            ParameterSetName = 'Inference',
-            Position = 0
-        )]
-        $Argument
+        [Parameter(Position = 0)]
+        $Argument,
+
+        $Default
     )
 
     Begin {
@@ -532,81 +530,88 @@ function Qualify-Object {
         }
 
         function Get-Subelement {
+            [CmdletBinding(DefaultParameterSetName = 'ByStruct')]
             Param(
                 $InputObject,
 
                 $ElementStruct,
 
                 [Switch]
-                $NoHeadings
+                $NoHeadings,
+
+                [Parameter(ParameterSetName = 'ByNextKey')]
+                [String]
+                $NextKey
             )
 
-            foreach ($element in @($ElementStruct)) {
-                switch ($element) {
-                    { $_ -is [Ordered] -or $_ -is [Hashtable] } {
-                        foreach ($key in $_.Keys) {
-                            $name = $key
+            switch ($PsCmdlet.ParameterSetName) {
+                # Iterate
+                'ByNextKey' {
+                    foreach ($item in $InputObject) {
+                        $value = Get-Subelement `
+                            -InputObject ( `
+                                Get-Subobject `
+                                    -InputObject $item `
+                                    -Name $NextKey `
+                            ) `
+                            -ElementStruct $ElementStruct `
+                            -NoHeadings:$NoHeadings
 
-                            foreach ($item in $InputObject) {
-                                $value = Get-Subelement `
-                                    -InputObject ( `
-                                        Get-Subobject `
-                                            -InputObject $item `
-                                            -Name $name `
-                                    ) `
-                                    -ElementStruct $_[$name] `
-                                    -NoHeadings:$NoHeadings
-
-                                if ($NoHeadings) {
-                                    $value
-                                }
-                                else {
-                                    [PsCustomObject]@{
-                                        $name = $value
-                                    }
-                                }
+                        if ($NoHeadings) {
+                            $value
+                        }
+                        else {
+                            [PsCustomObject]@{
+                                $NextKey = $value
                             }
                         }
-
-                        break
                     }
+                }
 
-                    { $_ -is [PsCustomObject] } {
-                        foreach ($prop in $_.PsObject.Properties) {
-                            $name = $prop.Name
+                'ByStruct' {
+                    $NoHeadings =
+                        $NoHeadings -or
+                        @($InputObject).Count -eq 1
 
-                            foreach ($item in $InputObject) {
-                                $value = Get-Subelement `
-                                    -InputObject ( `
-                                        Get-Subobject `
-                                            -InputObject $item `
-                                            -Name $name `
-                                    ) `
-                                    -ElementStruct $prop.Value `
-                                    -NoHeadings:$NoHeadings
-
-                                if ($NoHeadings) {
-                                    $value
+                    foreach ($element in @($ElementStruct)) {
+                        switch ($element) {
+                            # Pre-orbit
+                            { $_ -is [Ordered] -or $_ -is [Hashtable] } {
+                                foreach ($key in $_.Keys) {
+                                    Get-Subelement `
+                                        -InputObject $InputObject `
+                                        -ElementStruct $_[$key] `
+                                        -NextKey $key `
+                                        -NoHeadings:$NoHeadings
                                 }
-                                else {
-                                    [PsCustomObject]@{
-                                        $name = $value
-                                    }
+
+                                break
+                            }
+
+                            # Pre-orbit
+                            { $_ -is [PsCustomObject] } {
+                                foreach ($prop in $_.PsObject.Properties) {
+                                    Get-Subelement `
+                                        -InputObject $InputObject `
+                                        -ElementStruct $prop.Value `
+                                        -NextKey $prop.Name `
+                                        -NoHeadings:$NoHeadings
                                 }
+
+                                break
+                            }
+
+                            # Fixed Point
+                            { $_ -is [String] } {
+                                foreach ($item in $InputObject) {
+                                    Get-Subobject `
+                                        -InputObject $item `
+                                        -Name $ElementStruct
+                                }
+
+                                break
                             }
                         }
-
-                        break
-                    }
-
-                    { $_ -is [String] } {
-                        foreach ($item in $InputObject) {
-                            Get-Subobject `
-                                -InputObject $item `
-                                -Name $ElementStruct
-                        }
-
-                        break
                     }
                 }
             }
@@ -616,8 +621,8 @@ function Qualify-Object {
     }
 
     Process {
-        switch ($PsCmdlet.ParameterSetName) {
-            'Qualifier' {
+        $list += $(
+            if ($Property) {
                 foreach ($prop in $Property) {
                     foreach ($item in $InputObject) {
                         Get-Subelement `
@@ -627,127 +632,68 @@ function Qualify-Object {
                     }
                 }
             }
-
-            default {
-                $list += @($InputObject)
+            else {
+                @($InputObject)
             }
-        }
+        )
     }
 
     End {
-        if ($list.Count -eq 0) {
+        if ($list) {
+            if ($Default) {
+                $Default
+            }
+
             return
         }
 
-        $list = switch ($PsCmdlet.ParameterSetName) {
-            'PassAllThru' {
-                $list
-                break
-            }
+        if ($Argument) {
+            $indices = @()
+            $properties = @()
 
-            'GetFirst' {
-                $list[0]
-                break
-            }
+            foreach ($a in $Argument) {
+                switch ($a) {
+                    { $_ -is [Int] -or "$_" -match "^\s*\d+\s*$" } {
+                        $indices += @($_)
+                        break
+                    }
 
-            'Subscript' {
-                $Index | foreach {
-                    $list[$_]
-                }
-
-                break
-            }
-
-            'Inference' {
-                foreach ($a in $Argument) {
-                    switch ($a) {
-                        { $_ -is [Int] -or "$_" -match "^\s*\d+\s*$" } {
-                            $list | Qualify-Object `
-                                -Index $_
-
-                            break
-                        }
-
-                        # { $_ -is [Hashtable] } {
-                        #     foreach ($key in $_.Keys) {
-                        #         foreach ($item in $list) {
-                        #             $name = $key
-
-                        #             $value =
-                        #                 $item.$key |
-                        #                 Qualify-Object `
-                        #                     -Argument $a[$key] `
-                        #                     -NoHeadings:$NoHeadings
-
-                        #             if ($NoHeadings) {
-                        #                 $value
-                        #             }
-                        #             else {
-                        #                 [PsCustomObject]@{
-                        #                     $name = $value
-                        #                 }
-                        #             }
-                        #         }
-                        #     }
-
-                        #     break
-                        # }
-
-                        # { $_ -is [PsCustomObject] } {
-                        #     foreach ($prop in $_.PsObject.Properties) {
-                        #         foreach ($item in $list) {
-                        #             $name = $prop.Name
-
-                        #             $value =
-                        #                 $item.$name |
-                        #                 Qualify-Object `
-                        #                     -Argument $prop.Value `
-                        #                     -NoHeadings:$NoHeadings
-
-                        #             if ($NoHeadings) {
-                        #                 $value
-                        #             }
-                        #             else {
-                        #                 [PsCustomObject]@{
-                        #                     $name = $value
-                        #                 }
-                        #             }
-                        #         }
-                        #     }
-
-                        #     break
-                        # }
-
-                        default {
-                            $list | Qualify-Object `
-                                -Property $_ `
-                                -NoHeadings:$NoHeadings
-
-                            break
-                        }
+                    default {
+                        $properties += @($_)
+                        break
                     }
                 }
+            }
 
-                break
+            $list = $list | Query-Object `
+                -Property $properties `
+                -Index $indices
+        }
+
+        if ($Numbered) {
+            $list = $list |
+            foreach -Begin {
+                $count = 0
+            } -Process {
+                [PsCustomObject]@{
+                    Id = ++$count
+                    Object = $_
+                }
             }
         }
 
-        return $(
-            if ($Numbered) {
-                $list |
-                foreach -Begin {
-                    $count = 0
-                } -Process {
-                    [PsCustomObject]@{
-                        Id = ++$count
-                        Object = $_
-                    }
-                }
+        if ($GetFirst) {
+            return $list[0]
+        }
+
+        if ($Index) {
+            $list = $Index |
+            foreach {
+                $list[$_]
             }
-            else {
-                $list
-            }
-        )
+        }
+
+        return $list
     }
 }
 

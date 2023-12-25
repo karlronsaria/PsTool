@@ -1934,13 +1934,13 @@
         "LinkType": null
       },
       {
-        "Name": "Qualify-Object.Tests.ps1",
+        "Name": "Query-Object.Tests.ps1",
         "Length": 223,
         "DirectoryName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test",
         "Directory": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test",
         "IsReadOnly": false,
         "Exists": true,
-        "FullName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\Qualify-Object.Tests.ps1",
+        "FullName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\Query-Object.Tests.ps1",
         "Extension": ".ps1",
         "CreationTime": "2023-12-23T15:38:14.7559364-08:00",
         "CreationTimeUtc": "2023-12-23T23:38:14.7559364Z",
@@ -1951,32 +1951,32 @@
         "LinkTarget": null,
         "UnixFileMode": -1,
         "Attributes": 1056,
-        "PSPath": "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\Qualify-Object.Tests.ps1",
+        "PSPath": "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\Query-Object.Tests.ps1",
         "PSParentPath": "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test",
-        "PSChildName": "Qualify-Object.Tests.ps1",
+        "PSChildName": "Query-Object.Tests.ps1",
         "PSDrive": "C",
         "PSProvider": "Microsoft.PowerShell.Core\\FileSystem",
         "PSIsContainer": false,
         "Mode": "la---",
         "ModeWithoutHardLink": "la---",
         "VersionInfo": {
-          "value": "File:             C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\Qualify-Object.Tests.ps1\r\nInternalName:     \r\nOriginalFilename: \r\nFileVersion:      \r\nFileDescription:  \r\nProduct:          \r\nProductVersion:   \r\nDebug:            False\r\nPatched:          False\r\nPreRelease:       False\r\nPrivateBuild:     False\r\nSpecialBuild:     False\r\nLanguage:         \r\n",
+          "value": "File:             C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\Query-Object.Tests.ps1\r\nInternalName:     \r\nOriginalFilename: \r\nFileVersion:      \r\nFileDescription:  \r\nProduct:          \r\nProductVersion:   \r\nDebug:            False\r\nPatched:          False\r\nPreRelease:       False\r\nPrivateBuild:     False\r\nSpecialBuild:     False\r\nLanguage:         \r\n",
           "FileVersionRaw": "0.0.0.0",
           "ProductVersionRaw": "0.0.0.0"
         },
-        "BaseName": "Qualify-Object.Tests",
-        "ResolvedTarget": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\Qualify-Object.Tests.ps1",
+        "BaseName": "Query-Object.Tests",
+        "ResolvedTarget": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\Query-Object.Tests.ps1",
         "Target": null,
         "LinkType": null
       },
       {
-        "Name": "Qualify-Object.Mock.json",
+        "Name": "Query-Object.Mock.json",
         "Length": 0,
         "DirectoryName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\mock",
         "Directory": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\mock",
         "IsReadOnly": false,
         "Exists": true,
-        "FullName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\mock\\Qualify-Object.Mock.json",
+        "FullName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\mock\\Query-Object.Mock.json",
         "Extension": ".json",
         "CreationTime": "2023-12-23T22:35:53.7891924-08:00",
         "CreationTimeUtc": "2023-12-24T06:35:53.7891924Z",
@@ -1987,21 +1987,21 @@
         "LinkTarget": null,
         "UnixFileMode": -1,
         "Attributes": 1056,
-        "PSPath": "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\mock\\Qualify-Object.Mock.json",
+        "PSPath": "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\mock\\Query-Object.Mock.json",
         "PSParentPath": "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\mock",
-        "PSChildName": "Qualify-Object.Mock.json",
+        "PSChildName": "Query-Object.Mock.json",
         "PSDrive": "C",
         "PSProvider": "Microsoft.PowerShell.Core\\FileSystem",
         "PSIsContainer": false,
         "Mode": "la---",
         "ModeWithoutHardLink": "la---",
         "VersionInfo": {
-          "value": "File:             C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\mock\\Qualify-Object.Mock.json\r\nInternalName:     \r\nOriginalFilename: \r\nFileVersion:      \r\nFileDescription:  \r\nProduct:          \r\nProductVersion:   \r\nDebug:            False\r\nPatched:          False\r\nPreRelease:       False\r\nPrivateBuild:     False\r\nSpecialBuild:     False\r\nLanguage:         \r\n",
+          "value": "File:             C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\mock\\Query-Object.Mock.json\r\nInternalName:     \r\nOriginalFilename: \r\nFileVersion:      \r\nFileDescription:  \r\nProduct:          \r\nProductVersion:   \r\nDebug:            False\r\nPatched:          False\r\nPreRelease:       False\r\nPrivateBuild:     False\r\nSpecialBuild:     False\r\nLanguage:         \r\n",
           "FileVersionRaw": "0.0.0.0",
           "ProductVersionRaw": "0.0.0.0"
         },
-        "BaseName": "Qualify-Object.Mock",
-        "ResolvedTarget": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\mock\\Qualify-Object.Mock.json",
+        "BaseName": "Query-Object.Mock",
+        "ResolvedTarget": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\mock\\Query-Object.Mock.json",
         "Target": null,
         "LinkType": null
       },
@@ -3357,7 +3357,7 @@
       },
       {
         "Id": 20,
-        "CommandLine": "$what | ConvertTo-Json | Out-FileUnix Qualify-Object.Mock.json",
+        "CommandLine": "$what | ConvertTo-Json | Out-FileUnix Query-Object.Mock.json",
         "ExecutionStatus": 4,
         "StartExecutionTime": "2023-12-23T22:35:53.7702341-08:00",
         "EndExecutionTime": "2023-12-23T22:35:55.5767731-08:00",
@@ -3365,7 +3365,7 @@
       },
       {
         "Id": 21,
-        "CommandLine": "$what | ConvertTo-Json -Depth 100 | Out-FileUnix Qualify-Object.Mock.json",
+        "CommandLine": "$what | ConvertTo-Json -Depth 100 | Out-FileUnix Query-Object.Mock.json",
         "ExecutionStatus": 3,
         "StartExecutionTime": "2023-12-23T22:36:23.0075496-08:00",
         "EndExecutionTime": "2023-12-23T22:36:51.5344203-08:00",
@@ -3490,10 +3490,10 @@
       {
         "Name": "Tree for Property BaseName",
         "Run": [
-          "Qualify-Object -InputObject $InputObject.Tree -Property BaseName",
-          "$InputObject.Tree | Qualify-Object -Property BaseName",
-          "$InputObject.Tree | Qualify-Object BaseName",
-          "$InputObject | Qualify-Object ([PsCustomObject]@{ Tree = 'BaseName' }) -NoHeadings"
+          "Query-Object -InputObject $InputObject.Tree -Property BaseName",
+          "$InputObject.Tree | Query-Object -Property BaseName",
+          "$InputObject.Tree | Query-Object BaseName",
+          "$InputObject | Query-Object ([PsCustomObject]@{ Tree = 'BaseName' }) -NoHeadings"
         ],
         "Value": [
           "__DEPRECATED",
@@ -3552,8 +3552,8 @@
           "Move-.Test",
           "Other.Test",
           "ProxyFunction.Test",
-          "Qualify-Object.Tests",
-          "Qualify-Object.Mock",
+          "Query-Object.Tests",
+          "Query-Object.Mock",
           "ImageWebp_DemoFiles",
           "File",
           "FileWithLongName",
@@ -3593,9 +3593,9 @@
       {
         "Name": "Tree as Numbered List for Index [2, 9] ∪ [13, 20]",
         "Run": [
-          "Qualify-Object -InputObject $InputObject.Tree -Numbered | Qualify-Object -Index (@(2 .. 9) + @(13 .. 20))",
-          "$InputObject.Tree | Qualify-Object -Numbered | Qualify-Object -Index (@(2 .. 9) + @(13 .. 20))",
-          "$InputObject.Tree | Qualify-Object -Numbered | Qualify-Object (@(2 .. 9) + @(13 .. 20))"
+          "Query-Object -InputObject $InputObject.Tree -Numbered | Query-Object -Index (@(2 .. 9) + @(13 .. 20))",
+          "$InputObject.Tree | Query-Object -Numbered | Query-Object -Index (@(2 .. 9) + @(13 .. 20))",
+          "$InputObject.Tree | Query-Object -Numbered | Query-Object (@(2 .. 9) + @(13 .. 20))"
         ],
         "Value": [
           {
@@ -4171,9 +4171,9 @@
       {
         "Name": "History for CommandLine",
         "Run": [
-          "Qualify-Object -InputObject $InputObject.History -Property CommandLine",
-          "$InputObject.History | Qualify-Object -Property CommandLine",
-          "$InputObject.History | Qualify-Object CommandLine"
+          "Query-Object -InputObject $InputObject.History -Property CommandLine",
+          "$InputObject.History | Query-Object -Property CommandLine",
+          "$InputObject.History | Query-Object CommandLine"
         ],
         "Value": [
           "cd \\note",
@@ -4195,8 +4195,8 @@
           "rename-item .\\sample\\ mock",
           "cd mock",
           "dir",
-          "$what | ConvertTo-Json | Out-FileUnix Qualify-Object.Mock.json",
-          "$what | ConvertTo-Json -Depth 100 | Out-FileUnix Qualify-Object.Mock.json",
+          "$what | ConvertTo-Json | Out-FileUnix Query-Object.Mock.json",
+          "$what | ConvertTo-Json -Depth 100 | Out-FileUnix Query-Object.Mock.json",
           "$what = [PsCustomObject]@{\nTree = dir -Recurse | where { $_.FullName -notmatch \"\\.git\\\\|$\" }\nHistory = Get-History\n}",
           "$what",
           "$what.Tree",
@@ -4216,9 +4216,9 @@
       {
         "Name": "History as Numbered List for Index [2, 5] ∪ [8, 13]",
         "Run": [
-          "Qualify-Object -InputObject $InputObject.History -Numbered | Qualify-Object -Index (@(2 .. 5) + @(8 .. 13))",
-          "$InputObject.History | Qualify-Object -Index (@(2 .. 5) + @(8 .. 13))",
-          "$InputObject.History | Qualify-Object (@(2 .. 5) + @(8 .. 13))"
+          "Query-Object -InputObject $InputObject.History -Numbered | Query-Object -Index (@(2 .. 5) + @(8 .. 13))",
+          "$InputObject.History | Query-Object -Index (@(2 .. 5) + @(8 .. 13))",
+          "$InputObject.History | Query-Object (@(2 .. 5) + @(8 .. 13))"
         ],
         "Value": [
           {
