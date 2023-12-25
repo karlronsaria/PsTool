@@ -639,7 +639,7 @@ function Query-Object {
     }
 
     End {
-        if ($list) {
+        if (-not $list) {
             if ($Default) {
                 $Default
             }
