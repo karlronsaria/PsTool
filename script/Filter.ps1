@@ -648,26 +648,24 @@ function Query-Object {
         }
 
         if ($Argument) {
-            $indices = @()
-            $properties = @()
+            $Property = @()
 
             foreach ($a in $Argument) {
                 switch ($a) {
                     { $_ -is [Int] -or "$_" -match "^\s*\d+\s*$" } {
-                        $indices += @($_)
+                        $Index += @($_)
                         break
                     }
 
                     default {
-                        $properties += @($_)
+                        $Property += @($_)
                         break
                     }
                 }
             }
 
             $list = $list | Query-Object `
-                -Property $properties `
-                -Index $indices
+                -Property $Property
         }
 
         if ($Numbered) {
