@@ -1,9 +1,15 @@
-. $PsScriptRoot\..\script\HostLine.ps1
+#Requires -Module Pester
 
 Describe 'Clear-HostLine' {
-    It 'Called without arguments' {
-        Write-Host 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-        { Clear-HostLine } | Should Not Throw
+    BeforeAll {
+        . $PsScriptRoot\..\script\HostLine.ps1
+    }
+
+    Context 'Called' {
+        It 'Without arguments' {
+            Write-Host 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+            { Clear-HostLine } | Should Not Throw
+        }
     }
 }
 

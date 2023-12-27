@@ -647,12 +647,12 @@ function Query-Object {
             return
         }
 
-        if ($Argument) {
+        if ($null -ne $Argument -and @($Argument).Count -gt 0) {
             $Property = @()
 
             foreach ($a in $Argument) {
                 switch ($a) {
-                    { $_ -is [Int] -or "$_" -match "^\s*\d+\s*$" } {
+                    { $_ -is [Int] -or "$_" -match "^\s*-?\d+\s*$" } {
                         $Index += @($_)
                         break
                     }
@@ -684,8 +684,8 @@ function Query-Object {
             return $list[0]
         }
 
-        if ($Index) {
-            $list = $Index |
+        if ($null -ne $Index -and @($Index).Count -gt 0) {
+            $list = @($Index) |
             foreach {
                 $list[$_]
             }

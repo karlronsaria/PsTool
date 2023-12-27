@@ -1,6 +1,8 @@
 # issue
 
-- [ ] 2023_12_27_042818
+## complete
+
+- [x] 2023_12_27_042818
   - where: Filter#Query-Object
   - howto
 
@@ -12,8 +14,6 @@
     - returns entire list
   - expected
     - returns only first element in list
-
-## complete
 
 - [x] 2023_12_25_033119
   - where: Demand#Install-DemandModule
