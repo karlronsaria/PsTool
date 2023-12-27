@@ -28,8 +28,8 @@
     },
     "Commands": {
         "Select": {
-            "5": "{ Begin { $list = @() } Process { $list += @($Input.ToLower()) } End { $list | select -Unique } }",
-            "7": "{ $Input | select -Unique -CaseInsensitive }"
+            5: "{ Begin { $list = @() } Process { $list += @($Input.ToLower()) } End { $list | select -Unique } }",
+            7: "{ $Input | select -Unique -CaseInsensitive }"
         }
     }
 }
