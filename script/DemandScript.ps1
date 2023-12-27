@@ -3,7 +3,7 @@ function Get-DemandMatch {
     Param(
         [Parameter(ValueFromPipeline = $true)]
         [System.IO.FileSystemInfo[]]
-        $InputObject,
+        $File,
 
         [String[]]
         $Pattern
@@ -30,11 +30,12 @@ function Get-DemandMatch {
     }
 
     Process {
-        $list += @(foreach ($item in $Pattern) {
-            $InputObject |
-            sls $item |
+        $list += $Pattern |
+          foreach {
+            $File |
+            sls $_ |
             foreach {
-              $file = $_.Path
+              $item = $_.Path
 
               [PsCustomObject]@{
                 Matches =
@@ -51,7 +52,7 @@ function Get-DemandMatch {
                         iex $(
                           $script.Value -replace `
                             "\`$PsScriptRoot",
-                            "`$(`"$(Split-Path $file -Parent)`")"
+                            "`$(`"$(Split-Path $item -Parent)`")"
                         )
                       }
 
@@ -61,8 +62,7 @@ function Get-DemandMatch {
                         $word.Value
                       }
                     }
-                  } |
-                  & (iex $select)
+                  }
                 ItemName = Split-Path $_.Path -Leaf
                 ScriptModule =
                   $_.Path |
@@ -73,7 +73,7 @@ function Get-DemandMatch {
                 Capture = $_
               }
             }
-        })
+          }
     }
 
     End {
@@ -82,7 +82,8 @@ function Get-DemandMatch {
                 Get-DemandMatch
         }
         else {
-            $list | sort -Property ScriptModule
+            $list |
+                sort -Property ScriptModule
         })
     }
 }
@@ -99,40 +100,60 @@ function Get-DemandScript {
                 cat "$PsScriptRoot\..\res\demandscript.setting.json" |
                 ConvertFrom-Json
 
-            $strings =
-                Get-DemandScript -All |
-                sls $setting.Patterns.Value |
-                foreach {
-                  $file = $_.Path
-
-                  [Regex]::Matches(
-                    $_,
-                    "(?<=^|\s+)(?<word>\w+)|````(?<script>[^``]+)````"
-                  ) |
-                  foreach {
-                    $script = $_.Groups['script']
-
-                    if ($script.Success) {
-                      iex $(
-                        $script.Value -replace `
-                          "\`$PsScriptRoot",
-                          "`$(`"$(Split-Path $file -Parent)`")"
-                      )
-                    }
-
-                    $word = $_.Groups['word']
-
-                    if ($word.Success) {
-                      $word.Value
-                    }
-                  }
-                }
+            $scripts =
+                Get-DemandScript -All
 
             $modules =
                 Get-DemandScript -All |
                 Split-Path -Parent |
                 Split-Path -Parent |
                 Split-Path -Leaf
+
+            $other = @()
+            $tags = @()
+
+            foreach ($pat in $setting.Patterns) {
+              if ($pat.Name -notin $setting.ScriptPatterns) {
+                $other += @(
+                  $scripts |
+                  sls $pat.Value |
+                  foreach { $_.Matches.Value }
+                )
+              }
+              else {
+                $tags += @(
+                  $scripts |
+                  sls $pat.Value |
+                  foreach {
+                    $file = $_.Path
+
+                    $_.Matches | foreach {
+                      [Regex]::Matches(
+                        $_,
+                        "(?<=^|\s+)(?<word>\w+)|````(?<script>[^``]+)````"
+                      ) |
+                      foreach {
+                        $script = $_.Groups['script']
+
+                        if ($script.Success) {
+                          iex $(
+                            $script.Value -replace `
+                              "\`$PsScriptRoot",
+                              "`$(`"$(Split-Path $file -Parent)`")"
+                          )
+                        }
+
+                        $word = $_.Groups['word']
+
+                        if ($word.Success) {
+                          $word.Value
+                        }
+                      }
+                    }
+                  }
+                )
+              }
+            }
 
             $select =
                 $setting.
@@ -141,7 +162,7 @@ function Get-DemandScript {
                 ($PsVersionTable.PsVersion.Major)
 
             return $(
-                (@($strings) + @($modules)) |
+                (@($tags) + @($other) + @($modules)) |
                 & (iex $select) |
                 where { $_ -like "$C*" } |
                 sort
@@ -161,13 +182,15 @@ function Get-DemandScript {
         [String]
         $Mode = 'Or',
 
-        [Switch]
-        $AllProfiles,
-
         # todo: consider returning to 'No Parameters Means All'
         [Parameter(ParameterSetName = 'AllFiles')]
         [Switch]
-        $All
+        $All,
+
+        [Switch]
+        $AllProfiles,
+
+        $Directory
     )
 
     $setting = cat "$PsScriptRoot/../res/demandscript.setting.json" |
@@ -175,19 +198,29 @@ function Get-DemandScript {
 
     switch ($PsCmdlet.ParameterSetName) {
         'AllFiles' {
-            return $(
-                $(if ($AllProfiles) {
-                    $setting.Profiles
-                }
-                else {
-                    $setting.Profiles |
-                    where {
-                        $_.Version -eq $setting.DefaultVersion
+            if (-not $Directory) {
+                $start = iex $setting.DefaultStartingDirectory
+
+                $Directory =
+                    $(if ($AllProfiles) {
+                        $setting.Profiles
                     }
-                }).
-                Location |
+                    else {
+                        $setting.Profiles |
+                        where {
+                            $_.Version -eq $setting.DefaultVersion
+                        }
+                    }).
+                    Location |
+                    foreach {
+                        Join-Path $start $_
+                    }
+            }
+
+            return $(
+                $Directory |
                 foreach {
-                    "$env:OneDrive/Documents/$_/Scripts/*/demand/*.ps1"
+                    Join-Path $_ "*/demand/*.ps1"
                 } |
                 dir
             )
@@ -224,6 +257,7 @@ function Get-DemandScript {
         ($PsVersionTable.PsVersion.Major)
 
     Get-DemandScript `
+        -Directory:$Directory `
         -AllProfiles:$AllProfiles `
         -All |
     Get-DemandMatch |
@@ -234,10 +268,11 @@ function Get-DemandScript {
             & (iex $select)
 
         $diff = diff `
-            ($_.Group.Matches + @($scriptModule)) `
+            (@($_.Group.Matches) + @($scriptModule)) `
             $InputObject
 
-        ($Mode -eq 'Or' -or
+        $null -eq $diff -or
+            ($Mode -eq 'Or' -or
             $diff.SideIndicator -notcontains '=>') -and
             $diff.Count -lt `
             ($_.Group.Matches.Count + $InputObject.Count)
@@ -259,40 +294,60 @@ function Import-DemandModule {
                 cat "$PsScriptRoot\..\res\demandscript.setting.json" |
                 ConvertFrom-Json
 
+            $scripts =
+                Get-DemandScript -All
+
             $modules =
                 Get-DemandScript -All |
                 Split-Path -Parent |
                 Split-Path -Parent |
                 Split-Path -Leaf
 
-            $strings =
-                Get-DemandScript -All |
-                sls $setting.Patterns.Value |
-                foreach {
-                  $file = $_.Path
+            $other = @()
+            $tags = @()
 
-                  [Regex]::Matches(
-                    $_,
-                    "(?<=^|\s+)(?<word>\w+)|````(?<script>[^``]+)````"
-                  ) |
+            foreach ($pat in $setting.Patterns) {
+              if ($pat.Name -notin $setting.ScriptPatterns) {
+                $other += @(
+                  $scripts |
+                  sls $pat.Value |
+                  foreach { $_.Matches.Value }
+                )
+              }
+              else {
+                $tags += @(
+                  $scripts |
+                  sls $pat.Value |
                   foreach {
-                    $word = $_.Groups['word']
+                    $file = $_.Path
 
-                    if ($word.Success) {
-                      $word.Value
-                    }
+                    $_.Matches | foreach {
+                      [Regex]::Matches(
+                        $_,
+                        "(?<=^|\s+)(?<word>\w+)|````(?<script>[^``]+)````"
+                      ) |
+                      foreach {
+                        $script = $_.Groups['script']
 
-                    $script = $_.Groups['script']
+                        if ($script.Success) {
+                          iex $(
+                            $script.Value -replace `
+                              "\`$PsScriptRoot",
+                              "`$(`"$(Split-Path $file -Parent)`")"
+                          )
+                        }
 
-                    if ($script.Success) {
-                      iex $(
-                        $script.Value -replace `
-                          "\`$PsScriptRoot",
-                          "`$(`"$(Split-Path $file -Parent)`")"
-                      )
+                        $word = $_.Groups['word']
+
+                        if ($word.Success) {
+                          $word.Value
+                        }
+                      }
                     }
                   }
-                }
+                )
+              }
+            }
 
             $select =
                 $setting.
@@ -301,9 +356,9 @@ function Import-DemandModule {
                 ($PsVersionTable.PsVersion.Major)
 
             return $(
-                (@($modules) + @($strings)) |
-                where { $_ -like "$C*" } |
+                (@($tags) + @($other) + @($modules)) |
                 & (iex $select) |
+                where { $_ -like "$C*" } |
                 sort
             )
         })]

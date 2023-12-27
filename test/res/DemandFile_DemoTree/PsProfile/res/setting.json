@@ -1,0 +1,10 @@
+{
+    "ProfileLocation": {
+        "DefaultVersion": 5
+    },
+    "Package": {
+        "Choco": {
+            "FileName": "choco.package.json"
+        }
+    }
+}

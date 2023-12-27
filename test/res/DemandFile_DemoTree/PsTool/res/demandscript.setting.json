@@ -1,0 +1,36 @@
+{
+    "Profiles": [
+        {
+            "Version": 5,
+            "Location": "WindowsPowerShell"
+        },
+        {
+            "Version": 7,
+            "Location": "PowerShell"
+        }
+    ],
+    "Patterns": [
+        {
+            "Name": "Tag",
+            "Value": "(?<=^tags:\\s).+$"
+        },
+        {
+            "Name": "Function",
+            "Value": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*\\{$)"
+        }
+    ],
+    "DefaultVersion": 5,
+    "LocalDemandFile": {
+        "Suffix": "pstool.demand.json",
+        "Prefix": [
+            "", ".", "_", "__", "res/", "res/.", "res/_", "res/__"
+        ]
+    },
+    "Commands": {
+        "Select": {
+            5: "{ Begin { $list = @() } Process { $list += @($Input.ToLower()) } End { $list | select -Unique } }",
+            7: "{ $Input | select -Unique -CaseInsensitive }"
+        }
+    }
+}
+

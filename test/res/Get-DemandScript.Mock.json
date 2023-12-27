@@ -1,0 +1,1781 @@
+{
+  "MaxDepth": 8,
+  "Expect": {
+    "Query": [
+      {
+        "Name": "Get all files",
+        "Run": "Get-DemandScript -All -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\" | select FullName",
+        "Value": [
+          {
+            "FullName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1"
+          },
+          {
+            "FullName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+          },
+          {
+            "FullName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1"
+          },
+          {
+            "FullName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+          },
+          {
+            "FullName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+          },
+          {
+            "FullName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\MsExcel.ps1"
+          },
+          {
+            "FullName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\NotepadPlusPlus.ps1"
+          },
+          {
+            "FullName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1"
+          },
+          {
+            "FullName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Windows.ps1"
+          }
+        ]
+      },
+      {
+        "Name": "Get all tags",
+        "Run": "Get-DemandScript -All -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\" | Get-DemandMatch",
+        "Value": [
+          {
+            "Matches": [
+              "est",
+              "OneTab",
+              "ot",
+              "markdown",
+              "md",
+              "link",
+              "url",
+              "convert"
+            ],
+            "ItemName": "OneTab.ps1",
+            "ScriptModule": "PsMarkdown",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 2,
+              "Line": "Tags: est OneTab ot markdown md link url convert",
+              "Filename": "OneTab.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "est OneTab ot markdown md link url convert",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "est OneTab ot markdown md link url convert",
+                  "Index": 6,
+                  "Length": 42,
+                  "Value": "est OneTab ot markdown md link url convert",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Onwodkramotbaten",
+            "ItemName": "OneTab.ps1",
+            "ScriptModule": "PsMarkdown",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 4,
+              "Line": "function __Demo__Ctrevno-Onwodkramotbaten {",
+              "Filename": "OneTab.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Onwodkramotbaten __Demo__Ctrevno- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Onwodkramotbaten",
+                  "Index": 25,
+                  "Length": 16,
+                  "Value": "Onwodkramotbaten",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "uan",
+              "package",
+              "json",
+              "installed",
+              "powershell",
+              "module"
+            ],
+            "ItemName": "Package.ps1",
+            "ScriptModule": "PsProfile",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 6,
+              "Line": "Tags: uan package json installed powershell module",
+              "Filename": "Package.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "uan package json installed powershell module",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "uan package json installed powershell module",
+                  "Index": 6,
+                  "Length": 44,
+                  "Value": "uan package json installed powershell module",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "sin",
+              "choco",
+              "chocolatey",
+              "local",
+              "package",
+              "list",
+              "json"
+            ],
+            "ItemName": "Package.ps1",
+            "ScriptModule": "PsProfile",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 61,
+              "Line": "Tags: sin choco chocolatey local package list json",
+              "Filename": "Package.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "sin choco chocolatey local package list json",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "sin choco chocolatey local package list json",
+                  "Index": 6,
+                  "Length": 44,
+                  "Value": "sin choco chocolatey local package list json",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "ter",
+              "choco",
+              "chocolatey",
+              "local",
+              "package",
+              "install",
+              "json"
+            ],
+            "ItemName": "Package.ps1",
+            "ScriptModule": "PsProfile",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 142,
+              "Line": "Tags: ter choco chocolatey local package install json",
+              "Filename": "Package.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "ter choco chocolatey local package install json",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "ter choco chocolatey local package install json",
+                  "Index": 6,
+                  "Length": 47,
+                  "Value": "ter choco chocolatey local package install json",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Pnosjegakca",
+            "ItemName": "Package.ps1",
+            "ScriptModule": "PsProfile",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 8,
+              "Line": "function __Demo__Nwe-Pnosjegakca {",
+              "Filename": "Package.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Pnosjegakca __Demo__Nwe- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Pnosjegakca",
+                  "Index": 21,
+                  "Length": 11,
+                  "Value": "Pnosjegakca",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Ctsilegakcaplacolocoh",
+            "ItemName": "Package.ps1",
+            "ScriptModule": "PsProfile",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 63,
+              "Line": "function __Demo__Nwe-Ctsilegakcaplacolocoh {",
+              "Filename": "Package.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Ctsilegakcaplacolocoh __Demo__Nwe- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Ctsilegakcaplacolocoh",
+                  "Index": 21,
+                  "Length": 21,
+                  "Value": "Ctsilegakcaplacolocoh",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Ctsilegakcaplacolocoh",
+            "ItemName": "Package.ps1",
+            "ScriptModule": "PsProfile",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 144,
+              "Line": "function __Demo__Illatsn-Ctsilegakcaplacolocoh {",
+              "Filename": "Package.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Ctsilegakcaplacolocoh __Demo__Illatsn- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Ctsilegakcaplacolocoh",
+                  "Index": 25,
+                  "Length": 21,
+                  "Value": "Ctsilegakcaplacolocoh",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Ipbewegam",
+            "ItemName": "ImageConvert.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 13,
+              "Line": "function __Demo__Cmorftrevno-Ipbewegam {",
+              "Filename": "ImageConvert.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Ipbewegam __Demo__Cmorftrevno- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Ipbewegam",
+                  "Index": 29,
+                  "Length": 9,
+                  "Value": "Ipbewegam",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Ieziseregam",
+            "ItemName": "ImageConvert.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 145,
+              "Line": "function __Demo__Gte-Ieziseregam {",
+              "Filename": "ImageConvert.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Ieziseregam __Demo__Gte- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Ieziseregam",
+                  "Index": 21,
+                  "Length": 11,
+                  "Value": "Ieziseregam",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Inociegam",
+            "ItemName": "ImageConvert.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 194,
+              "Line": "function __Demo__Nwe-Inociegam {",
+              "Filename": "ImageConvert.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Inociegam __Demo__Nwe- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Inociegam",
+                  "Index": 21,
+                  "Length": 9,
+                  "Value": "Inociegam",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Itrevnocegam",
+            "ItemName": "ImageConvert.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 268,
+              "Line": "function __Demo__Nwe-Itrevnocegam {",
+              "Filename": "ImageConvert.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Itrevnocegam __Demo__Nwe- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Itrevnocegam",
+                  "Index": 21,
+                  "Length": 12,
+                  "Value": "Itrevnocegam",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Mlecxes",
+            "ItemName": "MsExcel.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\MsExcel.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 3,
+              "Line": "function __Demo__Cmorftrevno-Mlecxes {",
+              "Filename": "MsExcel.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\MsExcel.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Mlecxes __Demo__Cmorftrevno- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Mlecxes",
+                  "Index": 29,
+                  "Length": 7,
+                  "Value": "Mlecxes",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Mteehskrowlecxes",
+            "ItemName": "MsExcel.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\MsExcel.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 143,
+              "Line": "function __Demo__Fhcaero-Mteehskrowlecxes {",
+              "Filename": "MsExcel.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\MsExcel.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Mteehskrowlecxes __Demo__Fhcaero- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Mteehskrowlecxes",
+                  "Index": 25,
+                  "Length": 16,
+                  "Value": "Mteehskrowlecxes",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "itn",
+              "python",
+              "pie",
+              "chart"
+            ],
+            "ItemName": "Pychart.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 5,
+              "Line": "Tags: itn python pie chart",
+              "Filename": "Pychart.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "itn python pie chart",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "itn python pie chart",
+                  "Index": 6,
+                  "Length": 20,
+                  "Value": "itn python pie chart",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "pes",
+            "ItemName": "NotepadPlusPlus.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\NotepadPlusPlus.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 2,
+              "Line": "Tags: pes",
+              "Filename": "NotepadPlusPlus.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\NotepadPlusPlus.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "pes",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "pes",
+                  "Index": 6,
+                  "Length": 3,
+                  "Value": "pes",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Nsulpsulpdapeto",
+            "ItemName": "NotepadPlusPlus.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\NotepadPlusPlus.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 4,
+              "Line": "function __Demo__Otu-Nsulpsulpdapeto {",
+              "Filename": "NotepadPlusPlus.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\NotepadPlusPlus.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Nsulpsulpdapeto __Demo__Otu- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Nsulpsulpdapeto",
+                  "Index": 21,
+                  "Length": 15,
+                  "Value": "Nsulpsulpdapeto",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "tho",
+              "imagemagick",
+              "batch",
+              "convert",
+              "profile",
+              "theme",
+              "windows",
+              "explorer",
+              "background",
+              "vscode",
+              "background"
+            ],
+            "ItemName": "ImageConvert.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 266,
+              "Line": "Tags: tho imagemagick batch convert profile theme ``(cat \"$PsScriptRoot/../res/imageconvert.setting.json\" | ConvertFrom-Json).Processes.Tags``",
+              "Filename": "ImageConvert.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "tho imagemagick batch convert profile theme ``(cat \"$PsScriptRoot/../res/imageconvert.setting.json\" | ConvertFrom-Json).Processes.Tags``",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "tho imagemagick batch convert profile theme ``(cat \"$PsScriptRoot/../res/imageconvert.setting.json\" | ConvertFrom-Json).Processes.Tags``",
+                  "Index": 6,
+                  "Length": 136,
+                  "Value": "tho imagemagick batch convert profile theme ``(cat \"$PsScriptRoot/../res/imageconvert.setting.json\" | ConvertFrom-Json).Processes.Tags``",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "eme",
+              "folder",
+              "size",
+              "pie",
+              "chart",
+              "PsFolderSize"
+            ],
+            "ItemName": "Pychart.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 150,
+              "Line": "Tags: eme folder size pie chart PsFolderSize",
+              "Filename": "Pychart.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "eme folder size pie chart PsFolderSize",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "eme folder size pie chart PsFolderSize",
+                  "Index": 6,
+                  "Length": 38,
+                  "Value": "eme folder size pie chart PsFolderSize",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Ptrahcy",
+            "ItemName": "Pychart.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 21,
+              "Line": "function __Demo__Swoh-Ptrahcy {",
+              "Filename": "Pychart.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Ptrahcy __Demo__Swoh- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Ptrahcy",
+                  "Index": 22,
+                  "Length": 7,
+                  "Value": "Ptrahcy",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Mkoobhtnomlecxes",
+            "ItemName": "MsExcel.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\MsExcel.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 201,
+              "Line": "function __Demo__Nwe-Mkoobhtnomlecxes {",
+              "Filename": "MsExcel.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\MsExcel.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Mkoobhtnomlecxes __Demo__Nwe- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Mkoobhtnomlecxes",
+                  "Index": 21,
+                  "Length": 16,
+                  "Value": "Mkoobhtnomlecxes",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "the",
+              "imagemagick",
+              "image",
+              "convert",
+              "icon",
+              "ico"
+            ],
+            "ItemName": "ImageConvert.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 192,
+              "Line": "Tags: the imagemagick image convert icon ico",
+              "Filename": "ImageConvert.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "the imagemagick image convert icon ico",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "the imagemagick image convert icon ico",
+                  "Index": 6,
+                  "Length": 38,
+                  "Value": "the imagemagick image convert icon ico",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Fenihcamepytms",
+            "ItemName": "Fsm.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 26,
+              "Line": "function __Demo__Gte-Fenihcamepytms {",
+              "Filename": "Fsm.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Fenihcamepytms __Demo__Gte- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Fenihcamepytms",
+                  "Index": 21,
+                  "Length": 14,
+                  "Value": "Fenihcamepytms",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "oth",
+              "imagemagick",
+              "image",
+              "convert",
+              "webp"
+            ],
+            "ItemName": "ImageConvert.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 3,
+              "Line": "Tags: oth imagemagick image convert webp",
+              "Filename": "ImageConvert.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "oth imagemagick image convert webp",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "oth imagemagick image convert webp",
+                  "Index": 6,
+                  "Length": 34,
+                  "Value": "oth imagemagick image convert webp",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Fenihcamgnirtsms",
+            "ItemName": "Fsm.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 63,
+              "Line": "function __Demo__Gte-Fenihcamgnirtsms {",
+              "Filename": "Fsm.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Fenihcamgnirtsms __Demo__Gte- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Fenihcamgnirtsms",
+                  "Index": 21,
+                  "Length": 16,
+                  "Value": "Fenihcamgnirtsms",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Ftrahcezisredlo",
+            "ItemName": "Pychart.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 152,
+              "Line": "function __Demo__Swoh-Ftrahcezisredlo {",
+              "Filename": "Pychart.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Ftrahcezisredlo __Demo__Swoh- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Ftrahcezisredlo",
+                  "Index": 22,
+                  "Length": 15,
+                  "Value": "Ftrahcezisredlo",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Cerusol",
+            "ItemName": "Fsm.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 8,
+              "Line": "function __Demo__Nwe-Cerusol {",
+              "Filename": "Fsm.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Cerusol __Demo__Nwe- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Cerusol",
+                  "Index": 21,
+                  "Length": 7,
+                  "Value": "Cerusol",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "hir",
+              "string"
+            ],
+            "ItemName": "Fsm.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 61,
+              "Line": "Tags: hir string",
+              "Filename": "Fsm.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "hir string",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "hir string",
+                  "Index": 6,
+                  "Length": 10,
+                  "Value": "hir string",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "sep",
+              "type"
+            ],
+            "ItemName": "Fsm.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 24,
+              "Line": "Tags: sep type",
+              "Filename": "Fsm.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "sep type",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "sep type",
+                  "Index": 6,
+                  "Length": 8,
+                  "Value": "sep type",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "nti",
+              "closure"
+            ],
+            "ItemName": "Fsm.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 6,
+              "Line": "Tags: nti closure",
+              "Filename": "Fsm.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "nti closure",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "nti closure",
+                  "Index": 6,
+                  "Length": 11,
+                  "Value": "nti closure",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "eme",
+              "fsm",
+              "finite",
+              "state",
+              "machine",
+              "pattern",
+              "match"
+            ],
+            "ItemName": "Fsm.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 2,
+              "Line": "Tags: eme fsm finite state machine pattern match",
+              "Filename": "Fsm.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "eme fsm finite state machine pattern match",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "eme fsm finite state machine pattern match",
+                  "Index": 6,
+                  "Length": 42,
+                  "Value": "eme fsm finite state machine pattern match",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Iredlofetadotmet",
+            "ItemName": "DateFolder.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 102,
+              "Line": "function __Demo__Mevo-Iredlofetadotmet {",
+              "Filename": "DateFolder.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Iredlofetadotmet __Demo__Mevo- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Iredlofetadotmet",
+                  "Index": 22,
+                  "Length": 16,
+                  "Value": "Iredlofetadotmet",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Iemitetadmet",
+            "ItemName": "DateFolder.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 34,
+              "Line": "function __Demo__Gte-Iemitetadmet {",
+              "Filename": "DateFolder.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Iemitetadmet __Demo__Gte- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Iemitetadmet",
+                  "Index": 21,
+                  "Length": 12,
+                  "Value": "Iemitetadmet",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Iypocmet",
+            "ItemName": "DateFolder.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 5,
+              "Line": "function __Demo__Cerapmo-Iypocmet {",
+              "Filename": "DateFolder.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Iypocmet __Demo__Cerapmo- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Iypocmet",
+                  "Index": 25,
+                  "Length": 8,
+                  "Value": "Iypocmet",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "veh",
+              "move",
+              "date",
+              "folder"
+            ],
+            "ItemName": "DateFolder.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 100,
+              "Line": "Tags: veh move date folder",
+              "Filename": "DateFolder.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "veh move date folder",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "veh move date folder",
+                  "Index": 6,
+                  "Length": 20,
+                  "Value": "veh move date folder",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "ira",
+              "date",
+              "time"
+            ],
+            "ItemName": "DateFolder.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 32,
+              "Line": "Tags: ira date time",
+              "Filename": "DateFolder.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "ira date time",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "ira date time",
+                  "Index": 6,
+                  "Length": 13,
+                  "Value": "ira date time",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "ius",
+              "compare",
+              "copy"
+            ],
+            "ItemName": "DateFolder.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 3,
+              "Line": "Tags: ius compare copy",
+              "Filename": "DateFolder.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "ius compare copy",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "ius compare copy",
+                  "Index": 6,
+                  "Length": 16,
+                  "Value": "ius compare copy",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": [
+              "what",
+              "imagemagick",
+              "image",
+              "convert",
+              "resize"
+            ],
+            "ItemName": "ImageConvert.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 143,
+              "Line": "Tags: what imagemagick image convert resize",
+              "Filename": "ImageConvert.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1",
+              "Pattern": "(?<=^tags:\\s).+$",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "what imagemagick image convert resize",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "what imagemagick image convert resize",
+                  "Index": 6,
+                  "Length": 37,
+                  "Value": "what imagemagick image convert resize",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          },
+          {
+            "Matches": "Legakcaplaco",
+            "ItemName": "Windows.ps1",
+            "ScriptModule": "PsTool",
+            "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Windows.ps1",
+            "Capture": {
+              "IgnoreCase": true,
+              "LineNumber": 3,
+              "Line": "function __Demo__Gte-Legakcaplaco {",
+              "Filename": "Windows.ps1",
+              "Path": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Windows.ps1",
+              "Pattern": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))",
+              "Context": null,
+              "Matches": [
+                {
+                  "Groups": "Legakcaplaco __Demo__Gte- {",
+                  "Success": true,
+                  "Name": "0",
+                  "Captures": "Legakcaplaco",
+                  "Index": 21,
+                  "Length": 12,
+                  "Value": "Legakcaplaco",
+                  "ValueSpan": null
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "Name": "Get files matching tag 'est'",
+        "Run": "Get-DemandScript -InputObject est -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'OneTab'",
+        "Run": "Get-DemandScript -InputObject OneTab -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'ot'",
+        "Run": "Get-DemandScript -InputObject ot -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'markdown'",
+        "Run": "Get-DemandScript -InputObject markdown -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'md'",
+        "Run": "Get-DemandScript -InputObject md -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'link'",
+        "Run": "Get-DemandScript -InputObject link -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'url'",
+        "Run": "Get-DemandScript -InputObject url -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'convert'",
+        "Run": "Get-DemandScript -InputObject convert -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": [
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1",
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+        ]
+      },
+      {
+        "Name": "Get files matching tag 'Onwodkramotbaten'",
+        "Run": "Get-DemandScript -InputObject Onwodkramotbaten -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'uan'",
+        "Run": "Get-DemandScript -InputObject uan -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'package'",
+        "Run": "Get-DemandScript -InputObject package -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'json'",
+        "Run": "Get-DemandScript -InputObject json -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'installed'",
+        "Run": "Get-DemandScript -InputObject installed -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'powershell'",
+        "Run": "Get-DemandScript -InputObject powershell -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'module'",
+        "Run": "Get-DemandScript -InputObject module -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'sin'",
+        "Run": "Get-DemandScript -InputObject sin -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'choco'",
+        "Run": "Get-DemandScript -InputObject choco -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'chocolatey'",
+        "Run": "Get-DemandScript -InputObject chocolatey -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'local'",
+        "Run": "Get-DemandScript -InputObject local -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'package'",
+        "Run": "Get-DemandScript -InputObject package -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'list'",
+        "Run": "Get-DemandScript -InputObject list -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'json'",
+        "Run": "Get-DemandScript -InputObject json -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'ter'",
+        "Run": "Get-DemandScript -InputObject ter -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'choco'",
+        "Run": "Get-DemandScript -InputObject choco -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'chocolatey'",
+        "Run": "Get-DemandScript -InputObject chocolatey -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'local'",
+        "Run": "Get-DemandScript -InputObject local -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'package'",
+        "Run": "Get-DemandScript -InputObject package -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'install'",
+        "Run": "Get-DemandScript -InputObject install -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'json'",
+        "Run": "Get-DemandScript -InputObject json -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Pnosjegakca'",
+        "Run": "Get-DemandScript -InputObject Pnosjegakca -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Ctsilegakcaplacolocoh'",
+        "Run": "Get-DemandScript -InputObject Ctsilegakcaplacolocoh -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Ctsilegakcaplacolocoh'",
+        "Run": "Get-DemandScript -InputObject Ctsilegakcaplacolocoh -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsProfile\\demand\\Package.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Ipbewegam'",
+        "Run": "Get-DemandScript -InputObject Ipbewegam -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Ieziseregam'",
+        "Run": "Get-DemandScript -InputObject Ieziseregam -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Inociegam'",
+        "Run": "Get-DemandScript -InputObject Inociegam -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Itrevnocegam'",
+        "Run": "Get-DemandScript -InputObject Itrevnocegam -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Mlecxes'",
+        "Run": "Get-DemandScript -InputObject Mlecxes -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\MsExcel.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Mteehskrowlecxes'",
+        "Run": "Get-DemandScript -InputObject Mteehskrowlecxes -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\MsExcel.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'itn'",
+        "Run": "Get-DemandScript -InputObject itn -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'python'",
+        "Run": "Get-DemandScript -InputObject python -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'pie'",
+        "Run": "Get-DemandScript -InputObject pie -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'chart'",
+        "Run": "Get-DemandScript -InputObject chart -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'pes'",
+        "Run": "Get-DemandScript -InputObject pes -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\NotepadPlusPlus.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Nsulpsulpdapeto'",
+        "Run": "Get-DemandScript -InputObject Nsulpsulpdapeto -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\NotepadPlusPlus.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'tho'",
+        "Run": "Get-DemandScript -InputObject tho -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'imagemagick'",
+        "Run": "Get-DemandScript -InputObject imagemagick -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'batch'",
+        "Run": "Get-DemandScript -InputObject batch -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'convert'",
+        "Run": "Get-DemandScript -InputObject convert -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": [
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1",
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+        ]
+      },
+      {
+        "Name": "Get files matching tag 'profile'",
+        "Run": "Get-DemandScript -InputObject profile -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'theme'",
+        "Run": "Get-DemandScript -InputObject theme -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'windows'",
+        "Run": "Get-DemandScript -InputObject windows -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'explorer'",
+        "Run": "Get-DemandScript -InputObject explorer -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'background'",
+        "Run": "Get-DemandScript -InputObject background -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'vscode'",
+        "Run": "Get-DemandScript -InputObject vscode -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'background'",
+        "Run": "Get-DemandScript -InputObject background -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'eme'",
+        "Run": "Get-DemandScript -InputObject eme -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": [
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1"
+        ]
+      },
+      {
+        "Name": "Get files matching tag 'folder'",
+        "Run": "Get-DemandScript -InputObject folder -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": [
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1",
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1"
+        ]
+      },
+      {
+        "Name": "Get files matching tag 'size'",
+        "Run": "Get-DemandScript -InputObject size -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'pie'",
+        "Run": "Get-DemandScript -InputObject pie -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'chart'",
+        "Run": "Get-DemandScript -InputObject chart -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'PsFolderSize'",
+        "Run": "Get-DemandScript -InputObject PsFolderSize -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Ptrahcy'",
+        "Run": "Get-DemandScript -InputObject Ptrahcy -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Mkoobhtnomlecxes'",
+        "Run": "Get-DemandScript -InputObject Mkoobhtnomlecxes -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\MsExcel.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'the'",
+        "Run": "Get-DemandScript -InputObject the -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'imagemagick'",
+        "Run": "Get-DemandScript -InputObject imagemagick -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'image'",
+        "Run": "Get-DemandScript -InputObject image -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'convert'",
+        "Run": "Get-DemandScript -InputObject convert -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": [
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1",
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+        ]
+      },
+      {
+        "Name": "Get files matching tag 'icon'",
+        "Run": "Get-DemandScript -InputObject icon -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'ico'",
+        "Run": "Get-DemandScript -InputObject ico -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Fenihcamepytms'",
+        "Run": "Get-DemandScript -InputObject Fenihcamepytms -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'oth'",
+        "Run": "Get-DemandScript -InputObject oth -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'imagemagick'",
+        "Run": "Get-DemandScript -InputObject imagemagick -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'image'",
+        "Run": "Get-DemandScript -InputObject image -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'convert'",
+        "Run": "Get-DemandScript -InputObject convert -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": [
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1",
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+        ]
+      },
+      {
+        "Name": "Get files matching tag 'webp'",
+        "Run": "Get-DemandScript -InputObject webp -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Fenihcamgnirtsms'",
+        "Run": "Get-DemandScript -InputObject Fenihcamgnirtsms -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Ftrahcezisredlo'",
+        "Run": "Get-DemandScript -InputObject Ftrahcezisredlo -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Cerusol'",
+        "Run": "Get-DemandScript -InputObject Cerusol -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'hir'",
+        "Run": "Get-DemandScript -InputObject hir -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'string'",
+        "Run": "Get-DemandScript -InputObject string -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'sep'",
+        "Run": "Get-DemandScript -InputObject sep -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'type'",
+        "Run": "Get-DemandScript -InputObject type -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'nti'",
+        "Run": "Get-DemandScript -InputObject nti -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'closure'",
+        "Run": "Get-DemandScript -InputObject closure -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'eme'",
+        "Run": "Get-DemandScript -InputObject eme -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": [
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1",
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1"
+        ]
+      },
+      {
+        "Name": "Get files matching tag 'fsm'",
+        "Run": "Get-DemandScript -InputObject fsm -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'finite'",
+        "Run": "Get-DemandScript -InputObject finite -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'state'",
+        "Run": "Get-DemandScript -InputObject state -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'machine'",
+        "Run": "Get-DemandScript -InputObject machine -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'pattern'",
+        "Run": "Get-DemandScript -InputObject pattern -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'match'",
+        "Run": "Get-DemandScript -InputObject match -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Fsm.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Iredlofetadotmet'",
+        "Run": "Get-DemandScript -InputObject Iredlofetadotmet -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Iemitetadmet'",
+        "Run": "Get-DemandScript -InputObject Iemitetadmet -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Iypocmet'",
+        "Run": "Get-DemandScript -InputObject Iypocmet -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'veh'",
+        "Run": "Get-DemandScript -InputObject veh -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'move'",
+        "Run": "Get-DemandScript -InputObject move -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'date'",
+        "Run": "Get-DemandScript -InputObject date -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'folder'",
+        "Run": "Get-DemandScript -InputObject folder -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": [
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1",
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Pychart.ps1"
+        ]
+      },
+      {
+        "Name": "Get files matching tag 'ira'",
+        "Run": "Get-DemandScript -InputObject ira -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'date'",
+        "Run": "Get-DemandScript -InputObject date -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'time'",
+        "Run": "Get-DemandScript -InputObject time -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'ius'",
+        "Run": "Get-DemandScript -InputObject ius -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'compare'",
+        "Run": "Get-DemandScript -InputObject compare -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'copy'",
+        "Run": "Get-DemandScript -InputObject copy -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\DateFolder.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'what'",
+        "Run": "Get-DemandScript -InputObject what -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'imagemagick'",
+        "Run": "Get-DemandScript -InputObject imagemagick -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'image'",
+        "Run": "Get-DemandScript -InputObject image -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'convert'",
+        "Run": "Get-DemandScript -InputObject convert -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": [
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsMarkdown\\demand\\OneTab.ps1",
+          "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+        ]
+      },
+      {
+        "Name": "Get files matching tag 'resize'",
+        "Run": "Get-DemandScript -InputObject resize -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\ImageConvert.ps1"
+      },
+      {
+        "Name": "Get files matching tag 'Legakcaplaco'",
+        "Run": "Get-DemandScript -InputObject Legakcaplaco -Directory \"C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\\"",
+        "Value": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\test\\res\\DemandFile_DemoTree\\PsTool\\demand\\Windows.ps1"
+      }
+    ]
+  }
+}

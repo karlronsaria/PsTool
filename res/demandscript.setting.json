@@ -2,11 +2,11 @@
     "Profiles": [
         {
             "Version": 5,
-            "Location": "WindowsPowerShell"
+            "Location": "WindowsPowerShell/Scripts"
         },
         {
             "Version": 7,
-            "Location": "PowerShell"
+            "Location": "PowerShell/Scripts"
         }
     ],
     "Patterns": [
@@ -16,10 +16,12 @@
         },
         {
             "Name": "Function",
-            "Value": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*\\{$)"
+            "Value": "(?<=^function\\s+(\\w+-)?)\\w+(?=\\s*(\\{|$))"
         }
     ],
+    "ScriptPatterns": [ "Tag" ],
     "DefaultVersion": 5,
+    "DefaultStartingDirectory": "\"$env:OneDrive/Documents\"",
     "LocalDemandFile": {
         "Suffix": "pstool.demand.json",
         "Prefix": [

@@ -1,5 +1,18 @@
 # issue
 
+- [ ] 2023_12_27_042818
+  - where: Filter#Query-Object
+  - howto
+
+    ```powershell
+    Get-DemandScript -All -Directory "C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\test\res\DemandFile_DemoTree\" | select FullName | what 0
+    ```
+
+  - actual
+    - returns entire list
+  - expected
+    - returns only first element in list
+
 ## complete
 
 - [x] 2023_12_25_033119

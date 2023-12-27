@@ -1,0 +1,15 @@
+{
+    "Link": {
+        "Notebook": "/note/*.md"
+    },
+    "UxWrite": {
+        "ImageProcessAppPath": "magick",
+        "DefaultExtension": "png",
+        "DefaultImageSize": 32,
+        "ResourceDir": "res",
+        "Delimiter": "!!",
+        "DateTimeFormat": "yyyy_MM_dd_HHmmss",
+        "DateTimePattern": "\\d{4}_\\d{2}_\\d{2}_\\d{6}",
+        "SplitDelimiter": ":"
+    }
+}

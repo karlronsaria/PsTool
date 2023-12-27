@@ -1,0 +1,23 @@
+{
+    "DefaultRemote": "origin",
+    "DefaultBranch": "master",
+    "Repository": [
+        "MarkdownTree",
+        "PsSchedule",
+        "PsTask",
+        "PsMarkdown",
+        "PsTool"
+    ],
+    "ScriptModule": [
+        "MarkdownTree",
+        "PsSchedule",
+        "PsMarkdown",
+        "PsTool"
+    ],
+    "ElevatedScriptModule": [
+        "PsTask"
+    ],
+    "QuickCommitMessage": "routine commit",
+    "LocalGitSettingsFileName": "__git.json",
+    "TempPath": "$env:TEMP"
+}

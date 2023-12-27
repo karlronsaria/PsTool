@@ -1,0 +1,329 @@
+﻿{
+  "Packages": [
+    {
+      "Name":  "Azure",
+      "Version":  "5.1.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "Azure.AnalysisServices",
+      "Version":  "0.5.0",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "Azure.Storage",
+      "Version":  "4.2.1",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM",
+      "Version":  "5.7.0",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.AnalysisServices",
+      "Version":  "0.6.6",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.ApiManagement",
+      "Version":  "5.1.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.ApplicationInsights",
+      "Version":  "0.1.3",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Automation",
+      "Version":  "4.3.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Backup",
+      "Version":  "4.0.4",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Batch",
+      "Version":  "4.0.6",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Billing",
+      "Version":  "0.14.1",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Cdn",
+      "Version":  "4.2.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.CognitiveServices",
+      "Version":  "0.9.4",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Compute",
+      "Version":  "4.6.0",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Consumption",
+      "Version":  "0.3.1",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.ContainerInstance",
+      "Version":  "0.2.5",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.ContainerRegistry",
+      "Version":  "1.0.4",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.DataFactories",
+      "Version":  "4.2.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.DataFactoryV2",
+      "Version":  "0.5.3",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.DataLakeAnalytics",
+      "Version":  "4.2.3",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.DataLakeStore",
+      "Version":  "5.2.0",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.DevTestLabs",
+      "Version":  "4.0.4",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Dns",
+      "Version":  "4.1.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.EventGrid",
+      "Version":  "0.3.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.EventHub",
+      "Version":  "0.6.3",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.HDInsight",
+      "Version":  "4.1.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Insights",
+      "Version":  "4.0.4",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.IotHub",
+      "Version":  "3.1.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.KeyVault",
+      "Version":  "4.3.0",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.LogicApp",
+      "Version":  "4.0.3",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.MachineLearning",
+      "Version":  "0.17.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.MachineLearningCompute",
+      "Version":  "0.4.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.MarketplaceOrdering",
+      "Version":  "0.2.1",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Media",
+      "Version":  "0.9.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Network",
+      "Version":  "5.4.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.NotificationHubs",
+      "Version":  "4.1.1",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.OperationalInsights",
+      "Version":  "4.3.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.PowerBIEmbedded",
+      "Version":  "4.1.4",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Profile",
+      "Version":  "4.6.0",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.RecoveryServices",
+      "Version":  "4.1.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.RecoveryServices.Backup",
+      "Version":  "4.1.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.RecoveryServices.SiteRecovery",
+      "Version":  "0.2.4",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.RedisCache",
+      "Version":  "4.1.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Relay",
+      "Version":  "0.3.3",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Resources",
+      "Version":  "5.5.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Scheduler",
+      "Version":  "0.16.3",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.ServerManagement",
+      "Version":  "4.1.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.ServiceBus",
+      "Version":  "0.6.4",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.ServiceFabric",
+      "Version":  "0.3.4",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.SiteRecovery",
+      "Version":  "5.0.6",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Sql",
+      "Version":  "4.4.0",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Storage",
+      "Version":  "4.2.3",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.StreamAnalytics",
+      "Version":  "4.0.4",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Tags",
+      "Version":  "4.0.1",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.TrafficManager",
+      "Version":  "4.0.3",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.UsageAggregates",
+      "Version":  "4.0.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "AzureRM.Websites",
+      "Version":  "4.2.2",
+      "Repository":  "https://www.powershellgallery.com/api/v2/"
+    },
+    {
+      "Name":  "Configuration",
+      "Version":  "1.5.1",
+      "Repository":  "PSGallery"
+    },
+    {
+      "Name":  "Metadata",
+      "Version":  "1.5.7",
+      "Repository":  "PSGallery"
+    },
+    {
+      "Name":  "PSClock",
+      "Version":  "1.2.0",
+      "Repository":  "PSGallery"
+    },
+    {
+      "Name":  "PSExcel",
+      "Version":  "1.0.2",
+      "Repository":  "PSGallery"
+    },
+    {
+      "Name":  "PSFolderSize",
+      "Version":  "1.7.1",
+      "Repository":  "PSGallery"
+    },
+    {
+      "Name":  "PSGSuite",
+      "Version":  "2.36.4",
+      "Repository":  "PSGallery"
+    },
+    {
+      "Name":  "PSTimers",
+      "Version":  "1.0.1",
+      "Repository":  "PSGallery"
+    },
+    {
+      "Name":  "ThreadJob",
+      "Version":  "2.0.3",
+      "Repository":  "PSGallery"
+    }
+  ]
+}

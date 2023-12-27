@@ -1,0 +1,25 @@
+{
+  "DateTime": "2023-12-17T02:16:23.9374465-08:00",
+  "Packages": [
+    {
+      "Name": "Configuration",
+      "Version": "1.6.0",
+      "Repository": "PSGallery"
+    },
+    {
+      "Name": "Metadata",
+      "Version": "1.5.7",
+      "Repository": "PSGallery"
+    },
+    {
+      "Name": "posh-git",
+      "Version": "1.1.0",
+      "Repository": "PSGallery"
+    },
+    {
+      "Name": "PSTimers",
+      "Version": "2.1.0",
+      "Repository": "PSGallery"
+    }
+  ]
+}
