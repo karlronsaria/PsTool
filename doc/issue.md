@@ -3,6 +3,14 @@
 ## complete
 
 - [x] 2023_12_27_042818
+  - todo
+    - [ ] unit test
+      - ``| Query -1``
+      - ``| Query 0``
+      - ``| Query 1``
+      - ``| Query -Index -1``
+      - ``| Query -Index 0``
+      - ``| Query -Index 1``
   - where: Filter#Query-Object
   - howto
 
