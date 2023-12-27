@@ -1,3 +1,56 @@
+function Get-What {
+    $setting =
+        cat "$PsScriptRoot\..\res\demandscript.setting.json" |
+        ConvertFrom-Json
+
+    $modules =
+        Get-DemandScript -All |
+        Split-Path -Parent |
+        Split-Path -Parent |
+        Split-Path -Leaf
+
+    $strings =
+        Get-DemandScript -All |
+        sls $setting.Patterns.Value |
+        foreach {
+          $file = $_.Path
+
+          [Regex]::Matches(
+            $_,
+            "(?<=\s+)(?<word>\w+)|````(?<script>[^``]+)````"
+          ) |
+          foreach {
+            $word = $_.Groups['word']
+
+            if ($word.Success) {
+              $word.Value
+            }
+
+            $script = $_.Groups['script']
+
+            if ($script.Success) {
+              iex $(
+                $script.Value -replace `
+                  "\`$PsScriptRoot",
+                  "`$(`"$(Split-Path $file -Parent)`")"
+              )
+            }
+          }
+        }
+
+    $select =
+        $setting.
+        Commands.
+        Select.
+        ($PsVersionTable.PsVersion.Major)
+
+    return $(
+        (@($modules) + @($strings)) |
+        & (iex $select) |
+        sort
+    )
+}
+
 function Get-DemandMatch {
     [OutputType([String])]
     Param(
@@ -10,13 +63,21 @@ function Get-DemandMatch {
     )
 
     Begin {
+        $setting = cat "$PsScriptRoot\..\res\demandscript.setting.json" |
+            ConvertFrom-Json
+
         if ($Pattern.Count -eq 0) {
             $Pattern =
-                (cat "$PsScriptRoot\..\res\demandscript.setting.json" |
-                ConvertFrom-Json).
+                $setting.
                 Patterns.
                 Value
         }
+
+        $select =
+            $setting.
+            Commands.
+            Select.
+            ($PsVersionTable.PsVersion.Major)
 
         $list = @()
     }
@@ -54,7 +115,7 @@ function Get-DemandMatch {
                       }
                     }
                   } |
-                  select -Unique -CaseInsensitive
+                  & (iex $select)
                 ItemName = Split-Path $_.Path -Leaf
                 ScriptModule =
                   $_.Path |
@@ -127,9 +188,15 @@ function Get-DemandScript {
                 Split-Path -Parent |
                 Split-Path -Leaf
 
+            $select =
+                $setting.
+                Commands.
+                Select.
+                ($PsVersionTable.PsVersion.Major)
+
             return $(
                 (@($strings) + @($modules)) |
-                select -Unique -CaseInsensitive |
+                & (iex $select) |
                 where { $_ -like "$C*" } |
                 sort
             )
@@ -151,6 +218,7 @@ function Get-DemandScript {
         [Switch]
         $AllProfiles,
 
+        # todo: consider returning to 'No Parameters Means All'
         [Parameter(ParameterSetName = 'AllFiles')]
         [Switch]
         $All
@@ -203,6 +271,12 @@ function Get-DemandScript {
         return
     }
 
+    $select =
+        $setting.
+        Commands.
+        Select.
+        ($PsVersionTable.PsVersion.Major)
+
     Get-DemandScript `
         -AllProfiles:$AllProfiles `
         -All |
@@ -211,7 +285,7 @@ function Get-DemandScript {
     where {
         $scriptModule =
             $_.Group.ScriptModule |
-            select -Unique -CaseInsensitive
+            & (iex $select)
 
         $diff = diff `
             ($_.Group.Matches + @($scriptModule)) `
@@ -225,7 +299,7 @@ function Get-DemandScript {
     foreach {
         $_.Group.Path
     } |
-    select -Unique -CaseInsensitive
+    & (iex $select)
 }
 
 function Import-DemandModule {
@@ -277,7 +351,7 @@ function Import-DemandModule {
 
             return $(
                 (@($strings) + @($modules)) |
-                select -Unique -CaseInsensitive |
+                & (iex $select) |
                 where { $_ -like "$C*" } |
                 sort
             )
