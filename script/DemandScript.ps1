@@ -42,7 +42,7 @@ function Get-DemandMatch {
                   foreach {
                     [Regex]::Matches(
                       $_,
-                      "(?<=\s+)(?<word>\w+)|````(?<script>[^``]+)````"
+                      "(?<=^|\s+)(?<word>\w+)|````(?<script>[^``]+)````"
                     ) |
                     foreach {
                       $script = $_.Groups['script']
@@ -93,7 +93,6 @@ function Get-DemandScript {
     Param(
         [ArgumentCompleter({
             # todo: Repetetive. Consider cleaning up.
-            # note: Does not work in PowerShell 5.
             Param($A, $B, $C)
 
             $setting =
@@ -108,7 +107,7 @@ function Get-DemandScript {
 
                   [Regex]::Matches(
                     $_,
-                    "(?<=\s+)(?<word>\w+)|````(?<script>[^``]+)````"
+                    "(?<=^|\s+)(?<word>\w+)|````(?<script>[^``]+)````"
                   ) |
                   foreach {
                     $script = $_.Groups['script']
@@ -246,7 +245,7 @@ function Get-DemandScript {
     foreach {
         $_.Group.Path
     } |
-    & (iex $select)
+    select -Unique
 }
 
 function Import-DemandModule {
@@ -254,12 +253,17 @@ function Import-DemandModule {
     Param(
         [ArgumentCompleter({
             # todo: Repetetive. Consider cleaning up.
-            # note: Does not work in PowerShell 5.
             Param($A, $B, $C)
 
             $setting =
                 cat "$PsScriptRoot\..\res\demandscript.setting.json" |
                 ConvertFrom-Json
+
+            $modules =
+                Get-DemandScript -All |
+                Split-Path -Parent |
+                Split-Path -Parent |
+                Split-Path -Leaf
 
             $strings =
                 Get-DemandScript -All |
@@ -269,9 +273,15 @@ function Import-DemandModule {
 
                   [Regex]::Matches(
                     $_,
-                    "(?<=\s+)(?<word>\w+)|````(?<script>[^``]+)````"
+                    "(?<=^|\s+)(?<word>\w+)|````(?<script>[^``]+)````"
                   ) |
                   foreach {
+                    $word = $_.Groups['word']
+
+                    if ($word.Success) {
+                      $word.Value
+                    }
+
                     $script = $_.Groups['script']
 
                     if ($script.Success) {
@@ -281,25 +291,19 @@ function Import-DemandModule {
                           "`$(`"$(Split-Path $file -Parent)`")"
                       )
                     }
-
-                    $word = $_.Groups['word']
-
-                    if ($word.Success) {
-                      $word.Value
-                    }
                   }
                 }
 
-            $modules =
-                Get-DemandScript -All |
-                Split-Path -Parent |
-                Split-Path -Parent |
-                Split-Path -Leaf
+            $select =
+                $setting.
+                Commands.
+                Select.
+                ($PsVersionTable.PsVersion.Major)
 
             return $(
-                (@($strings) + @($modules)) |
-                & (iex $select) |
+                (@($modules) + @($strings)) |
                 where { $_ -like "$C*" } |
+                & (iex $select) |
                 sort
             )
         })]

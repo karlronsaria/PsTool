@@ -1,6 +1,6 @@
 function Get-DemandMatchWord {
     $setting =
-        cat "$PsScriptRoot\..\res\demandscript.setting.json" |
+        cat "$PsScriptRoot\..\..\res\demandscript.setting.json" |
         ConvertFrom-Json
 
     $modules =

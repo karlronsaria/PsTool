@@ -1,6 +1,66 @@
-# Tags:
+<#
+Tags: fsm finite state machine pattern match
+#>
 
-function Get-FiniteStateMachine {
+<#
+Tags: closure
+#>
+function New-Closure {
+    Param(
+        [ScriptBlock]
+        $ScriptBlock,
+
+        $Parameters
+    )
+
+    return & {
+        Param($Parameters)
+        return $ScriptBlock.GetNewClosure()
+    } $Parameters
+}
+
+<#
+.DESCRIPTION
+Tags: type
+#>
+function Get-FsmTypeMachine {
+    Param(
+        [Hashtable]
+        $Machine
+    )
+
+    return New-Closure `
+        -Parameters ([PsCustomObject]@{
+            Machine = $Machine
+        }) `
+        -ScriptBlock `
+{
+Param(
+    [Parameter(
+        ValueFromPipeline = $true,
+        Position = 0
+    )]
+    [Object[]]
+    $InputObject,
+
+    [Object[]]
+    $Arguments
+)
+
+foreach ($item in $InputObject) {
+    $Parameters.Machine[
+        $item.GetType()
+    ].
+    Invoke($Arguments)
+}
+}
+}
+
+<#
+.DESCRIPTION
+Tags: string
+#>
+function Get-FsmStringMachine {
     Param(
         [String]
         $Pattern,
@@ -8,20 +68,6 @@ function Get-FiniteStateMachine {
         [Hashtable]
         $Machine
     )
-
-    function New-Closure {
-        Param(
-            [ScriptBlock]
-            $ScriptBlock,
-
-            $Parameters
-        )
-
-        return & {
-            Param($Parameters)
-            return $ScriptBlock.GetNewClosure()
-        } $Parameters
-    }
 
     return New-Closure `
         -Parameters ([PsCustomObject]@{
