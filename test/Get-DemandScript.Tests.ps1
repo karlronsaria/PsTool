@@ -34,7 +34,11 @@ Describe 'Get-DemandScript' {
                 }
 
                 $actual | Should Not Be $null
+
+                # If not converted to a list, will call ``[Hashtable]``'s
+                # ``Count`` instead
                 @($actual).Count | Should Be $Value.Count
+
                 diff ($actual) ($Value) | Should Be $null
             }
         }
