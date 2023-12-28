@@ -216,6 +216,8 @@ function Rename-Item {
                     'ByLiteralPath' { $LiteralPath }
                 }
 
+                $name = (Get-Item $name).Name
+
                 $menu = @"
 {
     "Preferences": { "Caption": "Rename-Item: $name" },

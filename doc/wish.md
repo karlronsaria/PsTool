@@ -1,11 +1,16 @@
 # wish
 
+- ``FileSystem#Rename-Item``
+  - [ ] were case-sensitive
+
 ## complete
 
 - Demand
   - [x] ability to add tags programatically
   - [x] a cmdlet that imports on-demand scripts requested by a local json file
     - solution: ``res/demandscript.setting.json#LocalDemandFile``
+
+### 2023_12_28
 
 - ``Qualify-Object``
   - [x] consider renaming to "``Query-Object``"
