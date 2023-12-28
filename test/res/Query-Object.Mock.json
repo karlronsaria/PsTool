@@ -3488,6 +3488,91 @@
   "Expect": {
     "Query": [
       {
+        "Name": "Tree for first item by Index",
+        "Run": [
+          "Query-Object -InputObject $InputObject.Tree -Index 0",
+          "Query-Object -InputObject $InputObject.Tree 0",
+          "$InputObject.Tree | Query-Object 0"
+        ],
+        "Value": [
+          {
+            "Name": "__DEPRECATED",
+            "Parent": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool",
+            "Root": "C:\\",
+            "Exists": true,
+            "FullName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\__DEPRECATED",
+            "Extension": "",
+            "CreationTime": "2023-11-21T19:42:22.131555-08:00",
+            "CreationTimeUtc": "2023-11-22T03:42:22.131555Z",
+            "LastAccessTime": "2023-12-23T22:32:03.2371965-08:00",
+            "LastAccessTimeUtc": "2023-12-24T06:32:03.2371965Z",
+            "LastWriteTime": "2023-11-21T23:34:58.2418554-08:00",
+            "LastWriteTimeUtc": "2023-11-22T07:34:58.2418554Z",
+            "LinkTarget": null,
+            "UnixFileMode": -1,
+            "Attributes": 1072,
+            "PSPath": "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\__DEPRECATED",
+            "PSParentPath": "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool",
+            "PSChildName": "__DEPRECATED",
+            "PSDrive": "C",
+            "PSProvider": "Microsoft.PowerShell.Core\\FileSystem",
+            "PSIsContainer": true,
+            "Mode": "la---",
+            "ModeWithoutHardLink": "la---",
+            "BaseName": "__DEPRECATED",
+            "ResolvedTarget": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\__DEPRECATED",
+            "Target": null,
+            "LinkType": null
+          }
+        ]
+      },
+      {
+        "Name": "Tree for last item by Index",
+        "Run": [
+          "Query-Object -InputObject $InputObject.Tree -Index -1",
+          "Query-Object -InputObject $InputObject.Tree -1",
+          "$InputObject.Tree | Query-Object -1"
+        ],
+        "Value": [
+          {
+            "Name": "Out-.ps1",
+            "Length": 1852,
+            "DirectoryName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\__DEPRECATED",
+            "Directory": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\__DEPRECATED",
+            "IsReadOnly": false,
+            "Exists": true,
+            "FullName": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\__DEPRECATED\\Out-.ps1",
+            "Extension": ".ps1",
+            "CreationTime": "2023-11-21T19:42:35.2035343-08:00",
+            "CreationTimeUtc": "2023-11-22T03:42:35.2035343Z",
+            "LastAccessTime": "2023-12-23T22:35:54.2796522-08:00",
+            "LastAccessTimeUtc": "2023-12-24T06:35:54.2796522Z",
+            "LastWriteTime": "2023-11-21T23:34:58.2418554-08:00",
+            "LastWriteTimeUtc": "2023-11-22T07:34:58.2418554Z",
+            "LinkTarget": null,
+            "UnixFileMode": -1,
+            "Attributes": 1056,
+            "PSPath": "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\__DEPRECATED\\Out-.ps1",
+            "PSParentPath": "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\__DEPRECATED",
+            "PSChildName": "Out-.ps1",
+            "PSDrive": "C",
+            "PSProvider": "Microsoft.PowerShell.Core\\FileSystem",
+            "PSIsContainer": false,
+            "Mode": "la---",
+            "ModeWithoutHardLink": "la---",
+            "VersionInfo": {
+              "value": "File:             C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\__DEPRECATED\\Out-.ps1\r\nInternalName:     \r\nOriginalFilename: \r\nFileVersion:      \r\nFileDescription:  \r\nProduct:          \r\nProductVersion:   \r\nDebug:            False\r\nPatched:          False\r\nPreRelease:       False\r\nPrivateBuild:     False\r\nSpecialBuild:     False\r\nLanguage:         \r\n",
+              "FileVersionRaw": "0.0.0.0",
+              "ProductVersionRaw": "0.0.0.0"
+            },
+            "BaseName": "Out-",
+            "ResolvedTarget": "C:\\Users\\karlr\\OneDrive\\Documents\\WindowsPowerShell\\Scripts\\PsTool\\__DEPRECATED\\Out-.ps1",
+            "Target": null,
+            "LinkType": null
+          }
+        ]
+      },
+      {
         "Name": "Tree for Property BaseName",
         "Run": [
           "Query-Object -InputObject $InputObject.Tree -Property BaseName",

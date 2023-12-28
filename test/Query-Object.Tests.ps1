@@ -34,7 +34,11 @@ Describe 'Query-Object' {
                 }
 
                 $actual | Should Not Be $null
-                $actual.Count | Should Be $Value.Count
+
+                # If not converted to a list, will call ``[Hashtable]``'s
+                # ``Count`` instead
+                @($actual).Count | Should Be $Value.Count
+
                 diff ($actual) ($Value) | Should Be $null
             }
         }
