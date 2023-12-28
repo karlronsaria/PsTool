@@ -34,7 +34,7 @@ Describe 'Get-DemandScript' {
                 }
 
                 $actual | Should Not Be $null
-                $actual.Count | Should Be $Value.Count
+                @($actual).Count | Should Be $Value.Count
                 diff ($actual) ($Value) | Should Be $null
             }
         }
