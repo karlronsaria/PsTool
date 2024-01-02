@@ -225,10 +225,16 @@ function Move-ItemToDateFolder {
                     -WhatIf:$WhatIf
             }
 
-            $dest = "$Path\$subdir\$_"
+            $dest = "$Path\$subdir\$($_.Name)"
             $properties = $_ | Get-ItemDateTime
             move $_.FullName $dest -Force:$Force -WhatIf:$WhatIf
-            $item = dir -Path $dest
+
+            $item = if ($WhatIf) {
+                $null
+            }
+            else {
+                dir -Path $dest
+            }
 
             if ($item) {
                 $properties.Keys |

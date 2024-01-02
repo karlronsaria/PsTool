@@ -93,8 +93,8 @@ foreach ($item in $InputObject) {
         ([Regex]::Match($item, $Parameters.Pattern).
         Groups |
         where {
-            $_.Name -ne 0 -and
-            $_.Success
+            $_.Success -and
+            $_.Name -notmatch '^\d$'
         }).
         Name
     ].
