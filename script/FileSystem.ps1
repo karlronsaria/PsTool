@@ -154,11 +154,11 @@ function Get-MyUrl {
                 }
             )
         })]
-        $InputObject,
+        $InputObject = @(),
 
         [ValidateSet('Or', 'And')]
         [String]
-        $Mode = 'Or',
+        $Mode,
 
         [Switch]
         $NoExpansion,
@@ -167,13 +167,35 @@ function Get-MyUrl {
         $ToUnix,
 
         [Switch]
-        $Verbose
+        $Verbose,
+
+        # Parameter Inference
+        [Parameter(Position = 0)]
+        [String[]]
+        $Argument
     )
 
     $setting = (dir "$PsScriptRoot/../res/filesystem.setting.json" |
         cat |
         ConvertFrom-Json).
         LocationFile
+
+    foreach ($item in $Argument) {
+        if (-not $Mode -and $item -in @('Or', 'And')) {
+            $Mode = $item
+            continue
+        }
+
+        if (@($InputObject).Count -eq 0) {
+            $InputObject = @()
+        }
+
+        $InputObject += @($item)
+    }
+
+    if (-not $Mode) {
+        $Mode = $setting.DefaultMode
+    }
 
     $locations = $setting.Notebooks |
         Get-Item |
@@ -215,7 +237,9 @@ function Get-MyUrl {
                         $value = $_.Where
 
                         foreach ($capture in [Regex]::Matches($value, "%[^%]+%")) {
-                            $value = $value -replace $capture, (& cmd /c "echo $($capture.Value)")
+                            $value = $value -replace `
+                                $capture, `
+                                (& cmd /c "echo $($capture.Value)")
                         }
 
                         $psMatches = [Regex]::Matches($value, "\$[^\$\\\/]+")
@@ -232,7 +256,10 @@ function Get-MyUrl {
                                 -Status "Expanding $($_.Value)" `
                                 -PercentComplete (100 * $count / $psMatches.Count)
 
-                            $value = $value.Replace($_, (& powershell -NoProfile "$($_.Value)"))
+                            $value = $value.Replace(
+                                $_,
+                                (& powershell -NoProfile "$($_.Value)")
+                            )
                         }
 
                         Write-Progress `

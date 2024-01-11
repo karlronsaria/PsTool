@@ -28,7 +28,7 @@
     ```
 
   - [ ] narrowing argument completer
-  - [ ] consider switching to ``-Mode And`` by default
+  - [x] consider switching to ``-Mode And`` by default
   - [ ] consider Modes ``Union`` and ``Intersect``
 
 ---

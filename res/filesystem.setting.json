@@ -3,5 +3,6 @@
         "Notebooks": [
             "/note/location.json"
         ]
-    }
+    },
+    "DefaultMode": "And"
 }
