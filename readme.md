@@ -33,5 +33,6 @@
 ---
 [Wishlist Page](./doc/wish.md)
 
-[Issues Page](./doc/issue.md)
+[Progress Page](./doc/todo.md)
 
+[Issues Page](./doc/issue.md)

@@ -59,38 +59,43 @@ function Compare-SetFromList {
         return $(
             $list |
             where {
-                $ref = if ($listOfObjects) {
-                    foreach ($name in @($SelectBy)) {
-                        $_.Group.$name
-                    }
+                if (@($DifferenceObject).Count -eq 0) {
+                    $true
                 }
                 else {
-                    $_
-                }
-
-                $ref = if ($CaseSensitive) {
-                    $ref | select -Unique
-                }
-                else {
-                    switch($PsVersionTable.PsVersion.Major) {
-                        7 {
-                            $ref | select -Unique -CaseInsensitive
-                        }
-
-                        default {
-                            $ref | foreach { $_.ToLower() } | select -Unique
+                    $ref = if ($listOfObjects) {
+                        foreach ($name in @($SelectBy)) {
+                            $_.Group.$name
                         }
                     }
+                    else {
+                        $_
+                    }
+
+                    $ref = if ($CaseSensitive) {
+                        $ref | select -Unique
+                    }
+                    else {
+                        switch($PsVersionTable.PsVersion.Major) {
+                            7 {
+                                $ref | select -Unique -CaseInsensitive
+                            }
+
+                            default {
+                                $ref | foreach { $_.ToLower() } | select -Unique
+                            }
+                        }
+                    }
+
+                    $ref = @($ref) + @($AdditionalObject)
+                    $diff = diff ($ref) ($DifferenceObject)
+
+                    $null -eq $diff -or
+                        ($Mode -eq 'Or' -or
+                        $diff.SideIndicator -notcontains '=>') -and
+                        $diff.Count -lt `
+                        (@($ref).Count + @($DifferenceObject).Count)
                 }
-
-                $ref = @($ref) + @($AdditionalObject)
-                $diff = diff ($ref) ($DifferenceObject)
-
-                $null -eq $diff -or
-                    ($Mode -eq 'Or' -or
-                    $diff.SideIndicator -notcontains '=>') -and
-                    $diff.Count -lt `
-                    (@($ref).Count + @($DifferenceObject).Count)
             } |
             foreach {
                 if ($listOfObjects) {
