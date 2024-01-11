@@ -1,3 +1,5 @@
+. "$PsScriptRoot/../private/Select.ps1" # todo: consider renaming
+
 function Rename-AllSansWhiteSpace {
     Param(
         [Parameter(Position = 0)]
@@ -110,8 +112,158 @@ function New-NoteItem {
     }
 
     $item = "$($Prefix)$(Get-Date -f yyyy_MM_dd)$($Name)"
-
     New-Item $item
+}
+
+# todo: consider renaming
+function Get-MyUrl {
+    Param(
+        [ArgumentCompleter({
+            Param($A, $B, $C)
+
+            $setting = (dir "$PsScriptRoot/../res/filesystem.setting.json" |
+                cat |
+                ConvertFrom-Json).
+                LocationFile
+
+            $locations = $setting.Notebooks |
+                Get-Item |
+                cat |
+                ConvertFrom-Json |
+                foreach {
+                    $_.Location
+                    $_.Locations
+                }
+
+            return $(
+                (@($locations.Name) +
+                @($locations.Tag) +
+                @($locations.Tags)) |
+                sort |
+                select -Unique -CaseInsensitive | # todo
+                where {
+                    $_ -like "$C*"
+                } |
+                foreach {
+                    if ($_ -match "\s") {
+                        "`"$_`""
+                    }
+                    else {
+                        $_
+                    }
+                }
+            )
+        })]
+        $InputObject,
+
+        [ValidateSet('Or', 'And')]
+        [String]
+        $Mode = 'Or',
+
+        [Switch]
+        $NoExpansion,
+
+        [Switch]
+        $ToUnix,
+
+        [Switch]
+        $Verbose
+    )
+
+    $setting = (dir "$PsScriptRoot/../res/filesystem.setting.json" |
+        cat |
+        ConvertFrom-Json).
+        LocationFile
+
+    $locations = $setting.Notebooks |
+        Get-Item |
+        cat |
+        ConvertFrom-Json |
+        foreach {
+            $_.Location
+            $_.Locations
+        }
+
+    return $(
+        $locations |
+        Compare-SetFromList `
+            -DifferenceObject $InputObject `
+            -GroupBy 'Where' `
+            -SelectBy 'Name', 'Tag', 'Tags' `
+            -Mode $Mode |
+        foreach {
+            $obj = [PsCustomObject]@{}
+
+            $_.PsObject.Properties |
+            where { $_.MemberType -eq 'NoteProperty' } |
+            where { $_.Name -ne 'Where' } |
+            foreach {
+                $obj | Add-Member `
+                    -MemberType NoteProperty `
+                    -Name $_.Name `
+                    -Value $_.Value
+            }
+
+            $obj | Add-Member `
+                -MemberType NoteProperty `
+                -Name 'Where' `
+                -Value $($(
+                    if ($NoExpansion) {
+                        $_.Where
+                    }
+                    else {
+                        $value = $_.Where
+
+                        foreach ($capture in [Regex]::Matches($value, "%[^%]+%")) {
+                            $value = $value -replace $capture, (& cmd /c "echo $($capture.Value)")
+                        }
+
+                        $psMatches = [Regex]::Matches($value, "\$[^\$\\\/]+")
+
+                        $psMatches |
+                        foreach -Begin {
+                            $count = 0
+                        } -Process {
+                            $count = $count + 1
+
+                            Write-Progress `
+                                -Id 1 `
+                                -Activity "Running PS subshell" `
+                                -Status "Expanding $($_.Value)" `
+                                -PercentComplete (100 * $count / $psMatches.Count)
+
+                            $value = $value.Replace($_, (& powershell -NoProfile "$($_.Value)"))
+                        }
+
+                        Write-Progress `
+                            -Id 1 `
+                            -Activity "Running PS subshell" `
+                            -PercentComplete 100 `
+                            -Complete
+
+                        $value
+                    }
+                ) |
+                foreach {
+                    if ($ToUnix) {
+                        $_ -replace "\\", "/"
+                    }
+                    else {
+                        $_ -replace "\/", "\"
+                    }
+                })
+
+            $obj
+        } |
+        foreach {
+            if ($Verbose) {
+                $_
+            }
+            else {
+                $_.Where
+            }
+        }
+    )
 }
 
 function Rename-Item {

@@ -262,7 +262,7 @@ function Get-DemandScript {
         -All |
     Get-DemandMatch |
     group Path |
-    where {
+    where { # todo
         $scriptModule =
             $_.Group.ScriptModule |
             & (iex $select)
