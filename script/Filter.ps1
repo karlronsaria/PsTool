@@ -334,6 +334,12 @@ function Get-PipelinePropertySuggestion {
         $PreboundParameters
     )
 
+    # todo
+    Set-Variable `
+        -Scope Global `
+        -Name MyAst `
+        -Value $CommandAst
+
     # Find out if we have pipeline input.
     $pipelineElements = $CommandAst.Parent.PipelineElements
     $thisPipelineElementAsString = $CommandAst.Extent.Text
@@ -486,7 +492,7 @@ function Query-Object {
         $First,
 
         [Switch]
-        $Numbered,
+        $Enumerate,
 
         [Alias('Flat')]
         [Switch]
@@ -668,7 +674,7 @@ function Query-Object {
                 -Property $Property
         }
 
-        if ($Numbered) {
+        if ($Enumerate) {
             $list = $list |
             foreach -Begin {
                 $count = 0

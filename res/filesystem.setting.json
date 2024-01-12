@@ -2,7 +2,7 @@
     "LocationFile": {
         "Notebooks": [
             "/note/location.json"
-        ]
-    },
-    "DefaultMode": "And"
+        ],
+        "DefaultMode": "And"
+    }
 }

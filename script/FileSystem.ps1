@@ -115,25 +115,69 @@ function New-NoteItem {
     New-Item $item
 }
 
+class MyUrl {
+    [String] $Name
+    [String] $Where
+    [String[]] $Tag
+
+    MyUrl([PsCustomObject] $obj) {
+        $this.Name = $obj.Name
+        $this.Where = $obj.Where
+        $this.Tag = $obj.Tag
+
+        if (-not $this.Tag) {
+            $this.Tag = $obj.Tags
+        }
+
+        $obj.
+            PsObject.
+            Properties |
+            where {
+                $_.MemberType -eq 'NoteProperty'
+            } |
+            where {
+                $_.Name -notmatch "Name|Where|Tags?"
+            } |
+            foreach {
+                $this | Add-Member `
+                    -MemberType NoteProperty `
+                    -Name $_.Name `
+                    -Value $_.Value
+            }
+    }
+}
+
 # todo: consider renaming
 function Get-MyUrl {
+    # [CmdletBinding(DefaultParameterSetName = 'InputByName')]
+    [OutputType([MyUrl])]
     Param(
+        # [Parameter(ParameterSetName = 'InputByName')]
         [ArgumentCompleter({
-            Param($A, $B, $C)
+            Param($A, $B, $WordToComplete, $CommandAst)
 
             $setting = (dir "$PsScriptRoot/../res/filesystem.setting.json" |
                 cat |
                 ConvertFrom-Json).
                 LocationFile
 
-            $locations = $setting.Notebooks |
-                Get-Item |
-                cat |
-                ConvertFrom-Json |
-                foreach {
-                    $_.Location
-                    $_.Locations
-                }
+            $locations = @()
+            $pipelineElements = $CommandAst.Parent.PipelineElements
+
+            if ($null -ne $pipelineElements -and @($pipelineElements).Count -gt 0) {
+                $locations = iex $pipelineElements[0].Extent.Text
+            }
+
+            if ($null -eq $locations -or @($locations).Count -eq 0) {
+                $locations = $setting.Notebooks |
+                    Get-Item |
+                    cat |
+                    ConvertFrom-Json |
+                    foreach {
+                        $_.Location
+                        $_.Locations
+                    }
+            }
 
             return $(
                 (@($locations.Name) +
@@ -142,7 +186,7 @@ function Get-MyUrl {
                 sort |
                 select -Unique -CaseInsensitive | # todo
                 where {
-                    $_ -like "$C*"
+                    $_ -like "$WordToComplete*"
                 } |
                 foreach {
                     if ($_ -match "\s") {
@@ -154,7 +198,8 @@ function Get-MyUrl {
                 }
             )
         })]
-        $InputObject = @(),
+        [Parameter(Position = 0)]
+        $Tag = @(),
 
         [ValidateSet('Or', 'And')]
         [String]
@@ -166,131 +211,121 @@ function Get-MyUrl {
         [Switch]
         $ToUnix,
 
-        [Switch]
-        $Verbose,
-
-        # Parameter Inference
-        [Parameter(Position = 0)]
-        [String[]]
-        $Argument
+        [Parameter(ValueFromPipeline = $true)]
+        [MyUrl[]]
+        $InputObject = @()
     )
 
-    $setting = (dir "$PsScriptRoot/../res/filesystem.setting.json" |
-        cat |
-        ConvertFrom-Json).
-        LocationFile
+    Begin {
+        $setting = (dir "$PsScriptRoot/../res/filesystem.setting.json" |
+            cat |
+            ConvertFrom-Json).
+            LocationFile
 
-    foreach ($item in $Argument) {
-        if (-not $Mode -and $item -in @('Or', 'And')) {
-            $Mode = $item
-            continue
+        if (-not $Mode) {
+            $Mode = $setting.DefaultMode
         }
 
-        if (@($InputObject).Count -eq 0) {
-            $InputObject = @()
-        }
-
-        $InputObject += @($item)
+        $locations = @()
     }
 
-    if (-not $Mode) {
-        $Mode = $setting.DefaultMode
+    Process {
+        $locations += @($InputObject)
     }
 
-    $locations = $setting.Notebooks |
-        Get-Item |
-        cat |
-        ConvertFrom-Json |
-        foreach {
-            $_.Location
-            $_.Locations
+    End {
+        if ($null -eq $locations -or @($locations).Count -eq 0) {
+            $locations = $setting.Notebooks |
+                Get-Item |
+                cat |
+                ConvertFrom-Json |
+                foreach {
+                    $_.Location
+                    $_.Locations
+                } |
+                foreach {
+                    [MyUrl]::new($_)
+                }
         }
 
-    return $(
-        $locations |
-        Compare-SetFromList `
-            -DifferenceObject $InputObject `
-            -GroupBy 'Where' `
-            -SelectBy 'Name', 'Tag', 'Tags' `
-            -Mode $Mode |
-        foreach {
-            $obj = [PsCustomObject]@{}
-
-            $_.PsObject.Properties |
-            where { $_.MemberType -eq 'NoteProperty' } |
-            where { $_.Name -ne 'Where' } |
+        return $(
+            $locations |
+            Compare-SetFromList `
+                -DifferenceObject $Tag `
+                -GroupBy 'Where' `
+                -SelectBy 'Name', 'Tag', 'Tags' `
+                -Mode $Mode |
             foreach {
+                $obj = [PsCustomObject]@{}
+
+                $_.PsObject.Properties |
+                where { $_.MemberType -in 'Property', 'NoteProperty' } |
+                where { $_.Name -ne 'Where' } |
+                foreach {
+                    $obj | Add-Member `
+                        -MemberType NoteProperty `
+                        -Name $_.Name `
+                        -Value $_.Value
+                }
+
                 $obj | Add-Member `
                     -MemberType NoteProperty `
-                    -Name $_.Name `
-                    -Value $_.Value
-            }
-
-            $obj | Add-Member `
-                -MemberType NoteProperty `
-                -Name 'Where' `
-                -Value $($(
-                    if ($NoExpansion) {
-                        $_.Where
-                    }
-                    else {
-                        $value = $_.Where
-
-                        foreach ($capture in [Regex]::Matches($value, "%[^%]+%")) {
-                            $value = $value -replace `
-                                $capture, `
-                                (& cmd /c "echo $($capture.Value)")
+                    -Name 'Where' `
+                    -Value $($(
+                        if ($NoExpansion) {
+                            $_.Where
                         }
+                        else {
+                            $value = $_.Where
 
-                        $psMatches = [Regex]::Matches($value, "\$[^\$\\\/]+")
+                            foreach ($capture in [Regex]::Matches($value, "%[^%]+%")) {
+                                $value = $value -replace `
+                                    $capture, `
+                                    (& cmd /c "echo $($capture.Value)")
+                            }
 
-                        $psMatches |
-                        foreach -Begin {
-                            $count = 0
-                        } -Process {
-                            $count = $count + 1
+                            $psMatches = [Regex]::Matches($value, "\$[^\$\\\/]+")
+
+                            $psMatches |
+                            foreach -Begin {
+                                $count = 0
+                            } -Process {
+                                $count = $count + 1
+
+                                Write-Progress `
+                                    -Id 1 `
+                                    -Activity "Running PS subshell" `
+                                    -Status "Expanding $($_.Value)" `
+                                    -PercentComplete (100 * $count / $psMatches.Count)
+
+                                $value = $value.Replace(
+                                    $_,
+                                    (& powershell -NoProfile "$($_.Value)")
+                                )
+                            }
 
                             Write-Progress `
                                 -Id 1 `
                                 -Activity "Running PS subshell" `
-                                -Status "Expanding $($_.Value)" `
-                                -PercentComplete (100 * $count / $psMatches.Count)
+                                -PercentComplete 100 `
+                                -Complete
 
-                            $value = $value.Replace(
-                                $_,
-                                (& powershell -NoProfile "$($_.Value)")
-                            )
+                            $value
                         }
+                    ) |
+                    foreach {
+                        if ($ToUnix) {
+                            $_ -replace "\\", "/"
+                        }
+                        else {
+                            $_ -replace "\/", "\"
+                        }
+                    })
 
-                        Write-Progress `
-                            -Id 1 `
-                            -Activity "Running PS subshell" `
-                            -PercentComplete 100 `
-                            -Complete
-
-                        $value
-                    }
-                ) |
-                foreach {
-                    if ($ToUnix) {
-                        $_ -replace "\\", "/"
-                    }
-                    else {
-                        $_ -replace "\/", "\"
-                    }
-                })
-
-            $obj
-        } |
-        foreach {
-            if ($Verbose) {
-                $_
+                [MyUrl]::new($obj)
             }
-            else {
-                $_.Where
-            }
-        }
-    )
+        )
+    }
 }
 
 function Rename-Item {
