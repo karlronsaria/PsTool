@@ -152,7 +152,6 @@ function Get-MyUrl {
     # [CmdletBinding(DefaultParameterSetName = 'InputByName')]
     [OutputType([MyUrl])]
     Param(
-        # [Parameter(ParameterSetName = 'InputByName')]
         [ArgumentCompleter({
             Param($A, $B, $WordToComplete, $CommandAst)
 

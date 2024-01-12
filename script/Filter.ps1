@@ -334,12 +334,6 @@ function Get-PipelinePropertySuggestion {
         $PreboundParameters
     )
 
-    # todo
-    Set-Variable `
-        -Scope Global `
-        -Name MyAst `
-        -Value $CommandAst
-
     # Find out if we have pipeline input.
     $pipelineElements = $CommandAst.Parent.PipelineElements
     $thisPipelineElementAsString = $CommandAst.Extent.Text
