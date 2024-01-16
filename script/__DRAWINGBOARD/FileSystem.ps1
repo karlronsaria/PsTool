@@ -147,97 +147,11 @@ class MyUrl {
     }
 }
 
-function Get-MyUrlLink {
-    # [CmdletBinding(DefaultParameterSetName = 'InputByName')]
-    [Alias('myurllink')]
-    [OutputType([MyUrl])]
-    Param(
-        [ArgumentCompleter({
-            Param($A, $B, $WordToComplete, $CommandAst)
-
-            $setting = (dir "$PsScriptRoot/../res/filesystem.setting.json" |
-                cat |
-                ConvertFrom-Json).
-                LocationFile
-
-            $locations = @()
-            $pipelineElements = $CommandAst.Parent.PipelineElements
-
-            if ($null -ne $pipelineElements -and @($pipelineElements).Count -gt 0) {
-                $locations = iex $pipelineElements[0].Extent.Text
-            }
-
-            if ($null -eq $locations -or @($locations).Count -eq 0) {
-                $locations = $setting.Notebooks |
-                    Get-Item |
-                    cat |
-                    ConvertFrom-Json |
-                    foreach {
-                        $_.Location
-                        $_.Locations
-                    }
-            }
-
-            return $(
-                (@($locations.Name) +
-                @($locations.Tag) +
-                @($locations.Tags)) |
-                sort |
-                select -Unique -CaseInsensitive | # todo
-                where {
-                    $_ -like "$WordToComplete*"
-                } |
-                foreach {
-                    if ($_ -match "\s") {
-                        "`"$_`""
-                    }
-                    else {
-                        $_
-                    }
-                }
-            )
-        })]
-        [Parameter(Position = 0)]
-        $Tag = @(),
-
-        [ValidateSet('Or', 'And')]
-        [String]
-        $Mode,
-
-        [Switch]
-        $NoExpansion,
-
-        [Switch]
-        $ToUnix,
-
-        [Parameter(ValueFromPipeline = $true)]
-        [MyUrl[]]
-        $InputObject = @()
-    )
-
-    Begin {
-        $list = @()
-    }
-
-    Process {
-        $list += @($InputObject)
-    }
-
-    End {
-        [void] $PsBoundParameters.Remove('InputObject')
-        return $(
-            $list |
-            Get-MyUrl @PsBoundParameters |
-            foreach { $_.Where }
-        )
-    }
-}
-
 # todo: consider renaming
 function Get-MyUrl {
-    # [CmdletBinding(DefaultParameterSetName = 'InputByName')]
-    [Alias('myurl')]
+    [CmdletBinding(DefaultParameterSetName = 'InputByName')]
     [OutputType([MyUrl])]
+    [OutputType([String])]
     Param(
         [ArgumentCompleter({
             Param($A, $B, $WordToComplete, $CommandAst)
@@ -250,8 +164,43 @@ function Get-MyUrl {
             $locations = @()
             $pipelineElements = $CommandAst.Parent.PipelineElements
 
-            if ($null -ne $pipelineElements -and @($pipelineElements).Count -gt 0) {
-                $locations = iex $pipelineElements[0].Extent.Text
+            # todo
+            Set-Variable `
+                -Scope Global `
+                -Name MyAst `
+                -Value $CommandAst
+
+            if ($null -ne $pipelineElements -and @($pipelineElements).Count -gt 1) {
+                $commandText = $pipelineElements[-2].Extent.Text
+                $commandElements = $pipelineElements[-2].CommandElements
+                $commandName = $commandElements[0].Value
+
+                $command =
+                    if ($commandName -eq 'Get-MyUrl') {
+                        if (@($commandElements.ParameterName) -notcontains 'Verbose') {
+                            "$commandText -Verbose"
+                        }
+                        else {
+                            $commandText
+                        }
+                    }
+                    else {
+                        $commandText
+                    }
+
+                $locations = iex $command
+
+                # todo
+                Set-Variable `
+                    -Scope Global `
+                    -Name MyCommand `
+                    -Value ([PsCustomObject]@{
+                        CommandName = $commandName
+                        CommandText = $commandText
+                        CommandElements = $commandElements
+                        Command = $command
+                        Locations = $locations
+                    })
             }
 
             if ($null -eq $locations -or @($locations).Count -eq 0) {
@@ -408,7 +357,12 @@ function Get-MyUrl {
                         })
                     })
 
-                [MyUrl]::new($obj)
+                if ($Verbose) {
+                    [MyUrl]::new($obj)
+                }
+                else {
+                    $obj.Where
+                }
             }
         )
     }
