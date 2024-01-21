@@ -1,5 +1,95 @@
 # issue
 
+- [ ] 2024_01_18_025321
+
+  - what: Query-Object
+  - howto
+
+    ```powershell
+    Get-GitPendingRepo | what -1, Status
+    ```
+
+  - actual
+
+    ```text
+    no changes added to commit (use "git add" and/or "git commit -a")
+    ```
+
+  - expected
+
+    ```text
+    On branch master
+    Your branch is up to date with 'origin/master'.
+
+    Changes not staged for commit:
+      (use "git add <file>..." to update what will be committed)
+      (use "git restore <file>..." to discard changes in working directory)
+        modified:   ../issue.md
+
+    no changes added to commit (use "git add" and/or "git commit -a")
+    ```
+
+- [ ] 2024_01_17_201116
+  - howto
+
+    ```powershell
+    dir *.ps1 | sls New-Closure | what -Enumerate
+    ```
+
+  - actual
+
+    ```text
+    Id Object
+    -- ------
+     1 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\Closure.ps1:71:function New-Closure {
+     2 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\Layout.ps1:413:            New-Closure `
+     3 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\Layout.ps1:422:            New-Closure `
+     4 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\Layout.ps1:437:            New-Closure `
+     5 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\NumberSlider.ps1:134:        function New-Closure {
+     6 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\NumberSlider.ps1:145:        $closure = New-Closure `
+     7 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\NumberSlider.ps1:158:        $closure = New-Closure { $Parameters.Up() } $this
+     8 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\NumberSlider.ps1:161:        $closure = New-Closure { $Parameters.Down() } $this
+     9 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\NumberSlider.ps1:166:                New-Closure { $Parameters.Up() } $this
+    10 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\NumberSlider.ps1:170:                New-Closure { $Parameters.SetToMaximum() } $thΓÇª
+    11 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\NumberSlider.ps1:172:            $closure = New-Closure `
+    12 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\NumberSlider.ps1:189:                New-Closure { $Parameters.Down() } $this
+    13 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\NumberSlider.ps1:193:                New-Closure { $Parameters.SetToMinimum() } $thΓÇª
+    14 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\NumberSlider.ps1:195:            $closure = New-Closure `
+    15 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\NumberSlider.ps1:210:        $closure = New-Closure `
+    16 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\Qform.ps1:420:                $closure = New-Closure `
+    17 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\Qform.ps1:489:        $closure = New-Closure `
+    18 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\Type.ps1:62:            $closure = New-Closure `
+    19 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\Type.ps1:139:            $closure = New-Closure `
+    20 C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Modules\PsQuickform\script\Type.ps1:441:                            New-Closure `
+    ```
+
+  - expected
+
+    ```text
+    Id  Object
+    --  ------
+     1 Closure.ps1:71:function New-Closure {
+     2 Layout.ps1:413:            New-Closure `
+     3 Layout.ps1:422:            New-Closure `
+     4 Layout.ps1:437:            New-Closure `
+     5 NumberSlider.ps1:134:        function New-Closure {
+     6 NumberSlider.ps1:145:        $closure = New-Closure `
+     7 NumberSlider.ps1:158:        $closure = New-Closure { $Parameters.Up() } $this
+     8 NumberSlider.ps1:161:        $closure = New-Closure { $Parameters.Down() } $this
+     9 NumberSlider.ps1:166:                New-Closure { $Parameters.Up() } $this
+    10 NumberSlider.ps1:170:                New-Closure { $Parameters.SetToMaximum() } $this
+    11 NumberSlider.ps1:172:            $closure = New-Closure `
+    12 NumberSlider.ps1:189:                New-Closure { $Parameters.Down() } $this
+    13 NumberSlider.ps1:193:                New-Closure { $Parameters.SetToMinimum() } $this
+    14 NumberSlider.ps1:195:            $closure = New-Closure `
+    15 NumberSlider.ps1:210:        $closure = New-Closure `
+    16 Qform.ps1:420:                $closure = New-Closure `
+    17 Qform.ps1:489:        $closure = New-Closure `
+    18 Type.ps1:62:            $closure = New-Closure `
+    19 Type.ps1:139:            $closure = New-Closure `
+    20 Type.ps1:441:                            New-Closure `
+    ```
+
 ## complete
 
 - [x] 2023_12_27_042818

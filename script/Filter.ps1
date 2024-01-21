@@ -519,7 +519,9 @@ function Query-Object {
             )
 
             switch ($InputObject) {
-                { $_ -is [Ordered] -or $_ -is [Hashtable] } {
+                { $_ -is [System.Collections.Specialized.OrderedDictionary] -or
+                  $_ -is [Hashtable] }
+                {
                     $_[$Name]
                 }
 
@@ -576,7 +578,9 @@ function Query-Object {
                     foreach ($element in @($ElementStruct)) {
                         switch ($element) {
                             # Pre-orbit
-                            { $_ -is [Ordered] -or $_ -is [Hashtable] } {
+                            { $_ -is [System.Collections.Specialized.OrderedDictionary] -or
+                              $_ -is [Hashtable] }
+                            {
                                 foreach ($key in $_.Keys) {
                                     Get-Subelement `
                                         -InputObject $InputObject `
