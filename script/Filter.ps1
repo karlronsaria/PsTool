@@ -802,3 +802,75 @@ function ConvertTo-List {
     }
 }
 
+function json {
+    [CmdletBinding(DefaultParameterSetName = 'Undetermined')]
+    param(
+        [Parameter(
+            Mandatory = $true,
+            Position = 0,
+            ValueFromPipeline = $true
+        )]
+        [AllowNull()]
+        [AllowEmptyString()]
+        ${InputObject},
+
+        [ValidateRange([System.Management.Automation.ValidateRangeKind]::Positive)]
+        [int]
+        ${Depth},
+
+        [Parameter(ParameterSetName = 'From')]
+        [switch]
+        ${AsHashtable},
+
+        [Parameter(ParameterSetName = 'From')]
+        [switch]
+        ${NoEnumerate},
+
+        [Parameter(ParameterSetName = 'To')]
+        [switch]
+        ${Compress},
+
+        [Parameter(ParameterSetName = 'To')]
+        [switch]
+        ${EnumsAsStrings},
+
+        [Parameter(ParameterSetName = 'To')]
+        [switch]
+        ${AsArray},
+
+        [Parameter(ParameterSetName = 'To')]
+        [Newtonsoft.Json.StringEscapeHandling]
+        ${EscapeHandling}
+    )
+
+    begin
+    {
+        $list = @()
+        $inputIsString = $false
+    }
+
+    process
+    {
+        $inputIsString = $inputIsString -or $InputObject -is [String]
+        $list += @($InputObject)
+    }
+
+    end
+    {
+        $from = $PsCmdlet.ParameterSetName -eq 'From' -or
+            ($PsCmdlet.ParameterSetName -eq 'Undetermined' -and
+            $inputIsString)
+
+        [void] $PsBoundParameters.Remove('InputObject')
+
+        return $list | & $(
+            if ($from) {
+                'ConvertFrom-Json'
+            }
+            else {
+                'ConvertTo-Json'
+            }
+        ) @PsBoundParameters
+    }
+}
+
