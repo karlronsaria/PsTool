@@ -104,7 +104,7 @@ function Get-DemandScript {
                 Get-DemandScript -All
 
             $modules =
-                Get-DemandScript -All |
+                $scripts |
                 Split-Path -Parent |
                 Split-Path -Parent |
                 Split-Path -Leaf
@@ -183,7 +183,9 @@ function Get-DemandScript {
         $Mode = 'Or',
 
         # todo: consider returning to 'No Parameters Means All'
-        [Parameter(ParameterSetName = 'AllFiles')]
+        [Parameter(
+            ParameterSetName = 'AllFiles'
+        )]
         [Switch]
         $All,
 
@@ -298,7 +300,7 @@ function Import-DemandModule {
                 Get-DemandScript -All
 
             $modules =
-                Get-DemandScript -All |
+                $scripts |
                 Split-Path -Parent |
                 Split-Path -Parent |
                 Split-Path -Leaf
