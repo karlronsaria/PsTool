@@ -6,7 +6,7 @@ function Get-DemandMatch {
         $File,
 
         [String[]]
-        $Pattern
+        $Pattern = @()
     )
 
     Begin {
@@ -173,7 +173,7 @@ function Get-DemandScript {
             Position = 0
         )]
         [String[]]
-        $InputObject,
+        $InputObject = @(),
 
         [Parameter(
             ParameterSetName = 'SomeFiles'
@@ -235,7 +235,7 @@ function Get-DemandScript {
         $suffix = $setting.LocalDemandFile.Suffix
 
         $InputObject =
-            $($prefix |
+            $prefix |
             foreach {
                 Join-Path $path "$_$suffix"
             } |
@@ -244,8 +244,10 @@ function Get-DemandScript {
             } |
             dir |
             cat |
-            ConvertFrom-Json).
-            Import
+            ConvertFrom-Json |
+            foreach {
+                $_.Import
+            }
     }
 
     if ($InputObject.Count -eq 0) {
@@ -366,7 +368,7 @@ function Import-DemandModule {
         })]
         [Parameter(Position = 0)]
         [String[]]
-        $InputObject,
+        $InputObject = @(),
 
         [ValidateSet('Or', 'And')]
         [String]
