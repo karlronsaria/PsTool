@@ -814,7 +814,8 @@ function json {
         [AllowEmptyString()]
         ${InputObject},
 
-        [ValidateRange([System.Management.Automation.ValidateRangeKind]::Positive)]
+        # [ValidateRange([System.Management.Automation.ValidateRangeKind]::Positive)]
+        [ValidateScript({ $_ -ge 0 })]
         [int]
         ${Depth},
 
