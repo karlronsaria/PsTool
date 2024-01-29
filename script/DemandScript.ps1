@@ -234,7 +234,7 @@ function Get-DemandScript {
         $prefix = $setting.LocalDemandFile.Prefix
         $suffix = $setting.LocalDemandFile.Suffix
 
-        $InputObject =
+        $InputObject = @(
             $prefix |
             foreach {
                 Join-Path $path "$_$suffix"
@@ -248,6 +248,7 @@ function Get-DemandScript {
             foreach {
                 $_.Import
             }
+        )
     }
 
     if ($InputObject.Count -eq 0) {
