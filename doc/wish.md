@@ -1,5 +1,6 @@
 # wish
 
+- [ ] ``has`` Filter
 - ``FileSystem#Rename-Item``
   - [ ] were case-sensitive
 
