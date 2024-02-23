@@ -1,7 +1,7 @@
 {
     "AppPath": "magick",
     "DateTimeFormat": "yyyy_MM_dd_HHmmss",
-    "Processes": [
+    "Profiles": [
         {
             "Name": "WindowsExplorer",
             "Tags": [ "windows", "explorer", "background" ],

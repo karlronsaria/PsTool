@@ -272,9 +272,11 @@ function Get-DemandScript {
             $_.Group.ScriptModule |
             & (iex $select)
 
+        # (karlr 2024_02_22): Nil values are being introduced into ``ReferenceObject``
+        # by this point.
         $diff = diff `
-            (@($_.Group.Matches) + @($scriptModule)) `
-            $InputObject
+            -Reference ((@($_.Group.Matches) + @($scriptModule)) | where { $_ }) `
+            -Difference $InputObject
 
         $null -eq $diff -or
             ($Mode -eq 'Or' -or

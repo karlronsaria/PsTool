@@ -44,8 +44,8 @@ function ConvertFrom-ImageWebp {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot/../res/imageconvert.setting.json" `
-            | ConvertFrom-Json
+        $setting = cat "$PsScriptRoot/../res/imageconvert.setting.json" |
+            ConvertFrom-Json
 
         $cmd = $setting.AppPath
         $list = @()
@@ -159,8 +159,8 @@ function Get-ImageResize {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot/../res/imageconvert.setting.json" `
-            | ConvertFrom-Json
+        $setting = cat "$PsScriptRoot/../res/imageconvert.setting.json" |
+            ConvertFrom-Json
 
         $app = $setting.AppPath
     }
@@ -172,7 +172,8 @@ function Get-ImageResize {
 
         $itemName = if ($cap.Success) {
             "$name-$Size.$ext"
-        } else {
+        }
+        else {
             "$Path-$Size"
         }
 
@@ -262,15 +263,17 @@ function New-ImageIcon {
 Generates images by batch-conversion using ImageMagick, useful for background images themes
 Requires ImageMagick
 
-.Description
+.DESCRIPTION
 Tags: imagemagick batch convert profile theme ``(cat "$PsScriptRoot/../res/imageconvert.setting.json" | ConvertFrom-Json).Processes.Tags``
 #>
 function New-ImageConvert {
+    [CmdletBinding(DefaultParameterSetName = "ByProfile")]
     Param(
         [Parameter(ValueFromPipeline = $true)]
         [Object[]]
         $Directory,
 
+        [Parameter(ParameterSetName = "ByProfile")]
         [ArgumentCompleter({
             Param($A, $B, $C)
 
@@ -293,6 +296,10 @@ function New-ImageConvert {
         [String]
         $Profile,
 
+        [Parameter(ParameterSetName = "ByCommand")]
+        [String[]]
+        $Command,
+
         [String]
         $Destination,
 
@@ -306,9 +313,25 @@ function New-ImageConvert {
 
         $app = $setting.AppPath
 
-        $process = $setting.
-            Processes |
-            where { $_.Name -eq $Profile }
+        $whatDo = switch ($PsCmdlet.ParameterSetName) {
+            "ByProfile" {
+                $setting |
+                    foreach { $_.Profiles } |
+                    where { $_.Name -eq $Profile }
+            }
+
+            "ByCommand" {
+                [PsCustomObject]@{
+                    Convert = $Command |
+                        foreach { [Regex]::Matches($_, "(?<=^\s*convert ).+").Value } |
+                        where { $_ }
+
+                    Mogrify = $Command |
+                        foreach { [Regex]::Matches($_, "(?<=^\s*mogrify ).+").Value } |
+                        where { $_ }
+                }
+            }
+        }
 
         if ($Directory.Count -eq 0) {
             $Directory = Get-Location
@@ -333,7 +356,7 @@ function New-ImageConvert {
     }
 
     End {
-        if ($process.Convert) {
+        if ($whatDo.Convert) {
             $list |
             foreach -Begin {
               $count = 0
@@ -342,7 +365,7 @@ function New-ImageConvert {
               "$Destination/$($folders[0])/$($_.BaseName)_$dateTime.png"
 
               $cmd =
-              "$app convert $($process.Convert) `"$($_.Name)`" `"$dst`""
+              "$app convert $($whatDo.Convert) `"$($_.Name)`" `"$dst`""
 
               $progress = @{
                 Id = 1
@@ -366,10 +389,10 @@ function New-ImageConvert {
             }
         }
 
-        if ($process.Mogrify) {
+        if ($whatDo.Mogrify) {
             $src = "$Destination/$($folders[0])/*.png"
             $dst = $folders[1]
-            $cmd = "$app mogrify -path `"$dst`" $($process.Mogrify) `"$src`""
+            $cmd = "$app mogrify -path `"$dst`" $($whatDo.Mogrify) `"$src`""
 
             $progress = @{
               Id = 1
