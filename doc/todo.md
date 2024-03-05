@@ -1,5 +1,8 @@
 # todo
 
+- Rename-Item
+  - [ ] show loading feedback
+  - [ ] consider returning something
 - FileSystem
   - [ ] ``location.json``
 

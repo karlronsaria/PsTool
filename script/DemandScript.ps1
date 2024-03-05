@@ -275,7 +275,7 @@ function Get-DemandScript {
         # (karlr 2024_02_22): Nil values are being introduced into ``ReferenceObject``
         # by this point.
         $diff = diff `
-            -Reference ((@($_.Group.Matches) + @($scriptModule)) | where { $_ }) `
+            -Reference ((@($_.Group.Matches | where { $_ }) + @($scriptModule))) `
             -Difference $InputObject
 
         $null -eq $diff -or

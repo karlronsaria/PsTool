@@ -62,6 +62,9 @@ function ConvertFrom-ImageWebp {
     }
 
     Process {
+        # todo
+        Write-Host "😃😃😃 $($PsCmdlet.ParameterSetName) 😃😃😃"
+
         switch ($PsCmdlet.ParameterSetName) {
             "ByFilePath" {
                 ConvertFrom-ImageWebp `
@@ -97,11 +100,17 @@ function ConvertFrom-ImageWebp {
             $frames = (& $cmd identify $file.FullName).Count
             $src = $file.FullName
 
-            $dst = if ($frames -eq 1) {
-                "$Destination\$($file.BaseName).png"
-            } elseif ($frames -gt 1) {
-                "$Destination\$($file.BaseName).gif"
+            $ext = if ($frames -eq 1) {
+                "png"
             }
+            elseif ($frames -gt 1) {
+                "gif"
+            }
+            else {
+                ""
+            }
+
+            $dst = "$Destination\$($file.BaseName).$ext"
 
             $progress = @{
                 Activity =
@@ -113,7 +122,7 @@ function ConvertFrom-ImageWebp {
             }
 
             Write-Progress @progress
-            $command = "$cmd $src $dst"
+            $command = "$cmd `"$src`" `"$dst`""
 
             if ($WhatIf) {
                 $command
