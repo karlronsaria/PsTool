@@ -531,8 +531,29 @@ function Rename-Item {
 }
 "@
 
+                Write-Progress `
+                    -Id 1 `
+                    -Activity "Loading quickform" `
+                    -Status "Importing module" `
+                    -PercentComplete 33
+
                 Import-Module -Name PsQuickform
-                $result = $menu | ConvertFrom-Json | Show-QformMenu
+
+                Write-Progress `
+                    -Id 1 `
+                    -Activity "Loading quickform" `
+                    -Status "Loading menu" `
+                    -PercentComplete 66
+
+                $result = $menu |
+                    ConvertFrom-Json |
+                    Show-QformMenu
+
+                Write-Progress `
+                    -Id 1 `
+                    -Activity "Loading quickform" `
+                    -PercentComplete 100 `
+                    -Complete
 
                 if (-not $result.Confirm) {
                     $continue = $false
