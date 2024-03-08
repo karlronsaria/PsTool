@@ -392,10 +392,22 @@ function Import-DemandModule {
         [void]$PsBoundParameters.Remove($_)
     }
 
+    Write-Progress `
+        -Id 1 `
+        -Activity "Import-DemandModule" `
+        -Status "Searching demand files" `
+        -PercentComplete 0
+
     foreach ($file in (Get-DemandScript @PsBoundParameters)) {
         if ($PassThru) {
             $file
         }
+
+        Write-Progress `
+            -Id 1 `
+            -Activity "Import-DemandModule" `
+            -Status "File found: $file" `
+            -PercentComplete 0
 
         $dir = (dir $file).Directory
 
@@ -418,5 +430,11 @@ function Import-DemandModule {
             Import-Module $script
         }
     }
+
+    Write-Progress `
+        -Id 1 `
+        -Activity "Import-DemandModule" `
+        -PercentComplete 100 `
+        -Complete
 }
 
