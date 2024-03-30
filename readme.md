@@ -3,12 +3,14 @@
 ## Getting Started
 
 ### Requires
+
 - PsQuickform
 
 ### Setup
-1. Run elevated 
 
-   ```
+1. Run elevated
+
+   ```dos
    ./python/install.bat
    ```
 
@@ -20,14 +22,16 @@
 
 ## Externals
 
-#### PsFolderSize
-- url: https://github.com/gngrninja/PSFolderSize
+### PsFolderSize
+
+- url: <https://github.com/gngrninja/PSFolderSize>
 - retrieved: 2023_10_06
 
-#### matplotlib
+### matplotlib
+
 - url
-  - https://github.com/matplotlib/matplotlib
-  - https://matplotlib.org/
+  - <https://github.com/matplotlib/matplotlib>
+  - <https://matplotlib.org/>
 - retrieved: 2023_10_06
 
 ---

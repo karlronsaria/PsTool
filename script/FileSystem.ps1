@@ -145,6 +145,10 @@ class MyUrl {
                     -Value $_.Value
             }
     }
+
+    [String] ToString() {
+        return $this.Where
+    }
 }
 
 function Get-MyUrlLink {
@@ -160,28 +164,33 @@ function Get-MyUrlLink {
                 ConvertFrom-Json).
                 LocationFile
 
+            $all = $setting.Notebooks |
+                Get-Item |
+                cat |
+                ConvertFrom-Json |
+                foreach {
+                    $_.Location
+                    $_.Locations
+                }
+
             $locations = @()
             $pipelineElements = $CommandAst.Parent.PipelineElements
 
-            if ($null -ne $pipelineElements -and @($pipelineElements).Count -gt 0) {
+            if ($null -ne $pipelineElements -and @($pipelineElements).Count -gt 1) {
                 $locations = iex $pipelineElements[0].Extent.Text
             }
 
-            if ($null -eq $locations -or @($locations).Count -eq 0) {
-                $locations = $setting.Notebooks |
-                    Get-Item |
-                    cat |
-                    ConvertFrom-Json |
-                    foreach {
-                        $_.Location
-                        $_.Locations
+            if ($null -ne $locations -and @($locations).Count -gt 0) {
+                $all = $all |
+                    where {
+                        $_.Name -in $locations.Name
                     }
             }
 
             return $(
-                (@($locations.Name) +
-                @($locations.Tag) +
-                @($locations.Tags)) |
+                (@($all.Name) +
+                @($all.Tag) +
+                @($all.Tags)) |
                 sort |
                 select -Unique -CaseInsensitive | # todo
                 where {
@@ -225,10 +234,18 @@ function Get-MyUrlLink {
 
     End {
         [void] $PsBoundParameters.Remove('InputObject')
+
         return $(
             $list |
             Get-MyUrl @PsBoundParameters |
-            foreach { $_.Where }
+            foreach {
+                if ($NoExpansion) {
+                    $_.Where
+                }
+                else {
+                    $_
+                }
+            }
         )
     }
 }

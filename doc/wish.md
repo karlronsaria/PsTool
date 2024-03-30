@@ -1,5 +1,6 @@
 # wish
 
+- [ ] get properties by matching pattern or substring
 - [ ] ``has`` Filter
 - ``FileSystem#Rename-Item``
   - [ ] were case-sensitive
