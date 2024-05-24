@@ -1,3 +1,5 @@
+. "$PsScriptRoot/$($PsVersionTable.PsVersion.Major)/Command.ps1"
+
 function Get-DemandMatch {
     [OutputType([String])]
     Param(
@@ -19,12 +21,6 @@ function Get-DemandMatch {
                 Patterns.
                 Value
         }
-
-        $select =
-            $setting.
-            Commands.
-            Select.
-            ($PsVersionTable.PsVersion.Major)
 
         $list = @()
     }
@@ -155,15 +151,9 @@ function Get-DemandScript {
               }
             }
 
-            $select =
-                $setting.
-                Commands.
-                Select.
-                ($PsVersionTable.PsVersion.Major)
-
             return $(
                 (@($tags) + @($other) + @($modules)) |
-                & (iex $select) |
+                Select-CaseInsensitive |
                 where { $_ -like "$C*" } |
                 sort
             )
@@ -255,12 +245,6 @@ function Get-DemandScript {
         return
     }
 
-    $select =
-        $setting.
-        Commands.
-        Select.
-        ($PsVersionTable.PsVersion.Major)
-
     Get-DemandScript `
         -Directory:$Directory `
         -AllProfiles:$AllProfiles `
@@ -270,7 +254,7 @@ function Get-DemandScript {
     where { # todo
         $scriptModule =
             $_.Group.ScriptModule |
-            & (iex $select)
+            Select-CaseInsensitive
 
         # (karlr 2024_02_22): Nil values are being introduced into ``ReferenceObject``
         # by this point.
@@ -356,15 +340,9 @@ function Import-DemandModule {
               }
             }
 
-            $select =
-                $setting.
-                Commands.
-                Select.
-                ($PsVersionTable.PsVersion.Major)
-
             return $(
                 (@($tags) + @($other) + @($modules)) |
-                & (iex $select) |
+                Select-CaseInsensitive |
                 where { $_ -like "$C*" } |
                 sort
             )

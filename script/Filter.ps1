@@ -875,3 +875,27 @@ function json {
     }
 }
 
+function ConvertTo-PsPath {
+    [Alias('ToPs')]
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        [String]
+        $Path
+    )
+
+    Begin {
+        $pattern = "(?<=%)[^%]+(?=%)"
+    }
+
+    Process {
+        $cap = [Regex]::Match($Path, $pattern)
+
+        while ($cap.Success) {
+            $Path = $Path -replace "%$cap%", $(iex "`$env:$($cap.Value)")
+            $cap = [Regex]::Match($Path, $pattern)
+        }
+
+        $Path
+    }
+}
+
