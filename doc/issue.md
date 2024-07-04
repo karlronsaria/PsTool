@@ -104,6 +104,12 @@
 
 ## complete
 
+- [x] 2024_07_03_211153
+
+  - what: DemandScript
+  - howto: search for module names using ``Get-DemandMatch``, ``Get-DemandScript``, or ``Import-DemandModule``
+  - actual: module names, such as ``DateFolder``, cannot be found
+
 - [x] 2023_12_27_042818
   - todo
     - [ ] unit test

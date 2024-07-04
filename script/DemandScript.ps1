@@ -59,7 +59,8 @@ function Get-DemandMatch {
                       }
                     }
                   }
-                ItemName = Split-Path $_.Path -Leaf
+                # todo: ItemName = Split-Path $_.Path -Leaf
+                ItemName = (Get-Item $_.Path).BaseName
                 ScriptModule =
                   $_.Path |
                   Split-Path -Parent |
@@ -99,11 +100,14 @@ function Get-DemandScript {
             $scripts =
                 Get-DemandScript -All
 
-            $modules =
-                $scripts |
-                Split-Path -Parent |
-                Split-Path -Parent |
-                Split-Path -Leaf
+            $modules = (Get-Item $scripts).BaseName
+
+            # # todo
+            # $modules =
+            #     $scripts |
+            #     Split-Path -Parent |
+            #     Split-Path -Parent |
+            #     Split-Path -Leaf
 
             $other = @()
             $tags = @()
@@ -253,7 +257,8 @@ function Get-DemandScript {
     group Path |
     where { # todo
         $scriptModule =
-            $_.Group.ScriptModule |
+            # todo: $_.Group.ScriptModule |
+            $_.Group.ItemName |
             Select-CaseInsensitive
 
         # (karlr 2024_02_22): Nil values are being introduced into ``ReferenceObject``
