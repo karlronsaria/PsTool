@@ -293,11 +293,14 @@ function Import-DemandModule {
             $scripts =
                 Get-DemandScript -All
 
-            $modules =
-                $scripts |
-                Split-Path -Parent |
-                Split-Path -Parent |
-                Split-Path -Leaf
+            $modules = (Get-Item $scripts).BaseName
+
+            # # todo
+            # $modules =
+            #     $scripts |
+            #     Split-Path -Parent |
+            #     Split-Path -Parent |
+            #     Split-Path -Leaf
 
             $other = @()
             $tags = @()
