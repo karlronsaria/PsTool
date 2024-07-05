@@ -100,14 +100,14 @@ function Get-DemandScript {
             $scripts =
                 Get-DemandScript -All
 
-            $modules = (Get-Item $scripts).BaseName
+            $submodules = (Get-Item $scripts).BaseName
 
-            # # todo
-            # $modules =
-            #     $scripts |
-            #     Split-Path -Parent |
-            #     Split-Path -Parent |
-            #     Split-Path -Leaf
+            # todo
+            $modules =
+                $scripts |
+                Split-Path -Parent |
+                Split-Path -Parent |
+                Split-Path -Leaf
 
             $other = @()
             $tags = @()
@@ -156,7 +156,7 @@ function Get-DemandScript {
             }
 
             return $(
-                (@($tags) + @($other) + @($modules)) |
+                (@($tags) + @($other) + @($modules) + @($submodules)) |
                 Select-CaseInsensitive |
                 where { $_ -like "$C*" } |
                 sort
@@ -256,16 +256,32 @@ function Get-DemandScript {
     Get-DemandMatch |
     group Path |
     where { # todo
-        $scriptModule =
+        $submodule =
             # todo: $_.Group.ScriptModule |
             $_.Group.ItemName |
             Select-CaseInsensitive
 
+        $module =
+            $_.Group.ScriptModule |
+            Select-CaseInsensitive
+
+        # todo
+        Write-Host "Module: $module"
+
         # (karlr 2024_02_22): Nil values are being introduced into ``ReferenceObject``
         # by this point.
         $diff = diff `
-            -Reference ((@($_.Group.Matches | where { $_ }) + @($scriptModule))) `
+            -Reference ((@($_.Group.Matches | where { $_ }) + @($module) + @($submodule))) `
             -Difference $InputObject
+
+        # todo
+        $diff | foreach {
+            Write-Host "Diff: [$_]"
+        }
+        Write-Host "Diff count: $($diff.Count)"
+        Write-Host "Match count: $($_.Group.Matches.Count)"
+        Write-Host "Input count: $($InputObject.Count)"
+        Write-Host ""
 
         $null -eq $diff -or
             ($Mode -eq 'Or' -or
@@ -293,14 +309,14 @@ function Import-DemandModule {
             $scripts =
                 Get-DemandScript -All
 
-            $modules = (Get-Item $scripts).BaseName
+            $submodules = (Get-Item $scripts).BaseName
 
-            # # todo
-            # $modules =
-            #     $scripts |
-            #     Split-Path -Parent |
-            #     Split-Path -Parent |
-            #     Split-Path -Leaf
+            # todo
+            $modules =
+                $scripts |
+                Split-Path -Parent |
+                Split-Path -Parent |
+                Split-Path -Leaf
 
             $other = @()
             $tags = @()
@@ -349,7 +365,7 @@ function Import-DemandModule {
             }
 
             return $(
-                (@($tags) + @($other) + @($modules)) |
+                (@($tags) + @($other) + @($modules) + @($submodules)) |
                 Select-CaseInsensitive |
                 where { $_ -like "$C*" } |
                 sort
