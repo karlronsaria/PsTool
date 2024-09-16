@@ -8,7 +8,7 @@ $myScripts = @(
 
 $myModules = @(
     "$loc\Scripts\PsProfile\Get-Scripts.ps1"
-    "\shortcut\dos\ps\ShortcutGoogleChrome\Get-Scripts.ps1"
+    "\shortcut\dos\pwsh\ShortcutGoogleChrome\Get-Scripts.ps1"
 )
 
 $myScripts | foreach {

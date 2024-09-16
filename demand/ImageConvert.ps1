@@ -62,9 +62,6 @@ function ConvertFrom-ImageWebp {
     }
 
     Process {
-        # todo
-        Write-Host "😃😃😃 $($PsCmdlet.ParameterSetName) 😃😃😃"
-
         switch ($PsCmdlet.ParameterSetName) {
             "ByFilePath" {
                 ConvertFrom-ImageWebp `
