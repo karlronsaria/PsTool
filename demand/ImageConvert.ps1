@@ -183,7 +183,10 @@ function Get-ImageResize {
             "$Path-$Size"
         }
 
-        $cmd = "$app convert `"$Path`" -resize $Size `"$itemName`""
+        # # (karlr 2024_09_16): ``magick convert `` is deprecated
+        # $cmd = "$app convert `"$Path`" -resize $Size `"$itemName`""
+
+        $cmd = "$app `"$Path`" -resize $Size `"$itemName`""
 
         if ($WhatIf) {
             return $cmd
@@ -237,11 +240,15 @@ function New-ImageIcon {
     mkdir $dir -Force | Out-Null
 
     foreach ($size in 16, 32, 48, 128, 256) {
-        . $command convert "$($FilePath)" -scale $size "$dir/$size.png"
+        # # (karlr 2024_09_16): ``magick convert`` is deprecated
+        # . $command convert "$($FilePath)" -scale $size "$dir/$size.png"
+        . $command "$($FilePath)" -scale $size "$dir/$size.png"
     }
 
     $FilePath = (($FilePath -Replace "\.[^\.]+$") + ".ico")
-    . $command convert "$dir/*.png" $FilePath
+    # # (karlr 2024_09_16): ``magick convert`` is deprecated
+    # . $command convert "$dir/*.png" $FilePath
+    . $command "$dir/*.png" $FilePath
 
     if ($RemoveTemps) {
         del $dir -Recurse -Force
@@ -270,7 +277,7 @@ Generates images by batch-conversion using ImageMagick, useful for background im
 Requires ImageMagick
 
 .DESCRIPTION
-Tags: imagemagick batch convert profile theme ``(cat "$PsScriptRoot/../res/imageconvert.setting.json" | ConvertFrom-Json).Processes.Tags``
+Tags: imagemagick batch convert profile theme ``(cat "$PsScriptRoot/../res/imageconvert.setting.json" | ConvertFrom-Json).Profiles.Tags``
 #>
 function New-ImageConvert {
     [CmdletBinding(DefaultParameterSetName = "ByProfile")]
@@ -286,7 +293,7 @@ function New-ImageConvert {
             return $(
                 (cat "$PsScriptRoot/../res/imageconvert.setting.json" |
                 ConvertFrom-Json).
-                Processes.
+                Profiles.
                 Name |
                 where { $_ -like "$C*" }
             )
@@ -295,7 +302,7 @@ function New-ImageConvert {
             return $($_ -in (
                 (cat "$PsScriptRoot/../res/imageconvert.setting.json" |
                 ConvertFrom-Json).
-                Processes.
+                Profiles.
                 Name
             ))
         })]

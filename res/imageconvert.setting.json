@@ -16,6 +16,13 @@
             "Convert":
                 "-background transparent -gravity west -extent 960x768 -geometry +0+0",
             "Mogrify": ""
+        },
+        {
+            "Name": "VsCodeTrim",
+            "Tags": [ "vscode", "background" ],
+            "Convert":
+                "-trim -background transparent -gravity southeast -extent 960x768 -geometry +0+0",
+            "Mogrify": ""
         }
     ]
 }
