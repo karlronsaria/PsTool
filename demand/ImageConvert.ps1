@@ -374,11 +374,11 @@ function New-ImageConvert {
             foreach -Begin {
               $count = 0
             } -Process {
-              $dst =
-              "$Destination/$($folders[0])/$($_.BaseName)_$dateTime.png"
+              # # (karlr 2024_09_16): deprecated
+              # $cmd = "$app convert $($whatDo.Convert) `"$($_.Name)`" `"$dst`""
 
-              $cmd =
-              "$app convert $($whatDo.Convert) `"$($_.Name)`" `"$dst`""
+              $dst = "$Destination/$($folders[0])/$($_.BaseName)_$dateTime.png"
+              $cmd = "$app `"$($_.Name)`" $($whatDo.Convert) `"$dst`""
 
               $progress = @{
                 Id = 1
