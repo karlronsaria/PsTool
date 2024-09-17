@@ -307,7 +307,7 @@ function ConvertTo-Suggestion {
         $WordToComplete
     )
 
-    $suggestions = if ($wordToComplete) {
+    $suggestions = if ($WordToComplete) {
         $List | where {
             $_ -like "$WordToComplete*"
         }
@@ -880,7 +880,10 @@ function ConvertTo-PsPath {
     Param(
         [Parameter(ValueFromPipeline = $true)]
         [String]
-        $Path
+        $Path,
+
+        [Switch]
+        $Resolve
     )
 
     Begin {
@@ -889,9 +892,10 @@ function ConvertTo-PsPath {
 
     Process {
         $cap = [Regex]::Match($Path, $pattern)
+        $with = "`$env:$($cap.Value)"
 
         while ($cap.Success) {
-            $Path = $Path -replace "%$cap%", $(iex "`$env:$($cap.Value)")
+            $Path = $Path -replace "%$cap%", $(if ($Resolve) { iex $with } else { "`$($with)" })
             $cap = [Regex]::Match($Path, $pattern)
         }
 
