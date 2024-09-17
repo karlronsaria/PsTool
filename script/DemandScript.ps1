@@ -265,23 +265,11 @@ function Get-DemandScript {
             $_.Group.ScriptModule |
             Select-CaseInsensitive
 
-        # todo
-        Write-Host "Module: $module"
-
         # (karlr 2024_02_22): Nil values are being introduced into ``ReferenceObject``
         # by this point.
         $diff = diff `
             -Reference ((@($_.Group.Matches | where { $_ }) + @($module) + @($submodule))) `
             -Difference $InputObject
-
-        # todo
-        $diff | foreach {
-            Write-Host "Diff: [$_]"
-        }
-        Write-Host "Diff count: $($diff.Count)"
-        Write-Host "Match count: $($_.Group.Matches.Count)"
-        Write-Host "Input count: $($InputObject.Count)"
-        Write-Host ""
 
         $null -eq $diff -or
             ($Mode -eq 'Or' -or
