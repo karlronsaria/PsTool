@@ -1,6 +1,7 @@
 # issue
 
-- [ ] 2024_09_18_033326
+- [x] 2024_09_18_033326
+  - canceled: This function is working as intended. I just need to learn to use it properly.
 
   - what: Start-Edit
   - howto
