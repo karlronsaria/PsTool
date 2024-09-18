@@ -92,6 +92,26 @@
 
 ## complete
 
+- [x] 2024_09_18_012356
+
+  - what: Get-DemandScript
+  - howto
+
+    ```powershell
+    Get-DemandScript -InputObject profile
+    ```
+
+  - actual
+
+    ```text
+    ```
+
+  - expected
+
+    ```text
+    ...\Scripts\PsTool\demand\ImageConvert.ps1
+    ```
+
 - [x] 2024_03_24_013846
 
   - what: demand/ImageConvert#ConvertFrom-ImageWebp
@@ -176,7 +196,7 @@
 
   - expected
 
-    ```
+    ```text
         Directory: C:\note
 
 

@@ -59,7 +59,6 @@ function Get-DemandMatch {
                       }
                     }
                   }
-                # todo: ItemName = Split-Path $_.Path -Leaf
                 ItemName = (Get-Item $_.Path).BaseName
                 ScriptModule =
                   $_.Path |
@@ -256,11 +255,6 @@ function Get-DemandScript {
     Get-DemandMatch |
     group Path |
     where { # todo
-        $submodule =
-            # todo: $_.Group.ScriptModule |
-            $_.Group.ItemName |
-            Select-CaseInsensitive
-
         $module =
             $_.Group.ScriptModule |
             Select-CaseInsensitive
@@ -268,7 +262,7 @@ function Get-DemandScript {
         # (karlr 2024_02_22): Nil values are being introduced into ``ReferenceObject``
         # by this point.
         $diff = diff `
-            -Reference ((@($_.Group.Matches | where { $_ }) + @($module) + @($submodule))) `
+            -Reference (@($_.Group.Matches | where { $_ }) + @($module)) `
             -Difference $InputObject
 
         $null -eq $diff -or
