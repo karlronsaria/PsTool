@@ -1,5 +1,20 @@
 # issue
 
+- [ ] 2024_09_18_033326
+
+  - what: Start-Edit
+  - howto
+
+    ```powershell
+    dir .\duck.txt | edit VsCode
+    ```
+
+  - actual
+
+    ```powershell
+    Start-Edit: The input object cannot be bound to any parameters for the command either because the command does not take pipeline input or the input and its properties do not match any of the parameters that take pipeline input.
+    ```
+
 - [ ] 2024_01_18_025321
 
   - what: Query-Object
