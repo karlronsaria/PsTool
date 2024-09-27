@@ -3,6 +3,7 @@ Tags: fsm finite state machine pattern match
 #>
 
 <#
+.DESCRIPTION
 Tags: closure
 #>
 function New-Closure {
