@@ -167,7 +167,7 @@ function Write-IdleProgress {
 
         [Parameter(ParameterSetName = "SpinnerText")]
         [String[]]
-        $SpinnerText = @(" -", " \", " |", " /"),
+        $SpinnerText = @(" -", " \", " |", " /"), # todo: @(" ⡏", " ⢹", " ⣸", " ⣇"),
 
         [Int]
         $Id,
@@ -245,7 +245,7 @@ function Write-IdleProgress {
             "$Activity$Red$Green$Blue".Length - 19
     }
 
-    function ConvertTo-GreenText {
+    function ConvertTo-ColorText {
         Param(
             [String]
             $InputObject,
@@ -280,7 +280,9 @@ function Write-IdleProgress {
             0 .. ($MarqueeText.Length - 1) |
             foreach {
                 if ($_ + $length -ge $MarqueeText.Length) {
-                    "$($MarqueeText.Substring($_))$($MarqueeText.Substring(0, $length - ($MarqueeText.Length - $_)))"
+                    # # (karlr 2024_09_29)
+                    # "$($MarqueeText.Substring($_))$($MarqueeText.Substring(0, $ddength - ($MarqueeText.Length - $_)))"
+                    "$($MarqueeText.Substring($_))$($MarqueeText.Substring(0, $_))"
                 }
                 else {
                     $MarqueeText.Substring($_, $length)
@@ -289,7 +291,7 @@ function Write-IdleProgress {
     }
 
     $SpinnerText | cycle | foreach {
-        $greenText = ConvertTo-GreenText `
+        $colorText = ConvertTo-ColorText `
             -InputObject $_ `
             -Red $color.Red `
             -Green $color.Green `
@@ -298,13 +300,11 @@ function Write-IdleProgress {
         Write-Progress `
             -Id $Id `
             -Activity $Activity `
-            -Status $greenText `
+            -Status $colorText `
             -PercentComplete 0
 
         Start-Sleep `
             -Milliseconds $Milliseconds
     }
 }
-
-
 
