@@ -903,3 +903,41 @@ function ConvertTo-PsPath {
     }
 }
 
+function Get-NextTree {
+    [Alias('Desc')]
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        [PsCustomObject]
+        $InputObject
+    )
+
+    Begin {
+        function Get-Property {
+            Param(
+                $InputObject
+            )
+
+            if ($null -eq $InputObject `
+                -or (-not ($InputObject -is [PsCustomObject])) `
+            ) {
+                return @()
+            }
+
+            return $InputObject.PsObject.Properties |
+                where { $_ } # (karlr 2024_09_30): I REALLY THINK I SHOULDN'T HAVE TO DO THIS!
+        }
+    }
+
+    Process {
+        $temp = $InputObject
+        $properties = Get-Property $temp
+
+        while ($properties.Count -eq 1) {
+            $temp = $properties[0].Value
+            $properties = Get-Property $temp
+        }
+
+        return $temp
+    }
+}
+
