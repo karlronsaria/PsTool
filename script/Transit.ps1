@@ -11,7 +11,7 @@ function Start-Edit {
             return ConvertTo-Suggestion `
                 -WordToComplete $args[2] `
                 -List $(
-                    (cat "$PsScriptRoot\..\res\filter.setting.json" |
+                    (cat "$PsScriptRoot\..\res\transit.setting.json" |
                     ConvertFrom-Json).
                     Editor.
                     PsObject.
@@ -33,7 +33,7 @@ function Start-Edit {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot\..\res\filter.setting.json" |
+        $setting = cat "$PsScriptRoot\..\res\transit.setting.json" |
         ConvertFrom-Json
 
         $editors =
