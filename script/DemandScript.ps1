@@ -75,7 +75,7 @@ function Get-DemandMatch {
     End {
         return $(if ($list.Count -eq 0) {
             Get-DemandScript -All |
-                Get-DemandMatch
+                Get-DemandMatch -Pattern $Pattern
         }
         else {
             $list |
@@ -248,28 +248,51 @@ function Get-DemandScript {
         return
     }
 
+    $list = (@($_.Group.Matches | where { $_ }) + @($module))
+    Set-Variable `
+        -Scope Global `
+        -Name MyObject `
+        -Value $(
+            Get-DemandScript `
+                -Directory:$Directory `
+                -AllProfiles:$AllProfiles `
+                -All
+        )
+
+
     Get-DemandScript `
         -Directory:$Directory `
         -AllProfiles:$AllProfiles `
         -All |
     Get-DemandMatch |
     group Path |
-    where { # todo
-        $module =
-            $_.Group.ScriptModule |
-            Select-CaseInsensitive
+    where {
+        $module = @(
+            @($_.Group.ScriptModule) +
+            @((dir $_.Group.Path).BaseName)
+        ) |
+        Select-CaseInsensitive
 
         # (karlr 2024_02_22): Nil values are being introduced into ``ReferenceObject``
         # by this point.
+        $list = @($_.Group.Matches | where { $_ }) + @($module)
+
         $diff = diff `
-            -Reference (@($_.Group.Matches | where { $_ }) + @($module)) `
+            -Reference $list `
             -Difference $InputObject
 
-        $null -eq $diff -or
-            ($Mode -eq 'Or' -or
-            $diff.SideIndicator -notcontains '=>') -and
-            $diff.Count -lt `
-            ($_.Group.Matches.Count + $InputObject.Count)
+        if ($null -eq $diff) {
+            $true
+        }
+        else {
+            if ($Mode -eq 'And') {
+                $diff.Count -lt $list.Count
+            }
+
+            if ($Mode -eq 'Or') {
+                $diff.SideIndicator -notcontains '=>'
+            }
+        }
     } |
     foreach {
         $_.Group.Path

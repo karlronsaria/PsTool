@@ -1,5 +1,17 @@
 # issue
 
+- [x] 2024_10_15_010840
+  - howto
+
+    ```powershell
+    Import-DemandModule DateFolder -PassThru
+    ```
+
+  - actual
+
+    ```text
+    ```
+
 - [x] 2024_09_18_033326
   - canceled: This function is working as intended. I just need to learn to use it properly.
 
