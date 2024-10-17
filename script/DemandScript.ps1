@@ -244,21 +244,9 @@ function Get-DemandScript {
         )
     }
 
-    if ($InputObject.Count -eq 0) {
+    if (@($InputObject).Count -eq 0) {
         return
     }
-
-    $list = (@($_.Group.Matches | where { $_ }) + @($module))
-    Set-Variable `
-        -Scope Global `
-        -Name MyObject `
-        -Value $(
-            Get-DemandScript `
-                -Directory:$Directory `
-                -AllProfiles:$AllProfiles `
-                -All
-        )
-
 
     Get-DemandScript `
         -Directory:$Directory `
@@ -286,11 +274,11 @@ function Get-DemandScript {
         }
         else {
             if ($Mode -eq 'And') {
-                $diff.Count -lt $list.Count
+                $diff.SideIndicator -notcontains '=>'
             }
 
             if ($Mode -eq 'Or') {
-                $diff.SideIndicator -notcontains '=>'
+                $diff.Count -lt ($list.Count + @($InputObject).Count)
             }
         }
     } |
