@@ -1,5 +1,5 @@
 . "$PsScriptRoot/../external/com.github.panosgreg.encrypt-decrypt.ps1"
-. "$PsScriptRoot/../script/Transit.ps1"
+. "$PsScriptRoot/../script/Combinator.ps1"
 
 <#
 Tags: protect encrypt
