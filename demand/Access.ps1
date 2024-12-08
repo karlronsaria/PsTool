@@ -33,6 +33,9 @@ Add-Type @"
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool DestroyWindow(IntPtr hWnd);
     }
 "@
 
@@ -63,7 +66,7 @@ function Get-OpenWindow {
               -Value ($list.Value + @(
                 [PsCustomObject]@{
                   Handle = $hwnd
-                  Title = [User32]::GetWindowTitle($hwnd)
+                  Caption = [User32]::GetWindowTitle($hwnd)
                   Visible = [User32]::IsWindowVisible($hwnd)
                 }
               ))
@@ -80,7 +83,7 @@ function Get-OpenWindow {
             $_.Value
         } |
         where {
-            $_.Visible -and $_.Title.Trim()
+            $_.Visible -and $_.Caption.Trim()
         }
 
     Remove-Variable `
@@ -88,7 +91,7 @@ function Get-OpenWindow {
         -Name $listName
 }
 
-function Set-ForegroundWindowByTitle {
+function Set-ForegroundOpenWindow {
     Param(
         [ArgumentCompleter({
             Param($A, $B, $C)
@@ -100,18 +103,18 @@ function Set-ForegroundWindowByTitle {
                 -Scope Global `
                 -Value $windows
 
-            return $windows.Title | where {
+            return $windows.Caption | where {
                 "`"$_`"" -like "`"$C*`""
             } | foreach {
                 "`"$_`""
             }
         })]
         [String]
-        $WindowTitle
+        $Caption
     )
 
     $closure = New-Closure `
-        -Parameters $WindowTitle `
+        -Parameters $Caption `
         -ScriptBlock {
             Param($hWnd, $lParam)
 
@@ -124,5 +127,89 @@ function Set-ForegroundWindowByTitle {
         }
 
     [User32]::EnumWindows([User32+EnumWindowsProc] $closure, [IntPtr]::Zero) | Out-Null
+}
+
+function Remove-OpenWindow {
+    [CmdletBinding(DefaultParameterSetName = "ByCaption")]
+    Param(
+        [ArgumentCompleter({
+            Param($A, $B, $C)
+
+            $windows = Get-OpenWindow
+
+            Set-Variable `
+                -Name MyTest `
+                -Scope Global `
+                -Value $windows
+
+            return $windows.Caption | where {
+                "`"$_`"" -like "`"$C*`""
+            } | foreach {
+                "`"$_`""
+            }
+        })]
+        [Parameter(
+            ParameterSetName = 'ByCaption',
+            Position = 0
+        )]
+        [String]
+        $Caption,
+
+        [ArgumentCompleter({
+            Param($A, $B, $C)
+
+            $windows = Get-OpenWindow
+
+            Set-Variable `
+                -Name MyTest `
+                -Scope Global `
+                -Value $windows
+
+            return $windows.Handle
+        })]
+        [Parameter(ParameterSetName = 'ByHandleId')]
+        [String]
+        $Id,
+
+        [Parameter(
+            ParameterSetName = 'FromPipeline',
+            ValueFromPipeline
+        )]
+        [PsCustomObject[]]
+        $InputObject
+    )
+
+    Begin {
+        $list = @()
+    }
+
+    Process {
+        $list += @($InputObject)
+    }
+
+    End {
+        $windows = switch ($PsCmdlet.ParameterSetName) {
+            'FromPipeline' {
+                $list
+            }
+
+            'ByCaption' {
+                Get-OpenWindow | where { $_.Caption -like "$Caption*" }
+            }
+
+            'ByHandleId' {
+                Get-OpenWindow | where { $_.Caption -eq $Id }
+            }
+        }
+
+        foreach ($window in $windows) {
+            [PsCustomObject]@{
+                Success = [User32]::DestroyWindow($window.Handle)
+                Handle = $window.Handle
+                Caption = $window.Caption
+                Visible = $window.Visible
+            }
+        }
+    }
 }
 
