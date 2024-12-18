@@ -4,7 +4,7 @@ Describe 'Get-DemandScript' {
     BeforeAll {
         iex "$PsScriptRoot\..\Get-Scripts.ps1" | foreach { . $_ }
 
-        $stuff = cat "$PsScriptRoot\res\Get-DemandScript.Mock.json" |
+        $stuff = gc "$PsScriptRoot\res\Get-DemandScript.Mock.json" |
             ConvertFrom-Json `
             -AsHashtable
     }

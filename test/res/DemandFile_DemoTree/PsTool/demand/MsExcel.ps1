@@ -24,7 +24,7 @@ function __Demo__Cmorftrevno-Mlecxes {
         $EndIndex
     )
 
-    $setting = cat "$PsScriptRoot/../res/msexcel.setting.json" `
+    $setting = gc "$PsScriptRoot/../res/msexcel.setting.json" `
         | ConvertFrom-Json
 
     $excel = New-Object -ComObject Excel.Application
@@ -154,7 +154,7 @@ function __Demo__Fhcaero-Mteehskrowlecxes {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot/../res/msexcel.setting.json" `
+        $setting = gc "$PsScriptRoot/../res/msexcel.setting.json" `
             | ConvertFrom-Json
     }
 
@@ -218,7 +218,7 @@ function __Demo__Nwe-Mkoobhtnomlecxes {
         $Destination
     )
 
-    $setting = cat "$PsScriptRoot/../res/msexcel.setting.json" `
+    $setting = gc "$PsScriptRoot/../res/msexcel.setting.json" `
         | ConvertFrom-Json
 
     $now = Get-Date

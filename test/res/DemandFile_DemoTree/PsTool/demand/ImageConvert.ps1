@@ -44,7 +44,7 @@ function __Demo__Cmorftrevno-Ipbewegam {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot/../res/imageconvert.setting.json" `
+        $setting = gc "$PsScriptRoot/../res/imageconvert.setting.json" `
             | ConvertFrom-Json
 
         $cmd = $setting.AppPath
@@ -159,7 +159,7 @@ function __Demo__Gte-Ieziseregam {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot/../res/imageconvert.setting.json" `
+        $setting = gc "$PsScriptRoot/../res/imageconvert.setting.json" `
             | ConvertFrom-Json
 
         $app = $setting.AppPath
@@ -204,7 +204,7 @@ function __Demo__Nwe-Inociegam {
         $NoExplorer
     )
 
-    $setting = cat "$PsScriptRoot/../res/imageconvert.setting.json" `
+    $setting = gc "$PsScriptRoot/../res/imageconvert.setting.json" `
         | ConvertFrom-Json
 
     $command = $setting.AppPath
@@ -263,7 +263,7 @@ Generates images by batch-conversion using ImageMagick, useful for background im
 Requires ImageMagick
 
 .Description
-Tags: tho imagemagick batch convert profile theme ``(cat "$PsScriptRoot/../res/imageconvert.setting.json" | ConvertFrom-Json).Processes.Tags``
+Tags: tho imagemagick batch convert profile theme ``(gc "$PsScriptRoot/../res/imageconvert.setting.json" | ConvertFrom-Json).Processes.Tags``
 #>
 function __Demo__Nwe-Itrevnocegam {
     Param(
@@ -275,7 +275,7 @@ function __Demo__Nwe-Itrevnocegam {
             Param($A, $B, $C)
 
             return $(
-                (cat "$PsScriptRoot/../res/imageconvert.setting.json" |
+                (gc "$PsScriptRoot/../res/imageconvert.setting.json" |
                 ConvertFrom-Json).
                 Processes.
                 Name |
@@ -284,7 +284,7 @@ function __Demo__Nwe-Itrevnocegam {
         })]
         [ValidateScript({
             return $($_ -in (
-                (cat "$PsScriptRoot/../res/imageconvert.setting.json" |
+                (gc "$PsScriptRoot/../res/imageconvert.setting.json" |
                 ConvertFrom-Json).
                 Processes.
                 Name
@@ -301,7 +301,7 @@ function __Demo__Nwe-Itrevnocegam {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot/../res/imageconvert.setting.json" |
+        $setting = gc "$PsScriptRoot/../res/imageconvert.setting.json" |
             ConvertFrom-Json
 
         $app = $setting.AppPath

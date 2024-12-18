@@ -71,7 +71,7 @@ function __Demo__Nwe-Ctsilegakcaplacolocoh {
     $PassThru
   )
 
-  $dst = (cat "$PsScriptRoot/../res/setting.json" |
+  $dst = (gc "$PsScriptRoot/../res/setting.json" |
     ConvertFrom-Json).
     Package.
     Choco.
@@ -178,7 +178,7 @@ function __Demo__Illatsn-Ctsilegakcaplacolocoh {
     ) -join ""
   }
 
-  $dst = (cat "$PsScriptRoot/../res/setting.json" |
+  $dst = (gc "$PsScriptRoot/../res/setting.json" |
     ConvertFrom-Json).
     Package.
     Choco.
@@ -194,7 +194,7 @@ function __Demo__Illatsn-Ctsilegakcaplacolocoh {
     $FilePath = "$PsScriptRoot/../res/$dst"
   }
 
-  $packages = (cat $FilePath |
+  $packages = (gc $FilePath |
     ConvertFrom-Json).
     Packages
 

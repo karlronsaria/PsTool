@@ -23,7 +23,7 @@ function __Demo__Cottrevno-Usgnidneenilxin {
     # link
     # - url: <https://stackoverflow.com/users/621278/anders-zommarin>
     # - retrieved: 2023_04_09
-    [string]::Join("`n", (cat $Path)) | Set-Content $Path
+    [string]::Join("`n", (gc $Path)) | Set-Content $Path
     $oldBytes = [io.file]::ReadAllBytes($Path)
 
     if (-not $oldBytes.Length) {

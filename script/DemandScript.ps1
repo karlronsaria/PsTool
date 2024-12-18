@@ -12,7 +12,7 @@ function Get-DemandMatch {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot\..\res\demandscript.setting.json" |
+        $setting = gc "$PsScriptRoot\..\res\demandscript.setting.json" |
             ConvertFrom-Json
 
         if ($Pattern.Count -eq 0) {
@@ -93,7 +93,7 @@ function Get-DemandScript {
             Param($A, $B, $C)
 
             $setting =
-                cat "$PsScriptRoot\..\res\demandscript.setting.json" |
+                gc "$PsScriptRoot\..\res\demandscript.setting.json" |
                 ConvertFrom-Json
 
             $scripts =
@@ -188,7 +188,7 @@ function Get-DemandScript {
         $Directory
     )
 
-    $setting = cat "$PsScriptRoot/../res/demandscript.setting.json" |
+    $setting = gc "$PsScriptRoot/../res/demandscript.setting.json" |
         ConvertFrom-Json
 
     switch ($PsCmdlet.ParameterSetName) {
@@ -236,7 +236,7 @@ function Get-DemandScript {
                 Test-Path $_
             } |
             dir |
-            cat |
+            gc |
             ConvertFrom-Json |
             foreach {
                 $_.Import
@@ -296,7 +296,7 @@ function Import-DemandModule {
             Param($A, $B, $C)
 
             $setting =
-                cat "$PsScriptRoot\..\res\demandscript.setting.json" |
+                gc "$PsScriptRoot\..\res\demandscript.setting.json" |
                 ConvertFrom-Json
 
             $scripts =
@@ -409,7 +409,7 @@ function Import-DemandModule {
         $script = New-Module `
             -ScriptBlock $(
                 [ScriptBlock]::Create((
-                    cat $file |
+                    gc $file |
                     foreach {
                         $_ -replace "\`$PsScriptRoot", "`$(`"$dir`")"
                     } |

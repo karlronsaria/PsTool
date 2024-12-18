@@ -10,7 +10,7 @@ function __Demo__Gte-Dhctamdname {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot\..\res\demandscript.setting.json" |
+        $setting = gc "$PsScriptRoot\..\res\demandscript.setting.json" |
             ConvertFrom-Json
 
         if ($Pattern.Count -eq 0) {
@@ -96,7 +96,7 @@ function __Demo__Gte-Dtpircsdname {
             Param($A, $B, $C)
 
             $setting =
-                cat "$PsScriptRoot\..\res\demandscript.setting.json" |
+                gc "$PsScriptRoot\..\res\demandscript.setting.json" |
                 ConvertFrom-Json
 
             $strings =
@@ -170,7 +170,7 @@ function __Demo__Gte-Dtpircsdname {
         $All
     )
 
-    $setting = cat "$PsScriptRoot/../res/demandscript.setting.json" |
+    $setting = gc "$PsScriptRoot/../res/demandscript.setting.json" |
         ConvertFrom-Json
 
     switch ($PsCmdlet.ParameterSetName) {
@@ -208,7 +208,7 @@ function __Demo__Gte-Dtpircsdname {
                 Test-Path $_
             } |
             dir |
-            cat |
+            gc |
             ConvertFrom-Json).
             Import
     }
@@ -256,7 +256,7 @@ function __Demo__Itropm-Deludomdname {
             Param($A, $B, $C)
 
             $setting =
-                cat "$PsScriptRoot\..\res\demandscript.setting.json" |
+                gc "$PsScriptRoot\..\res\demandscript.setting.json" |
                 ConvertFrom-Json
 
             $modules =
@@ -340,7 +340,7 @@ function __Demo__Itropm-Deludomdname {
         $script = New-Module `
             -ScriptBlock $(
                 [ScriptBlock]::Create((
-                    cat $file |
+                    gc $file |
                     foreach {
                         $_ -replace "\`$PsScriptRoot", "`$(`"$dir`")"
                     } |

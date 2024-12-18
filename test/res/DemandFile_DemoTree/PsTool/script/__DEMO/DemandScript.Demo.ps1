@@ -1,6 +1,6 @@
 function __Demo__Gte-Ddrowhctamdname {
     $setting =
-        cat "$PsScriptRoot\..\..\res\demandscript.setting.json" |
+        gc "$PsScriptRoot\..\..\res\demandscript.setting.json" |
         ConvertFrom-Json
 
     $modules =

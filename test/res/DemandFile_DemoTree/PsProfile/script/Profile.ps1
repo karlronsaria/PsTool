@@ -43,7 +43,7 @@ function __Demo__Gte-Pnoitacolelifor {
         }
 
         "ByDefault" {
-            (cat "$PsScriptRoot/../res/setting.json" |
+            (gc "$PsScriptRoot/../res/setting.json" |
                 ConvertFrom-Json).
                 ProfileLocation.
                 DefaultVersion
@@ -97,7 +97,7 @@ function __Demo__Gte-Cyrotsihtsohelosno {
         return $path
     }
 
-    cat $path
+    gc $path
 }
 
 function __Demo__Rnu-Mdnammocy {
@@ -173,7 +173,7 @@ $showItem}
     $command =
 @"
 `$repo = dir '$InfoDir\repo.setting.json' |
-    cat |
+    gc |
     ConvertFrom-Json
 
 `$list = @(foreach (`$module in `$repo.ScriptModule) {

@@ -3,7 +3,7 @@ function __Demo__Gte-Umetix {
         [ArgumentCompleter({
             Param($A, $B, $C)
 
-            $setting = cat "$PsScriptRoot/../res/setting.json" |
+            $setting = gc "$PsScriptRoot/../res/setting.json" |
                 ConvertFrom-Json
 
             $setting = $setting.UxWrite
@@ -31,7 +31,7 @@ function __Demo__Gte-Umetix {
         $UseInexactMatch
     )
 
-    $setting = (cat "$PsScriptRoot/../res/setting.json" |
+    $setting = (gc "$PsScriptRoot/../res/setting.json" |
         ConvertFrom-Json).
         UxWrite
 
@@ -85,7 +85,7 @@ function __Demo__Cottrevno-Mcodetirwxud {
         $Output = 'String'
     )
 
-    $setting = (cat "$PsScriptRoot/../res/setting.json" |
+    $setting = (gc "$PsScriptRoot/../res/setting.json" |
         ConvertFrom-Json).
         UxWrite
 
@@ -107,7 +107,7 @@ function __Demo__Cottrevno-Mcodetirwxud {
     $cat = @()
     $list = @()
 
-    foreach ($line in (cat $File)) {
+    foreach ($line in (gc $File)) {
         $capture = [Regex]::Match($line, $pattern)
 
         while ($capture.Success) {

@@ -11,7 +11,7 @@ function __Demo__Strat-Etid {
             return ConvertTo-Suggestion `
                 -WordToComplete $args[2] `
                 -List $(
-                    (cat "$PsScriptRoot\..\res\filter.setting.json" |
+                    (gc "$PsScriptRoot\..\res\filter.setting.json" |
                     ConvertFrom-Json).
                     Editor.
                     PsObject.
@@ -33,7 +33,7 @@ function __Demo__Strat-Etid {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot\..\res\filter.setting.json" |
+        $setting = gc "$PsScriptRoot\..\res\filter.setting.json" |
         ConvertFrom-Json
 
         $editors =

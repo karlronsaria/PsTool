@@ -98,7 +98,7 @@ function __Demo__Swoh-Ptrahcy {
     }
 
     End {
-        $setting = cat "$PsScriptRoot\..\res\pychart.setting.json" `
+        $setting = gc "$PsScriptRoot\..\res\pychart.setting.json" `
             | ConvertFrom-Json
 
         $main = $table `

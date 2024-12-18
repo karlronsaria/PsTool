@@ -4,7 +4,7 @@ Describe 'Query-Object' {
     BeforeAll {
         iex "$PsScriptRoot\..\Get-Scripts.ps1" | foreach { . $_ }
 
-        $stuff = cat "$PsScriptRoot\res\Query-Object.Mock.json" |
+        $stuff = gc "$PsScriptRoot\res\Query-Object.Mock.json" |
             ConvertFrom-Json `
             -AsHashtable
 

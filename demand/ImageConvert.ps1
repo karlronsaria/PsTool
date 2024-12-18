@@ -44,7 +44,7 @@ function ConvertFrom-ImageWebp {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot/../res/imageconvert.setting.json" |
+        $setting = gc "$PsScriptRoot/../res/imageconvert.setting.json" |
             ConvertFrom-Json
 
         $cmd = $setting.AppPath
@@ -165,7 +165,7 @@ function Get-ImageResize {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot/../res/imageconvert.setting.json" |
+        $setting = gc "$PsScriptRoot/../res/imageconvert.setting.json" |
             ConvertFrom-Json
 
         $app = $setting.AppPath
@@ -214,7 +214,7 @@ function New-ImageIcon {
         $NoExplorer
     )
 
-    $setting = cat "$PsScriptRoot/../res/imageconvert.setting.json" `
+    $setting = gc "$PsScriptRoot/../res/imageconvert.setting.json" `
         | ConvertFrom-Json
 
     $command = $setting.AppPath
@@ -277,7 +277,7 @@ Generates images by batch-conversion using ImageMagick, useful for background im
 Requires ImageMagick
 
 .DESCRIPTION
-Tags: imagemagick batch convert profile theme ``(cat "$PsScriptRoot/../res/imageconvert.setting.json" | ConvertFrom-Json).Profiles.Tags``
+Tags: imagemagick batch convert profile theme ``(gc "$PsScriptRoot/../res/imageconvert.setting.json" | ConvertFrom-Json).Profiles.Tags``
 #>
 function New-ImageConvert {
     [CmdletBinding(DefaultParameterSetName = "ByProfile")]
@@ -291,7 +291,7 @@ function New-ImageConvert {
             Param($A, $B, $C)
 
             return $(
-                (cat "$PsScriptRoot/../res/imageconvert.setting.json" |
+                (gc "$PsScriptRoot/../res/imageconvert.setting.json" |
                 ConvertFrom-Json).
                 Profiles.
                 Name |
@@ -300,7 +300,7 @@ function New-ImageConvert {
         })]
         [ValidateScript({
             return $($_ -in (
-                (cat "$PsScriptRoot/../res/imageconvert.setting.json" |
+                (gc "$PsScriptRoot/../res/imageconvert.setting.json" |
                 ConvertFrom-Json).
                 Profiles.
                 Name
@@ -321,7 +321,7 @@ function New-ImageConvert {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot/../res/imageconvert.setting.json" |
+        $setting = gc "$PsScriptRoot/../res/imageconvert.setting.json" |
             ConvertFrom-Json
 
         $app = $setting.AppPath

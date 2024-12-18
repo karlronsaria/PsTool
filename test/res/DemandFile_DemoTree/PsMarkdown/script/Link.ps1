@@ -486,7 +486,7 @@ function __Demo__Mevo-Mmetinwodkra {
         $pattern = "!\[[^\[\]]+\]\((?<Resource>[^\(\)]+)\)"
         $dir = (Get-Item $ItemPath).Directory
 
-        foreach ($line in (cat $ItemPath)) {
+        foreach ($line in (gc $ItemPath)) {
             $capture = [Regex]::Match($line, $pattern)
 
             if ($capture.Success) {
@@ -594,7 +594,7 @@ function __Demo__Mevo-Mmetinwodkra {
 
                 foreach ($item in $grep) {
                     if ($null -eq $cats[$item.FilePath]) {
-                        $cats[$item.FilePath] = cat $item.FilePath
+                        $cats[$item.FilePath] = gc $item.FilePath
                     }
 
                     $matchInfo = $item.MatchInfo
@@ -643,7 +643,7 @@ function __Demo__Mevo-Mmetinwodkra {
     }
 
     if (-not $Notebook) {
-        $setting = cat "$PsScriptRoot/../res/setting.json" `
+        $setting = gc "$PsScriptRoot/../res/setting.json" `
             | ConvertFrom-Json
 
         $Notebook = $setting.Link.Notebook
@@ -693,7 +693,7 @@ function __Demo__Mevo-Mmetinwodkra {
     if ($Notebook) {
         $moveLinkInfo.Content | Out-File $Destination -Force
 
-        if (diff ($moveLinkInfo.Content) (cat $Destination)) {
+        if (diff ($moveLinkInfo.Content) (gc $Destination)) {
             Write-Warning "Failed to write file $($Destination)"
         }
         else {
@@ -703,7 +703,7 @@ function __Demo__Mevo-Mmetinwodkra {
         foreach ($backRef in $moveLinkInfo.BackReferences) {
             $backRef.Content | Out-File $backRef.Path -Force
 
-            if (diff ($backRef.Content) (cat $backRef.Path)) {
+            if (diff ($backRef.Content) (gc $backRef.Path)) {
                 Write-Warning "Failed to write file $($backRef.Path)"
             }
             else {

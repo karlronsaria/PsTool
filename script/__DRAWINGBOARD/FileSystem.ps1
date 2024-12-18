@@ -157,7 +157,7 @@ function Get-MyUrl {
             Param($A, $B, $WordToComplete, $CommandAst)
 
             $setting = (dir "$PsScriptRoot/../res/filesystem.setting.json" |
-                cat |
+                Get-Content |
                 ConvertFrom-Json).
                 LocationFile
 
@@ -206,7 +206,7 @@ function Get-MyUrl {
             if ($null -eq $locations -or @($locations).Count -eq 0) {
                 $locations = $setting.Notebooks |
                     Get-Item |
-                    cat |
+                    Get-Content |
                     ConvertFrom-Json |
                     foreach {
                         $_.Location
@@ -253,7 +253,7 @@ function Get-MyUrl {
 
     Begin {
         $setting = (dir "$PsScriptRoot/../res/filesystem.setting.json" |
-            cat |
+            Get-Content |
             ConvertFrom-Json).
             LocationFile
 
@@ -272,7 +272,7 @@ function Get-MyUrl {
         if ($null -eq $locations -or @($locations).Count -eq 0) {
             $locations = $setting.Notebooks |
                 Get-Item |
-                cat |
+                Get-Content |
                 ConvertFrom-Json |
                 foreach {
                     $_.Location

@@ -2,7 +2,7 @@ Get-DemoPathFunctionNameScramble {
   dir *.ps1 -Recurse |
   foreach {
     $file = get-item $_
-    $cat = cat $file
+    $cat = gc $file
 
     $sed = foreach ($line in $cat) {
       $capture = [Regex]::Match($line, "(?<=^function\s+)\S+(?=\s*(\{|$))")

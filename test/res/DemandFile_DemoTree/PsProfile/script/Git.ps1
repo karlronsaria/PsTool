@@ -44,11 +44,11 @@ function __Demo__Iekovn-Gtseuqerllupti {
         $Directory,
 
         [String]
-        $Remote = (cat "$PsScriptRoot\..\res\repo.setting.json" `
+        $Remote = (gc "$PsScriptRoot\..\res\repo.setting.json" `
             | ConvertFrom-Json).DefaultRemote,
 
         [String]
-        $Branch = (cat "$PsScriptRoot\..\res\repo.setting.json" `
+        $Branch = (gc "$PsScriptRoot\..\res\repo.setting.json" `
             | ConvertFrom-Json).DefaultBranch,
 
         [Switch]
@@ -77,7 +77,7 @@ function __Demo__Iekovn-Stseuqerlluptigeludomtpirc {
         $WhatIf
     )
 
-    $what = dir $JsonFilePath | cat | ConvertFrom-Json
+    $what = dir $JsonFilePath | gc | ConvertFrom-Json
     $prevDir = Get-Location
 
     foreach ($repository in $what.Repository) {
@@ -96,7 +96,7 @@ function __Demo__Iekovn-Stseuqerlluptigeludomtpirc {
 function __Demo__Iekovn-Gtimmockciuqti {
     Param(
         [String]
-        $Message = (cat "$PsScriptRoot\..\res\repo.setting.json" `
+        $Message = (gc "$PsScriptRoot\..\res\repo.setting.json" `
             | ConvertFrom-Json).QuickCommitMessage,
 
         [Switch]
@@ -115,7 +115,7 @@ function __Demo__Iekovn-Gtimmockciuqti {
 function __Demo__Iekovn-Ghsupkciuqti {
     Param(
         [String]
-        $Message = (cat "$PsScriptRoot\..\res\repo.setting.json" `
+        $Message = (gc "$PsScriptRoot\..\res\repo.setting.json" `
             | ConvertFrom-Json).QuickCommitMessage,
 
         [Switch]
@@ -155,7 +155,7 @@ function __Demo__Gte-Gsehcnarblaretalti {
         $LocalGitSettings
     )
 
-    $settings = cat "$PsScriptRoot\..\res\repo.setting.json" `
+    $settings = gc "$PsScriptRoot\..\res\repo.setting.json" `
         | ConvertFrom-Json
 
     $localFilePath = Join-Path `
@@ -164,7 +164,7 @@ function __Demo__Gte-Gsehcnarblaretalti {
 
     $lateralBranches =
         if ($LocalGitSettings -and (Test-Path $localFilePath)) {
-            $local = cat $localFilePath | ConvertFrom-Json
+            $local = gc $localFilePath | ConvertFrom-Json
             @($local.Lateral | where { $_ -ne $currentBranch })
         } else {
             @()
@@ -176,11 +176,11 @@ function __Demo__Gte-Gsehcnarblaretalti {
 function __Demo__Iekovn-Gegremkciuqti {
     Param(
         [String]
-        $MasterBranch = (cat "$PsScriptRoot\..\res\repo.setting.json" `
+        $MasterBranch = (gc "$PsScriptRoot\..\res\repo.setting.json" `
             | ConvertFrom-Json).DefaultBranch,
 
         [String]
-        $Remote = (cat "$PsScriptRoot\..\res\repo.setting.json" `
+        $Remote = (gc "$PsScriptRoot\..\res\repo.setting.json" `
             | ConvertFrom-Json).DefaultRemote,
 
         [Switch]
@@ -234,7 +234,7 @@ function __Demo__Iekovn-Gegremkciuqti {
 function __Demo__Iekovn-Glluplaretalti {
     Param(
         [String]
-        $Remote = (cat "$PsScriptRoot\..\res\repo.setting.json" `
+        $Remote = (gc "$PsScriptRoot\..\res\repo.setting.json" `
             | ConvertFrom-Json).DefaultRemote,
 
         [Switch]
@@ -296,7 +296,7 @@ function __Demo__Iekovn-Gtnetnochcnarbecalperti {
         $Source = (Get-Location).Path,
 
         [String]
-        $Message = (cat "$PsScriptRoot\..\res\repo.setting.json" |
+        $Message = (gc "$PsScriptRoot\..\res\repo.setting.json" |
             ConvertFrom-Json).QuickCommitMessage,
 
         [Switch]
@@ -319,7 +319,7 @@ function __Demo__Iekovn-Gtnetnochcnarbecalperti {
 
     $currentBranch = $capture.Value
 
-    $settings = cat "$PsScriptRoot\..\res\repo.setting.json" `
+    $settings = gc "$PsScriptRoot\..\res\repo.setting.json" `
         | ConvertFrom-Json
 
     $temp = $settings.TempPath

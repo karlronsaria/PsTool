@@ -24,7 +24,7 @@ function ConvertFrom-MsExcel {
         $EndIndex
     )
 
-    $setting = cat "$PsScriptRoot/../res/msexcel.setting.json" `
+    $setting = gc "$PsScriptRoot/../res/msexcel.setting.json" `
         | ConvertFrom-Json
 
     $excel = New-Object -ComObject Excel.Application
@@ -154,7 +154,7 @@ function ForEach-MsExcelWorksheet {
     )
 
     Begin {
-        $setting = cat "$PsScriptRoot/../res/msexcel.setting.json" `
+        $setting = gc "$PsScriptRoot/../res/msexcel.setting.json" `
             | ConvertFrom-Json
     }
 
@@ -218,7 +218,7 @@ function New-MsExcelMonthBook {
         $Destination
     )
 
-    $setting = cat "$PsScriptRoot/../res/msexcel.setting.json" `
+    $setting = gc "$PsScriptRoot/../res/msexcel.setting.json" `
         | ConvertFrom-Json
 
     $now = Get-Date
