@@ -35,7 +35,7 @@
     "DefaultVersion": 5,
     "DefaultStartingDirectory": {
         "Win32NT": "\"$env:OneDrive/Documents\"",
-        "Unix": "\"~/.config/powershell/\""
+        "Unix": "\"~/.config/\""
     },
     "LocalDemandFile": {
         "Suffix": "pstool.demand.json",
