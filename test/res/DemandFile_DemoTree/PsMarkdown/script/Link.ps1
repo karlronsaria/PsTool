@@ -693,7 +693,7 @@ function __Demo__Mevo-Mmetinwodkra {
     if ($Notebook) {
         $moveLinkInfo.Content | Out-File $Destination -Force
 
-        if (diff ($moveLinkInfo.Content) (gc $Destination)) {
+        if (Compare-Object ($moveLinkInfo.Content) (gc $Destination)) {
             Write-Warning "Failed to write file $($Destination)"
         }
         else {
@@ -703,7 +703,7 @@ function __Demo__Mevo-Mmetinwodkra {
         foreach ($backRef in $moveLinkInfo.BackReferences) {
             $backRef.Content | Out-File $backRef.Path -Force
 
-            if (diff ($backRef.Content) (gc $backRef.Path)) {
+            if (Compare-Object ($backRef.Content) (gc $backRef.Path)) {
                 Write-Warning "Failed to write file $($backRef.Path)"
             }
             else {

@@ -266,7 +266,7 @@ function Get-DemandScript {
         # by this point.
         $list = @($_.Group.Matches | where { $_ }) + @($module)
 
-        $diff = diff `
+        $diff = Compare-Object `
             -Reference $list `
             -Difference $InputObject
 

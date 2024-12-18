@@ -233,7 +233,7 @@ function __Demo__Gte-Dtpircsdname {
             $_.Group.ScriptModule |
             & (iex $select)
 
-        $diff = diff `
+        $diff = Compare-Object `
             ($_.Group.Matches + @($scriptModule)) `
             $InputObject
 

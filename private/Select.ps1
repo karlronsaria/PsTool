@@ -88,7 +88,7 @@ function Compare-SetFromList {
                     }
 
                     $ref = @($ref) + @($AdditionalObject)
-                    $diff = diff ($ref) ($DifferenceObject)
+                    $diff = Compare-Object ($ref) ($DifferenceObject)
 
                     $null -eq $diff -or
                         ($Mode -eq 'Or' -or

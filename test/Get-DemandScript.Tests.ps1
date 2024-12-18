@@ -39,7 +39,7 @@ Describe 'Get-DemandScript' {
                 # ``Count`` instead
                 @($actual).Count | Should Be $Value.Count
 
-                diff ($actual) ($Value) | Should Be $null
+                Compare-Object ($actual) ($Value) | Should Be $null
             }
         }
     }
