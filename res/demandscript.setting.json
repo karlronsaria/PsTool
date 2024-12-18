@@ -21,7 +21,10 @@
     ],
     "ScriptPatterns": [ "Tag" ],
     "DefaultVersion": 5,
-    "DefaultStartingDirectory": "\"$env:OneDrive/Documents\"",
+    "DefaultStartingDirectory": {
+        "Win32NT": "\"$env:OneDrive/Documents\"",
+        "Unix": "\"~/.config/powershell/\""
+    },
     "LocalDemandFile": {
         "Suffix": "pstool.demand.json",
         "Prefix": [

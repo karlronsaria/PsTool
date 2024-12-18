@@ -194,7 +194,7 @@ function Get-DemandScript {
     switch ($PsCmdlet.ParameterSetName) {
         'AllFiles' {
             if (-not $Directory) {
-                $start = iex $setting.DefaultStartingDirectory
+                $start = iex $setting.DefaultStartingDirectory.$($PsVersionTable.Platform)
 
                 $Directory =
                     $(if ($AllProfiles) {
