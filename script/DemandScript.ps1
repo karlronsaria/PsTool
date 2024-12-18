@@ -195,13 +195,14 @@ function Get-DemandScript {
         'AllFiles' {
             if (-not $Directory) {
                 $start = iex $setting.DefaultStartingDirectory.$($PsVersionTable.Platform)
+                $profiles = $setting.Profiles.$($PsVersionTable.Platform)
 
                 $Directory =
                     $(if ($AllProfiles) {
-                        $setting.Profiles
+                        $profiles
                     }
                     else {
-                        $setting.Profiles |
+                        $profiles |
                         where {
                             $_.Version -eq $setting.DefaultVersion
                         }

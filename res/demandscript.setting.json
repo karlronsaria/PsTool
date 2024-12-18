@@ -1,14 +1,26 @@
 {
-    "Profiles": [
-        {
-            "Version": 5,
-            "Location": "WindowsPowerShell/Scripts"
-        },
-        {
-            "Version": 7,
-            "Location": "PowerShell/Scripts"
-        }
-    ],
+    "Profiles": {
+        "Win32NT": [
+            {
+                "Version": 5,
+                "Location": "WindowsPowerShell/Scripts"
+            },
+            {
+                "Version": 7,
+                "Location": "PowerShell/Scripts"
+            }
+        ],
+        "Unix": [
+            {
+                "Version": 5,
+                "Location": "powershell/Scripts"
+            },
+            {
+                "Version": 7,
+                "Location": "powershell/Scripts"
+            }
+        ]
+    },
     "Patterns": [
         {
             "Name": "Tag",
