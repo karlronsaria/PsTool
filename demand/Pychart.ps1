@@ -102,7 +102,7 @@ function Show-Pychart {
             | ConvertFrom-Json
 
         $main = $table `
-            | sort `
+            | Sort-Object `
                 -Property Value `
                 -Descending `
             | select `

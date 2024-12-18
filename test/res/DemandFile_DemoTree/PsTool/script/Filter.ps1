@@ -224,7 +224,7 @@ function __Demo__Strat-Eerolpx {
     }
 
     End {
-        foreach ($path in $list | sort -Unique) {
+        foreach ($path in $list | Sort-Object -Unique) {
             if ($PassThru) {
                 Write-Output $path
             }

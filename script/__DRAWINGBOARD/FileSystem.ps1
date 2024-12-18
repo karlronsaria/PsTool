@@ -218,7 +218,7 @@ function Get-MyUrl {
                 (@($locations.Name) +
                 @($locations.Tag) +
                 @($locations.Tags)) |
-                sort |
+                Sort-Object |
                 select -Unique -CaseInsensitive | # todo
                 where {
                     $_ -like "$WordToComplete*"

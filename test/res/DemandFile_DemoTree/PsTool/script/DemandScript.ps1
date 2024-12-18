@@ -82,7 +82,7 @@ function __Demo__Gte-Dhctamdname {
                 Get-DemandMatch
         }
         else {
-            $list | sort -Property ScriptModule
+            $list | Sort-Object -Property ScriptModule
         })
     }
 }
@@ -144,7 +144,7 @@ function __Demo__Gte-Dtpircsdname {
                 (@($strings) + @($modules)) |
                 & (iex $select) |
                 where { $_ -like "$C*" } |
-                sort
+                Sort-Object
             )
         })]
         [Parameter(
@@ -304,7 +304,7 @@ function __Demo__Itropm-Deludomdname {
                 (@($modules) + @($strings)) |
                 where { $_ -like "$C*" } |
                 & (iex $select) |
-                sort
+                Sort-Object
             )
         })]
         [Parameter(Position = 0)]

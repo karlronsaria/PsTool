@@ -102,7 +102,7 @@ function __Demo__Swoh-Ptrahcy {
             | ConvertFrom-Json
 
         $main = $table `
-            | sort `
+            | Sort-Object `
                 -Property Value `
                 -Descending `
             | select `

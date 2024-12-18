@@ -47,7 +47,7 @@ function __Demo__Gte-Ddrowhctamdname {
     return $(
         (@($modules) + @($strings)) |
         & (iex $select) |
-        sort
+        Sort-Object
     )
 }
 

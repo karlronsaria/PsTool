@@ -79,7 +79,7 @@ function Get-DemandMatch {
         }
         else {
             $list |
-                sort -Property ScriptModule
+                Sort-Object -Property ScriptModule
         })
     }
 }
@@ -158,7 +158,7 @@ function Get-DemandScript {
                 (@($tags) + @($other) + @($modules) + @($submodules)) |
                 Select-CaseInsensitive |
                 where { $_ -like "$C*" } |
-                sort
+                Sort-Object
             )
         })]
         [Parameter(
@@ -362,7 +362,7 @@ function Import-DemandModule {
                 (@($tags) + @($other) + @($modules) + @($submodules)) |
                 Select-CaseInsensitive |
                 where { $_ -like "$C*" } |
-                sort
+                Sort-Object
             )
         })]
         [Parameter(Position = 0)]

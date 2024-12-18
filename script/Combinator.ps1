@@ -224,7 +224,7 @@ function Start-Explore {
     }
 
     End {
-        foreach ($path in $list | sort -Unique) {
+        foreach ($path in $list | Sort-Object -Unique) {
             if ($PassThru) {
                 Write-Output $path
             }

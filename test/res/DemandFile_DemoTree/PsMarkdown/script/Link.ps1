@@ -621,7 +621,7 @@ function __Demo__Mevo-Mmetinwodkra {
                         $newLine
                 }
 
-                $moveItem.BackReferences = $cats.Keys | sort | foreach {
+                $moveItem.BackReferences = $cats.Keys | Sort-Object | foreach {
                     [PsCustomObject]@{
                         Path = $_
                         Content = $cats[$_]

@@ -68,7 +68,7 @@ function Get-DemandMatchWord {
                 (@($tags) + @($other) + @($modules)) |
                 & (iex $select) |
                 where { $_ -like "$C*" } |
-                sort
+                Sort-Object
             )
 }
 

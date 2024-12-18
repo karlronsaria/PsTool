@@ -42,7 +42,7 @@ Add-Type @"
 function Get-OpenWindow {
     $listName = (
         "$((Get-Item ($PsScriptRoot)).FullName)$('_' * 8)".GetEnumerator() |
-            sort { Get-Random } |
+            Sort-Object { Get-Random } |
             where { $_ -match "\w" }
     ) -join ''
 
