@@ -180,7 +180,7 @@ $showItem}
     iex "$StartingDirectory\`$module\Get-Scripts.ps1"
 })
 
-if ((Test-RoleIsAministrator)) {
+if ((Test-RoleIsAdministrator)) {
     `$list += @(foreach (`$module in `$repo.ElevatedScriptModule) {
         iex "$StartingDirectory\`$module\Get-Scripts.ps1"
     })
