@@ -126,6 +126,57 @@ function Set-ForegroundOpenWindow {
             return $true
         }
 
+    if (-not $Caption) {
+        $windows = Get-OpenWindow
+        Import-Module PsQuickform
+
+        $menu = [pscustomobject]@{
+            Preferences = [pscustomobject]@{
+                Caption = 'Focus Window'
+            }
+            MenuSpecs = @(
+                [pscustomobject]@{
+                    Name = 'Caption'
+                    Type = 'Enum'
+                    Mandatory = $true
+                    Symbols =
+                        $windows |
+                        foreach -Begin {
+                            $c = 0
+                        } -Process {
+                            [pscustomobject]@{
+                                Name = $c
+                                Text = $_.Caption
+                            }
+
+                            $c = $c + 1
+                        }
+                }
+            )
+        }
+
+        $result = $menu | Show-QformMenu
+
+        if (-not $result.Confirm) {
+            return
+        }
+
+        $window = $windows[$result.MenuAnswers.Caption]
+
+        $closure = New-Closure `
+            -Parameters $window.Handle `
+            -ScriptBlock {
+                Param($hWnd, $lParam)
+
+                if ([string]$hWnd -eq $Parameters) {
+                    [User32]::SetForegroundWindow($hWnd)
+                    return $false
+                }
+
+                return $true
+            }
+    }
+
     [User32]::EnumWindows([User32+EnumWindowsProc] $closure, [IntPtr]::Zero) | Out-Null
 }
 
