@@ -1,108 +1,5 @@
 # issue
 
-- [x] 2024_10_16_000842
-  - howto
-
-    ```powershell
-    Move-ItemDuplicatePair
-    ```
-
-  - actual
-
-    ```text
-    Get-Content:
-    Line |
-      32 |                  Get-Content |
-         |                  ~~~~~~~~~~~
-         | The input object cannot be bound to any parameters for the command either because the command does not take pipeline input or the input and its properties do not match any of the parameters that take pipeline input.
-    ```
-
-- [ ] 2024_10_16_000505
-  - howto
-    1. when the working directory has an odd-number of duplicates of an item
-    2. in powershell
-
-       ```powershell
-       dir *.* | Move-ItemDuplicatePair
-       ```
-
-  - actual
-
-    ```text
-        Directory: C:\temp\2024_10_16_todd
-
-    Mode                 LastWriteTime         Length Name
-    ----                 -------------         ------ ----
-    d----          10/16/2024 12:03 AM                __dup000
-    d----          10/16/2024 12:03 AM                __dup001
-    Move-Item:
-    Line |
-      89 |              Move-Item $_.ReferenceObject $dirName
-         |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         | Cannot find path 'C:\temp\2024_10_16_todd\DR7ITUhWkAAVUM3 (1).jpg' because it does not exist.
-    d----          10/16/2024 12:03 AM                __dup002
-    ```
-
-- [x] 2024_10_16_224609
-  - howto
-
-    ```powershell
-    Get-DemandScript -InputObject PsSchedule, PsTool -Mode Or
-    ```
-
-  - actual
-
-    ```text
-    ```
-
-  - expected
-
-    ```text
-    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsSchedule\demand\MySchedule.ps1
-    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsSchedule\demand\PplRoutine.ps1
-    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsSchedule\demand\ScheduleFromTable.ps1
-    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsSchedule\demand\ScheduleObject.ps1
-    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\Access.ps1
-    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\DateFolder.ps1
-    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\Fsm.ps1
-    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\ImageConvert.ps1
-    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\MsExcel.ps1
-    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\NotepadPlusPlus.ps1
-    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\ProtectedString.ps1
-    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\ProxyFunction.ps1
-    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\Pychart.ps1
-    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\RemoveDuplicate.ps1
-    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\Windows.ps1
-    ```
-
-- [x] 2024_10_15_010840
-  - howto
-
-    ```powershell
-    Import-DemandModule DateFolder -PassThru
-    ```
-
-  - actual
-
-    ```text
-    ```
-
-- [x] 2024_09_18_033326
-  - canceled: This function is working as intended. I just need to learn to use it properly.
-
-  - what: Start-Edit
-  - howto
-
-    ```powershell
-    dir .\duck.txt | edit VsCode
-    ```
-
-  - actual
-
-    ```powershell
-    Start-Edit: The input object cannot be bound to any parameters for the command either because the command does not take pipeline input or the input and its properties do not match any of the parameters that take pipeline input.
-    ```
-
 - [ ] 2024_01_18_025321
 
   - what: Query-Object
@@ -194,6 +91,109 @@
     ```
 
 ## complete
+
+- [x] 2024_10_16_000505
+  - howto
+    1. when the working directory has an odd number of duplicates of an item
+    2. in powershell
+
+       ```powershell
+       dir *.* | Move-ItemDuplicatePair
+       ```
+
+  - actual
+
+    ```text
+        Directory: C:\temp\2024_10_16_todd
+
+    Mode                 LastWriteTime         Length Name
+    ----                 -------------         ------ ----
+    d----          10/16/2024 12:03 AM                __dup000
+    d----          10/16/2024 12:03 AM                __dup001
+    Move-Item:
+    Line |
+      89 |              Move-Item $_.ReferenceObject $dirName
+         |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         | Cannot find path 'C:\temp\2024_10_16_todd\DR7ITUhWkAAVUM3 (1).jpg' because it does not exist.
+    d----          10/16/2024 12:03 AM                __dup002
+    ```
+
+- [x] 2024_10_16_224609
+  - howto
+
+    ```powershell
+    Get-DemandScript -InputObject PsSchedule, PsTool -Mode Or
+    ```
+
+  - actual
+
+    ```text
+    ```
+
+  - expected
+
+    ```text
+    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsSchedule\demand\MySchedule.ps1
+    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsSchedule\demand\PplRoutine.ps1
+    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsSchedule\demand\ScheduleFromTable.ps1
+    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsSchedule\demand\ScheduleObject.ps1
+    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\Access.ps1
+    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\DateFolder.ps1
+    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\Fsm.ps1
+    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\ImageConvert.ps1
+    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\MsExcel.ps1
+    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\NotepadPlusPlus.ps1
+    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\ProtectedString.ps1
+    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\ProxyFunction.ps1
+    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\Pychart.ps1
+    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\RemoveDuplicate.ps1
+    C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\Windows.ps1
+    ```
+
+- [x] 2024_10_15_010840
+  - howto
+
+    ```powershell
+    Import-DemandModule DateFolder -PassThru
+    ```
+
+  - actual
+
+    ```text
+    ```
+
+- [x] 2024_09_18_033326
+  - canceled: This function is working as intended. I just need to learn to use it properly.
+
+  - what: Start-Edit
+  - howto
+
+    ```powershell
+    dir .\duck.txt | edit VsCode
+    ```
+
+  - actual
+
+    ```powershell
+    Start-Edit: The input object cannot be bound to any parameters for the command either because the command does not take pipeline input or the input and its properties do not match any of the parameters that take pipeline input.
+    ```
+
+- [x] 2024_10_16_000842
+  - howto
+
+    ```powershell
+    Move-ItemDuplicatePair
+    ```
+
+  - actual
+
+    ```text
+    Get-Content:
+    Line |
+      32 |                  Get-Content |
+         |                  ~~~~~~~~~~~
+         | The input object cannot be bound to any parameters for the command either because the command does not take pipeline input or the input and its properties do not match any of the parameters that take pipeline input.
+    ```
 
 - [x] 2024_09_18_012356
 
