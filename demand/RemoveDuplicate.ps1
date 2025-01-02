@@ -19,6 +19,7 @@ function Get-ItemDuplicatePair {
 
     End {
         $list |
+        where { $_ } |
         foreach -Begin {
             $table = @{}
             $count = 0

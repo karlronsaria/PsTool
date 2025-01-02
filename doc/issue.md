@@ -1,6 +1,6 @@
 # issue
 
-- [ ] 2024_10_16_000842
+- [x] 2024_10_16_000842
   - howto
 
     ```powershell
@@ -19,7 +19,7 @@
 
 - [ ] 2024_10_16_000505
   - howto
-    1. when the working directory has an odd-number of duplicates of a item
+    1. when the working directory has an odd-number of duplicates of an item
     2. in powershell
 
        ```powershell
