@@ -862,7 +862,8 @@ function json {
             ($PsCmdlet.ParameterSetName -eq 'Undetermined' -and
             $inputIsString)
 
-        [void] $PsBoundParameters.Remove('InputObject')
+        $params = $PsBoundParameters
+        [void] $params.Remove('InputObject')
 
         return $list | & $(
             if ($from) {
@@ -871,7 +872,7 @@ function json {
             else {
                 'ConvertTo-Json'
             }
-        ) @PsBoundParameters
+        ) @params
     }
 }
 

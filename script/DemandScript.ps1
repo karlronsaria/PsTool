@@ -383,9 +383,12 @@ function Import-DemandModule {
         $WhatIf
     )
 
+    # (karlr 2025_01_03): new best practice
+    $params = $PsBoundParameters
+
     'PassThru', 'WhatIf' |
     foreach {
-        [void]$PsBoundParameters.Remove($_)
+        [void]$params.Remove($_)
     }
 
     Write-Progress `
@@ -394,7 +397,7 @@ function Import-DemandModule {
         -Status "Searching demand files" `
         -PercentComplete 0
 
-    foreach ($file in (Get-DemandScript @PsBoundParameters)) {
+    foreach ($file in (Get-DemandScript @params)) {
         if ($PassThru) {
             $file
         }
