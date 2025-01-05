@@ -457,8 +457,8 @@ function Get-PipelinePropertySuggestion {
     }
 }
 
-function Query-Object {
-    [Alias('What', 'Query')]
+function Select-FlatObject {
+    [Alias('What', 'Query-Object', 'Query')]
     [CmdletBinding(DefaultParameterSetName = 'GetAny')]
     Param(
         [Parameter(ValueFromPipeline = $true)]
@@ -802,7 +802,8 @@ function ConvertTo-List {
     }
 }
 
-function json {
+function Convert-Json {
+    [Alias('json')]
     [CmdletBinding(DefaultParameterSetName = 'Undetermined')]
     param(
         [Parameter(
