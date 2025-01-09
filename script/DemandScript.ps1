@@ -420,7 +420,9 @@ function Import-DemandModule {
                     Out-String
                 ))
             ) `
-            -Name "ModuleOnDemand_$((Get-Item $file).BaseName)"
+            -Name "ModuleOnDemand_$((Get-Item $file).BaseName)" `
+            -Alias * `
+            -Global
 
         if ($WhatIf) {
             $script

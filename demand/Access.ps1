@@ -40,6 +40,58 @@ Add-Type @"
 "@
 
 function Get-OpenWindow {
+    [CmdletBinding(DefaultParameterSetName = 'All')]
+    Param(
+        [ArgumentCompleter({
+            Param($A, $B, $C)
+
+            $windows = Get-OpenWindow
+
+            Set-Variable `
+                -Name MyTest `
+                -Scope Global `
+                -Value $windows
+
+            return $windows.Caption | where {
+                "`"$_`"" -like "`"$C*`""
+            } | foreach {
+                "`"$_`""
+            }
+        })]
+        [Parameter(
+            ParameterSetName = 'ByCaption',
+            Position = 0
+        )]
+        [String]
+        $Caption,
+
+        [ArgumentCompleter({
+            Param($A, $B, $C)
+
+            $windows = Get-OpenWindow
+
+            Set-Variable `
+                -Name MyTest `
+                -Scope Global `
+                -Value $windows
+
+            return $windows.HandleId
+        })]
+        [Parameter(ParameterSetName = 'ByHandleId')]
+        [String]
+        $HandleId
+    )
+
+    switch ($PsCmdlet.ParameterSetName) {
+        'ByCaption' {
+            return Get-OpenWindow | where { $_.Caption -eq $Caption }
+        }
+
+        'ByHandleId' {
+            return Get-OpenWindow | where { $_.HandleId -eq $HandleId }
+        }
+    }
+
     $listName = (
         "$((Get-Item ($PsScriptRoot)).FullName)$('_' * 8)".GetEnumerator() |
             Sort-Object { Get-Random } |
@@ -65,7 +117,7 @@ function Get-OpenWindow {
               -Name $Parameters `
               -Value ($list.Value + @(
                 [PsCustomObject]@{
-                  Handle = $hwnd
+                  HandleId = $hwnd
                   Caption = [User32]::GetWindowTitle($hwnd)
                   Visible = [User32]::IsWindowVisible($hwnd)
                 }
@@ -164,7 +216,7 @@ function Set-ForegroundOpenWindow {
         $window = $windows[$result.MenuAnswers.Caption]
 
         $closure = New-Closure `
-            -Parameters $window.Handle `
+            -Parameters $window.HandleId `
             -ScriptBlock {
                 Param($hWnd, $lParam)
 
@@ -216,11 +268,11 @@ function Remove-OpenWindow {
                 -Scope Global `
                 -Value $windows
 
-            return $windows.Handle
+            return $windows.HandleId
         })]
         [Parameter(ParameterSetName = 'ByHandleId')]
         [String]
-        $Id,
+        $HandleId,
 
         [Parameter(
             ParameterSetName = 'FromPipeline',
@@ -249,18 +301,76 @@ function Remove-OpenWindow {
             }
 
             'ByHandleId' {
-                Get-OpenWindow | where { $_.Caption -eq $Id }
+                Get-OpenWindow | where { $_.HandleId -eq $HandleId }
             }
         }
 
         foreach ($window in $windows) {
             [PsCustomObject]@{
-                Success = [User32]::DestroyWindow($window.Handle)
-                Handle = $window.Handle
+                Success = [User32]::DestroyWindow($window.HandleId)
+                HandleId = $window.HandleId
                 Caption = $window.Caption
                 Visible = $window.Visible
             }
         }
     }
 }
+
+function Test-OpenWindow {
+    Param(
+        [ArgumentCompleter({
+            Param($A, $B, $C)
+
+            $windows = Get-OpenWindow
+
+            Set-Variable `
+                -Name MyTest `
+                -Scope Global `
+                -Value $windows
+
+            return $windows.Caption | where {
+                "`"$_`"" -like "`"$C*`""
+            } | foreach {
+                "`"$_`""
+            }
+        })]
+        [Parameter(
+            ParameterSetName = 'ByCaption',
+            Position = 0
+        )]
+        [String]
+        $Caption,
+
+        [ArgumentCompleter({
+            Param($A, $B, $C)
+
+            $windows = Get-OpenWindow
+
+            Set-Variable `
+                -Name MyTest `
+                -Scope Global `
+                -Value $windows
+
+            return $windows.HandleId
+        })]
+        [Parameter(ParameterSetName = 'ByHandleId')]
+        [String]
+        $HandleId
+    )
+
+    switch ($PsCmdlet.ParameterSetName) {
+        'ByCaption' {
+            $(Get-OpenWindow -Caption $Caption).Count -ne 0
+        }
+
+        'ByHandleId' {
+            $(Get-OpenWindow -HandleId $HandleId).Count -ne 0
+        }
+    }
+}
+
+New-Alias `
+    -Name focusw `
+    -Value Set-ForegroundOpenWindow `
+    -Scope Global
 
