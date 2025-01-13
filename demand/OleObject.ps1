@@ -124,3 +124,94 @@ Out-OleBinaryStream {
     }
 }
 
+<#
+.DESCRIPTION
+Requires ImageMagick
+#>
+function New-MarkdownImageGallery {
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        $InputObject,
+
+        [String]
+        $Destination,
+
+        [String]
+        $GalleryFile = 'readme.md',
+
+        [String]
+        $ResourceDir = 'res',
+
+        [ValidateScript({ $_ -gt 0 })]
+        [Int]
+        $LineSpacing = 2
+    )
+
+    Begin {
+        if (-not $Destination) {
+            $Destination = Get-Location
+        }
+
+        $resPath = Join-Path $Destination $ResourceDir
+
+        if (-not (Test-Path $resPath)) {
+            mkdir $resPath
+        }
+
+        $list = @()
+        $count = 0
+        $activity = "New Markdown Gallery"
+
+        Write-Progress `
+            -Id 1 `
+            -Activity $activity
+    }
+
+    Process {
+        $list += @(Get-Item $InputObject)
+        $count++
+    }
+
+    End {
+        $index = 0
+        $lines = @()
+
+        foreach ($item in $list) {
+            $capture = [regex]::Match($item.BaseName, "(?<word>\D+)(?<num>\d+)")
+            $word = $capture.Groups['word'].Value
+            $num = $capture.Groups['num'].Value
+            $newName = "$word$("{0:d2}" -f [int]$num).png"
+            $newPath = "$resPath/$($newName)"
+
+            Write-Progress `
+                -Id 1 `
+                -Activity $activity `
+                -Status "Converting $($item.BaseName)" `
+                -PercentComplete (100 * $index / $count)
+
+            magick $item.FullName $newPath
+            $newItem = Get-Item $newPath
+            $index++
+
+            if (-not (Test-Path $newItem)) {
+                "ImageMagick failed for item $($item.Name)"
+                continue
+            }
+
+            $lines += @("![$newName](./$ResourceDir/$newName)")
+
+            for ($i = 1; $i -lt ($LineSpacing); $i++) {
+                $lines += @("")
+            }
+        }
+
+        Write-Progress `
+            -Id 1 `
+            -Activity $activity `
+            -Complete
+
+        $lines |
+        Out-FileUnix -FilePath (Join-Path $Destination $GalleryFile)
+    }
+}
+
