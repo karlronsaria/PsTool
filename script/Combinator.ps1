@@ -779,6 +779,61 @@ function Get-StringReplace {
     }
 }
 
+<#
+.SYNOPSIS
+A string split on patterns
+#>
+function Get-StringSplit {
+    [Alias('Split')]
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        [String[]]
+        $InputObject,
+
+        [String]
+        $Pattern
+    )
+
+    Process {
+        foreach ($subitem in $InputObject) {
+            $captures = [Regex]::Matches($subitem, $Pattern)
+            $index = 0
+
+            $pairs = @(
+                foreach ($capture in $captures) {
+                    [PsCustomObject]@{
+                        Prefix =
+                            if ($index -lt $capture.Index) {
+                                $subitem.Substring(
+                                    $index,
+                                    $capture.Index - $index
+                                )
+                            }
+                            else {
+                                ""
+                            }
+                        Value = $capture.Value
+                    }
+
+                    $index = $capture.Index + $capture.Length
+                }
+
+                if ($index -lt ($subitem.Length - 1)) {
+                    [PsCustomObject]@{
+                        Prefix = $subitem.Substring($index)
+                        Value = ""
+                    }
+                }
+            )
+
+            return $([PsCustomObject]@{
+                Pairs = $pairs
+                Matches = $captures
+            })
+        }
+    }
+}
+
 function ConvertTo-List {
     [Alias('List')]
     Param(
