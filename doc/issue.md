@@ -92,6 +92,40 @@
 
 ## complete
 
+- [x] 2025_01_13_044140
+  - solution: resource files need to have unique identifiers
+  - where: ``PsMarkdown/Link``, ``PsTool/demand/OleObject``
+  - howto
+
+    ```powershell
+    Move-MarkdownItem .\howto_-_2021_05_18_VsVim_ChangeKeybindingSettings.md C:\note\howto\
+    ```
+
+  - actual
+
+    ```text
+    Move-Item: C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsMarkdown\script\Link.ps1:670
+    Line |
+     670 |          Move-Item `
+         |          ~~~~~~~~~~~
+         | Cannot create a file when that file already exists.
+    Move-Item: C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsMarkdown\script\Link.ps1:670
+    Line |
+     670 |          Move-Item `
+         |          ~~~~~~~~~~~
+         | Cannot create a file when that file already exists.
+    Move-Item: C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsMarkdown\script\Link.ps1:670
+    Line |
+     670 |          Move-Item `
+         |          ~~~~~~~~~~~
+         | Cannot create a file when that file already exists.
+    Move-Item: C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsMarkdown\script\Link.ps1:670
+    Line |
+     670 |          Move-Item `
+         |          ~~~~~~~~~~~
+         | Cannot create a file when that file already exists.
+    ```
+
 - [x] 2024_10_16_000505
   - howto
     1. when the working directory has an odd number of duplicates of an item

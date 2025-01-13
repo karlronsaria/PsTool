@@ -1,5 +1,5 @@
 <#
-Tags: ole, word, msword
+Tags: ole, word, msword, docx
 #>
 
 <#
@@ -12,7 +12,7 @@ Install-Package OpenMcdf
 
 Find the *.dll file and place it in the bin/ folder of this module
 #>
-Out-OleBinaryStream {
+function Out-OleBinaryStream {
     Param(
         [Parameter(ValueFromPipeline = $true)]
         $File,
@@ -22,7 +22,7 @@ Out-OleBinaryStream {
     )
 
     Begin {
-        $dllPath = "$PsScriptRoot:..\bin\OpenMcdf.dll"
+        $dllPath = "$PsScriptRoot\..\bin\OpenMcdf.dll"
         $continue = Test-Path $dllPath
 
         if (-not $continue) {
@@ -45,7 +45,8 @@ Out-OleBinaryStream {
 
         Write-Progress `
             -Id 1 `
-            -Activity $activity
+            -Activity $activity `
+            -PercentComplete 0
 
         $count = 0
         $files = @()
@@ -158,13 +159,19 @@ function New-MarkdownImageGallery {
             mkdir $resPath
         }
 
+        $dtFormat = Get-Item "$PsScriptRoot/../res/setting.json" |
+            Get-Content |
+            ConvertFrom-Json |
+            foreach { $_.DateTimeFormat }
+
         $list = @()
         $count = 0
         $activity = "New Markdown Gallery"
 
         Write-Progress `
             -Id 1 `
-            -Activity $activity
+            -Activity $activity `
+            -PercentComplete 0
     }
 
     Process {
@@ -180,7 +187,12 @@ function New-MarkdownImageGallery {
             $capture = [regex]::Match($item.BaseName, "(?<word>\D+)(?<num>\d+)")
             $word = $capture.Groups['word'].Value
             $num = $capture.Groups['num'].Value
-            $newName = "$word$("{0:d2}" -f [int]$num).png"
+
+            # # (karlr 2025_01_13): resource files need to have unique identifiers
+            # $newName = "$word$("{0:d2}" -f [int]$num).png"
+
+            # # (karlr 2025_01_13): I decided I'll just add both
+            $newName = "$($word)$("{0:d2}" -f [int]$num)_$(Get-Date -f $dtFormat).png"
             $newPath = "$resPath/$($newName)"
 
             Write-Progress `
