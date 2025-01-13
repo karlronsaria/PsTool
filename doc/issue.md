@@ -1,7 +1,6 @@
 # issue
 
 - [ ] 2024_01_18_025321
-
   - what: Query-Object
   - howto
 

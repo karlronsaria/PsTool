@@ -41,6 +41,10 @@ function Out-OleBinaryStream {
             $Destination = Get-Location
         }
 
+        if (-not (Test-Path $Destination)) {
+            mkdir $Destination
+        }
+
         $activity = "Reading OLE Binary"
 
         Write-Progress `
@@ -116,6 +120,8 @@ function Out-OleBinaryStream {
                 -Path $path `
                 -Value $store.GetStream("CONTENTS").GetData() `
                 -AsByteStream
+
+            $path
         }
 
         Write-Progress `
