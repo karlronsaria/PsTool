@@ -131,7 +131,7 @@ function Set-Location {
                 (Get-Location).Path
             }
             else {
-                Import-DemandModule
+                Import-DemandModule | Out-Null
             }
 
             $steppablePipeline.End()

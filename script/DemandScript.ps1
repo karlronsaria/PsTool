@@ -290,6 +290,7 @@ function Get-DemandScript {
 }
 
 function Import-DemandModule {
+    [Alias('Demand')]
     [OutputType([System.Management.Automation.PsModuleInfo])]
     Param(
         [ArgumentCompleter({
@@ -377,16 +378,13 @@ function Import-DemandModule {
         $AllProfiles,
 
         [Switch]
-        $PassThru,
-
-        [Switch]
         $WhatIf
     )
 
     # (karlr 2025_01_03): new best practice
     $params = $PsBoundParameters
 
-    'PassThru', 'WhatIf' |
+    'WhatIf' |
     foreach {
         [void]$params.Remove($_)
     }
@@ -398,10 +396,6 @@ function Import-DemandModule {
         -PercentComplete 0
 
     foreach ($file in (Get-DemandScript @params)) {
-        if ($PassThru) {
-            $file
-        }
-
         Write-Progress `
             -Id 1 `
             -Activity "Import-DemandModule" `
@@ -409,6 +403,8 @@ function Import-DemandModule {
             -PercentComplete 0
 
         $dir = (dir $file).Directory
+        $baseName = (Get-Item $file).BaseName
+        $moduleName = "ModuleOnDemand_$baseName" `
 
         $script = New-Module `
             -ScriptBlock $(
@@ -420,7 +416,7 @@ function Import-DemandModule {
                     Out-String
                 ))
             ) `
-            -Name "ModuleOnDemand_$((Get-Item $file).BaseName)" `
+            -Name $moduleName `
             -Alias * `
             -Global
 
@@ -429,6 +425,18 @@ function Import-DemandModule {
         }
         else {
             Import-Module $script
+
+            $list = Get-Module $moduleName |
+                Foreach-Object { $_.ExportedCommands.Keys } |
+                Select-Object -Unique
+
+            # (karlr 2025_01_20): output more information by default
+            [PsCustomObject]@{
+                Script = $baseName
+                Commands = $list
+                ModuleName = $moduleName
+                Location = $file
+            }
         }
     }
 
