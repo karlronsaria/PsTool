@@ -88,6 +88,17 @@ function Set-Location {
                     [System.Management.Automation.CommandTypes]::Cmdlet
                 )
 
+            # (karlr 2025_01_19): if file, set location to parent
+            $temp = $PsBoundParameters['Path']
+
+            if ($temp) {
+                if (-not (Test-Path -Path $temp -PathType Container)) {
+                    $temp = Split-Path -Path $temp -Parent
+                }
+
+                $PsBoundParameters['Path'] = $temp
+            }
+
             $scriptCmd = { & $wrappedCmd @PSBoundParameters }
             $steppablePipeline =
                 $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
@@ -100,6 +111,13 @@ function Set-Location {
 
     Process {
         try {
+            # (karlr 2025_01_19): if file, set location to parent
+            if ($_) {
+                if (-not (Test-Path -Path $_ -PathType Container)) {
+                    $_ = Split-Path -Path $_ -Parent
+                }
+            }
+
             $steppablePipeline.Process($_)
         }
         catch {

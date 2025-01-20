@@ -23,8 +23,8 @@ function Compare-ItemCopy {
     $Destination = $Destination.TrimEnd("\")
 
     Compare-Object `
-        (dir $Source -Recurse).FullName `
-        (dir $Destination -Recurse).FullName
+        (gci $Source -Recurse).FullName `
+        (gci $Destination -Recurse).FullName
 }
 
 <#
@@ -211,7 +211,7 @@ function Move-ItemToDateFolder {
 
         $Path = $Path.TrimEnd("\")
 
-        dir $Path -File | foreach {
+        gci $Path -File | foreach {
             $date = $_."$GroupBy".Date
 
             $subdir = Get-Date `
@@ -233,7 +233,7 @@ function Move-ItemToDateFolder {
                 $null
             }
             else {
-                dir -Path $dest
+                gci -Path $dest
             }
 
             if ($item) {
