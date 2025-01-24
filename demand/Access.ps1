@@ -372,5 +372,6 @@ function Test-OpenWindow {
 New-Alias `
     -Name focusw `
     -Value Set-ForegroundOpenWindow `
-    -Scope Global
+    -Scope Global `
+    -Force
 

@@ -91,6 +91,31 @@
 
 ## complete
 
+- [x] 2025_01_24_022043
+  - where: ``demand/Access``
+  - howto
+
+    ```powershell
+    demand access
+    ```
+
+  - actual
+
+    ```text
+    New-Alias:
+    Line |
+     372 |  New-Alias `
+         |  ~~~~~~~~~~~
+         | The alias is not allowed, because an alias with the name 'focusw' already exists.
+
+    Script Commands                                                                       ModuleName            Location
+    ------ --------                                                                       ----------            --------
+    Access {Get-OpenWindow, Remove-OpenWindow, Set-ForegroundOpenWindow, Test-OpenWindow} ModuleOnDemand_Access C:\Users\karlr\…
+    ```
+
+  - solution
+    - add ``-Force`` flag to ``New-Alias``
+
 - [x] 2025_01_13_044140
   - solution: resource files need to have unique identifiers
   - where: ``PsMarkdown/Link``, ``PsTool/demand/OleObject``
