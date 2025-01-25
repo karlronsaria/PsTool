@@ -1,7 +1,11 @@
 function Start-Edit {
     [Alias('Edit')]
+    [CmdletBinding(DefaultParameterSetName = 'General')]
     Param(
-        [Parameter(ValueFromPipeline = $true)]
+        [Parameter(
+            ParameterSetName = 'General',
+            ValueFromPipeline = $true
+        )]
         $InputObject,
 
         [Switch]
@@ -30,11 +34,16 @@ function Start-Edit {
         [String]
         $Editor,
 
+        [Parameter(ParameterSetName = 'General')]
         [Int]
         $LineNumber = 0,
 
         [Switch]
-        $WhatIf
+        $WhatIf,
+
+        [Parameter(ParameterSetName = 'LastError')]
+        [Switch]
+        $LastError
     )
 
     Begin {
@@ -99,6 +108,10 @@ function Start-Edit {
     }
 
     Process {
+        if ($LastError) {
+            return
+        }
+
         $info = switch ($InputObject) {
             { $_ -is [String] } {
                 [PsCustomObject]@{
@@ -150,6 +163,30 @@ function Start-Edit {
     }
 
     End {
+        if ($LastError) {
+            $info = $error |
+                where {
+                    $_.InvocationInfo.PsCommandPath -and
+                    $_.CategoryInfo.TargetName -notmatch "__zoxide"
+                } |
+                select -ExpandProperty InvocationInfo
+
+            if (@($info).Count -eq 0) {
+                'No command path found'
+            }
+
+            $info = $info[-1]
+
+            Start-Edit `
+                -InputObject $info.PsCommandPath `
+                -LineNumber $info.ScriptLineNumber `
+                -Sudo:$Sudo `
+                -Editor:$Editor `
+                -WhatIf:$WhatIf
+
+            return
+        }
+
         foreach ($key in $map.Keys) {
             $cmd = $editCommand.
                 Replace('<path>', "$($map[$key].Path)").
