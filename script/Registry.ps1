@@ -181,12 +181,18 @@ param(
         $names = [enum]::GetNames([Microsoft.Win32.RegistryValueKind])
         $suggests = $names | where { $_ -like "$C*" }
 
-        if (@($suggests).Count -eq 0) {
-            $name
-        }
-        else {
-            $suggests
-        }
+        $suggests =
+            if (@($suggests).Count -eq 0) {
+                $name
+            }
+            else {
+                $suggests
+            }
+
+        return $suggests |
+            foreach {
+                [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+            }
     })]
     [string]
     ${PropertyType},

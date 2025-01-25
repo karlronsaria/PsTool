@@ -23,6 +23,9 @@ function Out-Toast {
             [Enum]::GetValues([System.Windows.Forms.ToolTipIcon]) |
             where {
                 $_ -like "$C*"
+            } |
+            foreach {
+                [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
             }
         })]
         [ValidateScript({

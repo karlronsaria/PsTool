@@ -203,6 +203,9 @@ function Get-MyUrlLink {
                     else {
                         $_
                     }
+                } |
+                foreach {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
                 }
             )
         })]
@@ -298,6 +301,9 @@ function Get-MyUrl {
                     else {
                         $_
                     }
+                } |
+                foreach {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
                 }
             )
         })]

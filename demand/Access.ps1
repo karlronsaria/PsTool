@@ -56,6 +56,8 @@ function Get-OpenWindow {
                 "`"$_`"" -like "`"$C*`""
             } | foreach {
                 "`"$_`""
+            } | foreach {
+                [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
             }
         })]
         [Parameter(
@@ -75,7 +77,12 @@ function Get-OpenWindow {
                 -Scope Global `
                 -Value $windows
 
-            return $windows.HandleId
+            return $(
+                $windows.HandleId |
+                foreach {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+                }
+            )
         })]
         [Parameter(ParameterSetName = 'ByHandleId')]
         [String]
@@ -159,6 +166,8 @@ function Set-ForegroundOpenWindow {
                 "`"$_`"" -like "`"$C*`""
             } | foreach {
                 "`"$_`""
+            } | foreach {
+                [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
             }
         })]
         [String]
@@ -249,6 +258,8 @@ function Remove-OpenWindow {
                 "`"$_`"" -like "`"$C*`""
             } | foreach {
                 "`"$_`""
+            } | foreach {
+                [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
             }
         })]
         [Parameter(
@@ -268,7 +279,12 @@ function Remove-OpenWindow {
                 -Scope Global `
                 -Value $windows
 
-            return $windows.HandleId
+            return $(
+                $windows.HandleId |
+                foreach {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+                }
+            )
         })]
         [Parameter(ParameterSetName = 'ByHandleId')]
         [String]
@@ -332,6 +348,8 @@ function Test-OpenWindow {
                 "`"$_`"" -like "`"$C*`""
             } | foreach {
                 "`"$_`""
+            } | foreach {
+                [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
             }
         })]
         [Parameter(
@@ -351,7 +369,12 @@ function Test-OpenWindow {
                 -Scope Global `
                 -Value $windows
 
-            return $windows.HandleId
+            return $(
+                $windows.HandleId |
+                foreach {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+                }
+            )
         })]
         [Parameter(ParameterSetName = 'ByHandleId')]
         [String]

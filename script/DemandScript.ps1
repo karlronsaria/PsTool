@@ -158,7 +158,10 @@ function Get-DemandScript {
                 (@($tags) + @($other) + @($modules) + @($submodules)) |
                 Select-CaseInsensitive |
                 where { $_ -like "$C*" } |
-                Sort-Object
+                Sort-Object |
+                foreach {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+                }
             )
         })]
         [Parameter(
@@ -363,7 +366,10 @@ function Import-DemandModule {
                 (@($tags) + @($other) + @($modules) + @($submodules)) |
                 Select-CaseInsensitive |
                 where { $_ -like "$C*" } |
-                Sort-Object
+                Sort-Object |
+                foreach {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+                }
             )
         })]
         [Parameter(Position = 0)]

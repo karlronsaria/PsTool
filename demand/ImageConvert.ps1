@@ -295,7 +295,10 @@ function New-ImageConvert {
                 ConvertFrom-Json).
                 Profiles.
                 Name |
-                where { $_ -like "$C*" }
+                where { $_ -like "$C*" } |
+                foreach {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+                }
             )
         })]
         [ValidateScript({

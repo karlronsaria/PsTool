@@ -8,19 +8,24 @@ function Start-Edit {
         $Sudo,
 
         [ArgumentCompleter({
-            return ConvertTo-Suggestion `
-                -WordToComplete $args[2] `
-                -List $(
-                    (gc "$PsScriptRoot\..\res\combinator.setting.json" |
-                    ConvertFrom-Json).
-                    Editor.
-                    PsObject.
-                    Properties.
-                    Name |
-                    where {
-                        $_ -ne 'Other'
-                    }
-                )
+            return $(
+                ConvertTo-Suggestion `
+                    -WordToComplete $args[2] `
+                    -List $(
+                        (gc "$PsScriptRoot\..\res\combinator.setting.json" |
+                        ConvertFrom-Json).
+                        Editor.
+                        PsObject.
+                        Properties.
+                        Name |
+                        where {
+                            $_ -ne 'Other'
+                        }
+                    ) |
+                foreach {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+                }
+            )
         })]
         [String]
         $Editor,
@@ -321,7 +326,10 @@ function ConvertTo-Suggestion {
     }
     else {
         $List
-    })
+    }) |
+    foreach {
+        [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+    }
 }
 
 function Get-PipelinePropertySuggestion {
@@ -454,6 +462,8 @@ function Get-PipelinePropertySuggestion {
         else {
             $_
         }
+    } | foreach {
+        [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
     }
 }
 
