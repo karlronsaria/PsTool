@@ -103,6 +103,8 @@ function Set-Location {
             $steppablePipeline =
                 $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
             $steppablePipeline.Begin($PSCmdlet)
+
+            $doNotProceed = $false
         }
         catch {
             throw
@@ -111,6 +113,10 @@ function Set-Location {
 
     Process {
         try {
+            if ($doNotProceed) {
+                return
+            }
+
             # (karlr 2025_01_19): if file, set location to parent
             if ($Path) {
                 # (karlr 2025_01_25): induce throw when item not found
@@ -130,15 +136,22 @@ function Set-Location {
         }
         catch [System.Management.Automation.ItemNotFoundException] {
             # (karlr 2025_01_25): replicate the appearance of a regular cmdlet error message
+            $doNotProceed = $true
             Write-Error $_.Exception.ErrorRecord
+            return
         }
         catch {
+            $doNotProceed = $true
             throw $_
         }
     }
 
     End {
         try {
+            if ($doNotProceed) {
+                return
+            }
+
             if ($PSBoundParameters.Count -eq 0) {
                 (Get-Location).Path
             }
