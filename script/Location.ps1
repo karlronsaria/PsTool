@@ -112,16 +112,28 @@ function Set-Location {
     Process {
         try {
             # (karlr 2025_01_19): if file, set location to parent
-            if ($_) {
-                if (-not (Test-Path -Path $_ -PathType Container)) {
-                    $_ = Split-Path -Path $_ -Parent
+            if ($Path) {
+                # (karlr 2025_01_25): induce throw when item not found
+                Get-Item $Path -ErrorAction Stop | Out-Null
+
+                if (-not (Test-Path -Path $Path -PathType Container)) {
+                    $Path = Split-Path -Path $Path -Parent
+
+                    # (karlr 2025_01_25): induce throw when item not found
+                    Get-Item $Path -ErrorAction Stop | Out-Null
+
+                    $_ = $Path
                 }
             }
 
             $steppablePipeline.Process($_)
         }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            # (karlr 2025_01_25): replicate the appearance of a regular cmdlet error message
+            Write-Error $_.Exception.ErrorRecord
+        }
         catch {
-            throw
+            throw $_
         }
     }
 
