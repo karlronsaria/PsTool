@@ -88,15 +88,20 @@ function Set-Location {
                     [System.Management.Automation.CommandTypes]::Cmdlet
                 )
 
-            # (karlr 2025_01_19): if file, set location to parent
-            $temp = $PsBoundParameters['Path']
+            if ($PsCmdlet.ParameterSetName -in 'Path', 'Literal') {
+                $temp = $PsBoundParameters[$PsCmdlet.ParameterSetName]
 
-            if ($temp) {
-                if (-not (Test-Path -Path $temp -PathType Container)) {
-                    $temp = Split-Path -Path $temp -Parent
+                if ($temp) {
+                    $temp = Resolve-Path $temp -ErrorAction Stop
+
+                    # (karlr 2025_01_19): if file, set location to parent
+                    if (-not (Test-Path -Path $temp -PathType Container)) {
+                        $temp = Split-Path -Path $temp -Parent
+                        $temp = Resolve-Path $_ -ErrorAction Stop
+                    }
+
+                    $PsBoundParameters[$PsCmdlet.ParameterSetName] = $temp
                 }
-
-                $PsBoundParameters['Path'] = $temp
             }
 
             $scriptCmd = { & $wrappedCmd @PSBoundParameters }
@@ -106,8 +111,15 @@ function Set-Location {
 
             $doNotProceed = $false
         }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            # (karlr 2025_01_25): replicate the appearance of a regular cmdlet error message
+            $doNotProceed = $true
+            Write-Error $_.Exception.ErrorRecord
+            return
+        }
         catch {
-            throw
+            $doNotProceed = $true
+            throw $_
         }
     }
 
@@ -118,18 +130,18 @@ function Set-Location {
             }
 
             # (karlr 2025_01_19): if file, set location to parent
-            if ($Path) {
+            if ($_) {
                 # (karlr 2025_01_25): induce throw when item not found
-                Get-Item $Path -ErrorAction Stop | Out-Null
+                $temp = Resolve-Path $_ -ErrorAction Stop
 
-                if (-not (Test-Path -Path $Path -PathType Container)) {
-                    $Path = Split-Path -Path $Path -Parent
+                if (-not (Test-Path -Path $_ -PathType Container)) {
+                    $temp = Split-Path -Path $_ -Parent
 
                     # (karlr 2025_01_25): induce throw when item not found
-                    Get-Item $Path -ErrorAction Stop | Out-Null
-
-                    $_ = $Path
+                    $temp = Resolve-Path $temp -ErrorAction Stop
                 }
+
+                $_ = $temp
             }
 
             $steppablePipeline.Process($_)

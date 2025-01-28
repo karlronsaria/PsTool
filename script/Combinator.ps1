@@ -164,22 +164,22 @@ function Start-Edit {
 
     End {
         if ($LastError) {
-            $info = $error |
+            $errorInfo = $global:error |
                 where {
                     $_.InvocationInfo.PsCommandPath -and
                     $_.CategoryInfo.TargetName -notmatch "__zoxide"
                 } |
                 select -ExpandProperty InvocationInfo
 
-            if (@($info).Count -eq 0) {
-                'No command path found'
+            if (@($errorInfo).Count -eq 0) {
+                return 'No command path found'
             }
 
-            $info = $info[-1]
+            $errorInfo = $errorInfo[-1]
 
             Start-Edit `
-                -InputObject $info.PsCommandPath `
-                -LineNumber $info.ScriptLineNumber `
+                -InputObject $errorInfo.PsCommandPath `
+                -LineNumber $errorInfo.ScriptLineNumber `
                 -Sudo:$Sudo `
                 -Editor:$Editor `
                 -WhatIf:$WhatIf
