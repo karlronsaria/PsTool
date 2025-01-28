@@ -4,7 +4,8 @@ function Start-Edit {
     Param(
         [Parameter(
             ParameterSetName = 'General',
-            ValueFromPipeline = $true
+            ValueFromPipeline = $true,
+            Position = 0
         )]
         $InputObject,
 
