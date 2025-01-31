@@ -165,7 +165,7 @@ function Save-CodeSnippetCapture {
         Add-Type -AssemblyName System.Drawing
 
         focusw -Caption $window.Caption
-        sleep -Mill 100
+        sleep -Mill 300
         $rect = Get-OpenWindowRect -HandleId $window.HandleId
 
         $width  = $rect.Width
