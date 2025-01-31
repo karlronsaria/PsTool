@@ -1,4 +1,5 @@
 <#
+.DESCRIPTION
 Tags: access, accessibility
 #>
 
@@ -9,7 +10,7 @@ Add-Type @"
     using System.Text;
     using System.Runtime.InteropServices;
 
-    public class User32 {
+    public class WinAPI {
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
@@ -19,10 +20,10 @@ Add-Type @"
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll")]
         public static extern bool IsWindowVisible(IntPtr hWnd);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
 
         public static string GetWindowTitle(IntPtr hWnd) {
@@ -31,11 +32,45 @@ Add-Type @"
             return sb.ToString();
         }
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll")]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern bool DestroyWindow(IntPtr hWnd);
+        [DllImport("user32.dll")]
+        public static extern bool PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+        public static bool CloseWindow(IntPtr hWnd) {
+            const int WM_CLOSE = 0x0010;
+            return PostMessage(hWnd, WM_CLOSE, 0, 0);
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        [DllImport("dwmapi")]
+        static extern int DwmGetWindowAttribute(
+            IntPtr hwnd,
+            Int32 dwAttribute,
+            out RECT pvAttribute,
+            Int32 cbAttribute
+        );
+
+        public static int[] GetWindowLogicalRectangle(IntPtr hWnd) {
+            RECT rect;
+            int attr = 9; // DWMA_EXTENDED_FRAME_BOUNDS
+            int S_OK = 0;
+
+            if (S_OK != DwmGetWindowAttribute(hWnd, attr, out rect, Marshal.SizeOf(typeof(RECT))))
+                return new int[] { -1, -1, -1, -1 }; // Error case
+
+            int width = rect.Right - rect.Left;
+            int height = rect.Bottom - rect.Top;
+            return new int[] { rect.Left, rect.Top, width, height };
+        }
     }
 "@
 
@@ -125,15 +160,15 @@ function Get-OpenWindow {
               -Value ($list.Value + @(
                 [PsCustomObject]@{
                   HandleId = $hwnd
-                  Caption = [User32]::GetWindowTitle($hwnd)
-                  Visible = [User32]::IsWindowVisible($hwnd)
+                  Caption = [WinAPI]::GetWindowTitle($hwnd)
+                  Visible = [WinAPI]::IsWindowVisible($hwnd)
                 }
               ))
 
             return $true
         }
 
-    [User32]::EnumWindows($closure, [IntPtr]::Zero) | Out-Null
+    [WinAPI]::EnumWindows($closure, [IntPtr]::Zero) | Out-Null
 
     Get-Variable `
         -Scope Global `
@@ -179,8 +214,8 @@ function Set-ForegroundOpenWindow {
         -ScriptBlock {
             Param($hWnd, $lParam)
 
-            if ([User32]::GetWindowTitle($hWnd).Trim() -eq $Parameters) {
-                [User32]::SetForegroundWindow($hWnd)
+            if ([WinAPI]::GetWindowTitle($hWnd).Trim() -eq $Parameters) {
+                [WinAPI]::SetForegroundWindow($hWnd)
                 return $false
             }
 
@@ -230,7 +265,7 @@ function Set-ForegroundOpenWindow {
                 Param($hWnd, $lParam)
 
                 if ([string]$hWnd -eq $Parameters) {
-                    [User32]::SetForegroundWindow($hWnd)
+                    [WinAPI]::SetForegroundWindow($hWnd)
                     return $false
                 }
 
@@ -238,10 +273,10 @@ function Set-ForegroundOpenWindow {
             }
     }
 
-    [User32]::EnumWindows([User32+EnumWindowsProc] $closure, [IntPtr]::Zero) | Out-Null
+    [WinAPI]::EnumWindows([WinAPI+EnumWindowsProc] $closure, [IntPtr]::Zero) | Out-Null
 }
 
-function Remove-OpenWindow {
+function Close-OpenWindow {
     [CmdletBinding(DefaultParameterSetName = "ByCaption")]
     Param(
         [ArgumentCompleter({
@@ -323,7 +358,7 @@ function Remove-OpenWindow {
 
         foreach ($window in $windows) {
             [PsCustomObject]@{
-                Success = [User32]::DestroyWindow($window.HandleId)
+                Success = [WinAPI]::CloseWindow($window.HandleId)
                 HandleId = $window.HandleId
                 Caption = $window.Caption
                 Visible = $window.Visible
@@ -389,6 +424,31 @@ function Test-OpenWindow {
         'ByHandleId' {
             $(Get-OpenWindow -HandleId $HandleId).Count -ne 0
         }
+    }
+}
+
+<#
+.LINK
+Url: <https://learn.microsoft.com/en-us/windows/win32/api/dwmapi/nf-dwmapi-dwmgetwindowattribute>
+Retrieved: 2025_01_29
+
+.LINK
+Url: <https://learn.microsoft.com/en-us/answers/questions/522265/movewindow-and-setwindowpos-is-moving-window-for-e>
+Retrieved: 2025_01_29
+#>
+function Get-OpenWindowRect {
+    Param(
+        $HandleId
+    )
+
+    # Get window position and size
+    $result = [WinAPI]::GetWindowLogicalRectangle([IntPtr]$HandleId)
+
+    [pscustomobject]@{
+        Left = $result[0]
+        Top = $result[1]
+        Width = $result[2]
+        Height = $result[3]
     }
 }
 

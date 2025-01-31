@@ -1,0 +1,24 @@
+{
+    "Extensions": {
+        "bash": "sh",
+        "bat": "bat",
+        "c": "c",
+        "c#": "cs",
+        "c++": "cpp",
+        "csharp": "cs",
+        "css": "css",
+        "java": "java",
+        "javascript": "js",
+        "json": "json",
+        "html": "html",
+        "lua": "lua",
+        "markdown": "md",
+        "powershell": "ps1",
+        "python": "py",
+        "ruby": "rb",
+        "rust": "rs",
+        "typescript": "ts",
+        "xml": "xml"
+    }
+}
+
