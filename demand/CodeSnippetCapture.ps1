@@ -93,12 +93,12 @@ function Save-CodeSnippetCapture {
 
     Begin {
         $profile = "Capture Prompt"
-        $colMargin = 7
-        $rowMargin = 8
+        $colMargin = 0
+        $rowMargin = 2
         $title = "capture_-_$(gdt)"
         $command = "title $title && nvim"
         $len = 0
-        $count = 2
+        $count = 3
         $lines = @()
 
         if ($PsCmdlet.ParameterSetName -eq 'ByDir') {
@@ -119,7 +119,7 @@ function Save-CodeSnippetCapture {
             $lines += @($line)
             $count++
 
-            if ($line.Length -gt $len) {
+            if ($len -lt $line.Length) {
                 $len = $line.Length
             }
         }
@@ -145,7 +145,8 @@ function Save-CodeSnippetCapture {
             $lines | Out-FileUnix -FilePath $Path
         }
 
-        $command = "$command -u NORC +""normal Go"" +""normal o"" +$ $Path"
+        $vimConfig = "$PsScriptRoot/../res/codesnippet-vimrc-init.lua"
+        $command = "$command -u ""$vimConfig"" +""normal Go"" +""normal o"" +$ $Path"
         sudo wt --size "$($len + $colMargin),$($count + $rowMargin)" -p "$profile" cmd /k "$command"
 
         $null = demand access
