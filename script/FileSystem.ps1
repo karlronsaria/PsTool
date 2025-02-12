@@ -73,8 +73,12 @@ function New-NoteItem {
         $Extension
     )
 
+    $setting = Get-Item "$PsScriptRoot/../res/filesystem.setting.json" |
+        Get-Content |
+        ConvertFrom-Json
+
     $fullFileNamePattern =
-        "(?<prefix>\w+)_-_\d{4}(_\d{2}){2}_(?<description>.+)(?<extension>\.\w(\w|\d)*)"
+        "(?<prefix>[_a-zA-Z]\w*)_-_\d{4}(_\d{2}){2}_(?<description>.+)(?<extension>\.[_a-zA-Z]\w*)" # Uses DateTimeFormat
 
     $fullNameAttempt = if ($Name) {
         $Name
@@ -100,7 +104,7 @@ function New-NoteItem {
         ""
     }
 
-    if ($Name -match ".+\.\w(\w|\d)+$") {
+    if ($Name -match ".+\.[_a-zA-Z]\w+$") {
         $Name = "_$Name"
     }
 
@@ -111,7 +115,7 @@ function New-NoteItem {
         Join-Path $Directory $Prefix
     }
 
-    $item = "$($Prefix)$(Get-Date -f yyyy_MM_dd)$($Name)"
+    $item = "$($Prefix)$(Get-Date -f $setting.DateFormat)$($Name)"
     New-Item $item
 }
 

@@ -91,6 +91,35 @@
 
 ## complete
 
+- [x] 2025_02_12_004601
+  - what: Set-Location
+  - howto
+
+    ```powershell
+    Set-Location
+    ```
+
+  - actual
+    1. change directory to home
+    2. echo home directory
+
+    ```text
+    PS ~> cd \note
+    PS C:\note> cd
+    C:\Users\karlr
+    PS ~>
+    ```
+
+  - expected
+    - echo current directory
+
+    ```text
+    PS ~> cd \note
+    PS C:\note> cd
+    C:\note
+    PS C:\note>
+    ```
+
 - [x] 2025_01_24_022043
   - where: ``demand/Access``
   - howto

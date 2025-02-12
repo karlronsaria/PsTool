@@ -72,7 +72,7 @@ function __Demo__Nwe-Nmetieto {
     )
 
     $fullFileNamePattern =
-        "(?<prefix>\w+)_-_\d{4}(_\d{2}){2}_(?<description>.+)(?<extension>\.\w(\w|\d)*)"
+        "(?<prefix>\w+)_-_\d{4}(_\d{2}){2}_(?<description>.+)(?<extension>\.\w(\w|\d)*)" # Uses DateTimeFormat
 
     $fullNameAttempt = if ($Name) {
         $Name
@@ -109,7 +109,7 @@ function __Demo__Nwe-Nmetieto {
         Join-Path $Directory $Prefix
     }
 
-    $item = "$($Prefix)$(Get-Date -f yyyy_MM_dd)$($Name)"
+    $item = "$($Prefix)$(Get-Date -f yyyy_MM_dd)$($Name)" # Uses DateTimeFormat
 
     New-Item $item
 }

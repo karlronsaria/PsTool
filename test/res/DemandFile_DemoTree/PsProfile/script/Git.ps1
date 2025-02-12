@@ -331,7 +331,7 @@ function __Demo__Iekovn-Gtnetnochcnarbecalperti {
         $cmd += @("mkdir $temp -Force")
     }
 
-    $dateStr = Get-Date -f 'yyyy_MM_dd'
+    $dateStr = Get-Date -f 'yyyy_MM_dd' # Uses DateTimeFormat
     $dst = Join-Path $temp $dateStr
 
     if (-not (Test-Path $dst)) {

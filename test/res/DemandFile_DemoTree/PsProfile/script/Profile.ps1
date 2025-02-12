@@ -1,6 +1,6 @@
 #Requires -Module PSReadLine
 
-. "$PsScriptRoot\Git.ps1"
+. "$PsScriptRoot/Git.ps1"
 
 <#
 .LINK
@@ -91,7 +91,7 @@ function __Demo__Gte-Cyrotsihtsohelosno {
     )
 
     $path =
-    "$($env:APPDATA)\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt"
+    "$($env:APPDATA)/Microsoft/Windows/PowerShell/PSReadLine/ConsoleHost_history.txt"
 
     if ($FilePath) {
         return $path
@@ -131,11 +131,11 @@ function __Demo__Gte-Sdnammocecruoseludomtpirc {
     )
 
     if (-not $InfoDir) {
-        $InfoDir = "$PsScriptRoot\..\res"
+        $InfoDir = "$PsScriptRoot/../res"
     }
 
     if (-not $StartingDirectory) {
-        $StartingDirectory = "$PsScriptRoot\..\.."
+        $StartingDirectory = "$PsScriptRoot/../.."
     }
 
     $showItem = if ($ShowList) {
@@ -172,17 +172,17 @@ $showItem}
 
     $command =
 @"
-`$repo = dir '$InfoDir\repo.setting.json' |
+`$repo = dir '$InfoDir/repo.setting.json' |
     gc |
     ConvertFrom-Json
 
 `$list = @(foreach (`$module in `$repo.ScriptModule) {
-    iex "$StartingDirectory\`$module\Get-Scripts.ps1"
+    iex "$StartingDirectory/`$module/Get-Scripts.ps1"
 })
 
 if ((Test-RoleIsAdministrator)) {
     `$list += @(foreach (`$module in `$repo.ElevatedScriptModule) {
-        iex "$StartingDirectory\`$module\Get-Scripts.ps1"
+        iex "$StartingDirectory/`$module/Get-Scripts.ps1"
     })
 }
 

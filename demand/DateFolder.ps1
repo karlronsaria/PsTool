@@ -216,7 +216,7 @@ function Move-ItemToDateFolder {
 
             $subdir = Get-Date `
                 -Date $date `
-                -Format "yyyy_MM_dd"
+                -Format "yyyy_MM_dd" # Uses DateTimeFormat
 
             if (-not (Test-Path "$Path\$subdir")) {
                 mkdir `
@@ -249,7 +249,7 @@ function Move-ItemToDateFolder {
     }
 
     $backup_dir =
-        "$($backup_dir)_$(Get-Date -Format "yyyy_MM_dd_HHmmss")"
+        "$($backup_dir)_$(Get-Date -Format "yyyy_MM_dd_HHmmss")" # Uses DateTimeFormat
 
     if ($Backup) {
         Copy-FilesToBackup `

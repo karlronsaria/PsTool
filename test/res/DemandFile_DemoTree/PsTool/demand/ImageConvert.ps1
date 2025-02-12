@@ -324,7 +324,7 @@ function __Demo__Nwe-Itrevnocegam {
         )
 
         mkdir $folders -ErrorAction SilentlyContinue
-        $dateTime = Get-Date -f yyyy_MM_dd_HHmmss
+        $dateTime = Get-Date -f yyyy_MM_dd_HHmmss # Uses DateTimeFormat
         $list = @()
     }
 

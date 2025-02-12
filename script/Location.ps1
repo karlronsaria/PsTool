@@ -107,8 +107,12 @@ function Set-Location {
             $scriptCmd = { & $wrappedCmd @PSBoundParameters }
             $steppablePipeline =
                 $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
-            $steppablePipeline.Begin($PSCmdlet)
 
+            if ($PSBoundParameters.Count -eq 0) {
+                return
+            }
+
+            $steppablePipeline.Begin($PSCmdlet)
             $doNotProceed = $false
         }
         catch [System.Management.Automation.ItemNotFoundException] {
@@ -164,14 +168,34 @@ function Set-Location {
                 return
             }
 
-            if ($PSBoundParameters.Count -eq 0) {
-                (Get-Location).Path
-            }
-            else {
-                Import-DemandModule | Out-Null
+            switch ($PsCmdlet.ParameterSetName) {
+                'Path' {
+                    if (-not $Path) {
+                        (Get-Location).Path
+                        return
+                    }
+
+                    break
+                }
+
+                'LiteralPath' {
+                    if (-not $LiteralPath) {
+                        (Get-Location).Path
+                        return
+                    }
+
+                    break
+                }
             }
 
-            $steppablePipeline.End()
+            if ($PSBoundParameters.Count -eq 0) {
+                (Get-Location).Path
+                return
+            }
+            else {
+                $steppablePipeline.End()
+                Import-DemandModule | Out-Null
+            }
         }
         catch {
             throw

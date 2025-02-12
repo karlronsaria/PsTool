@@ -116,7 +116,12 @@ function ConvertTo-Cycle {
     }
 }
 
-New-Alias -Name 'Cycle' -Value 'ConvertTo-Cycle' -Force
+New-Alias `
+    -Name Cycle `
+    -Value ConvertTo-Cycle `
+    -Scope Global `
+    -Option ReadOnly `
+    -Force
 
 function Get-Zip {
     Param(
@@ -156,7 +161,12 @@ function Get-Zip {
     }
 }
 
-New-Alias -Name 'Zip' -Value 'Get-Zip' -Force
+New-Alias `
+    -Name Zip `
+    -Value Get-Zip `
+    -Scope Global `
+    -Option ReadOnly `
+    -Force
 
 function Write-IdleProgress {
     [CmdletBinding(DefaultParameterSetName = "SpinnerText")]

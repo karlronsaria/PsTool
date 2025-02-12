@@ -1,7 +1,39 @@
-function Send-Beep { [Console]::Beep(2000, 500) }
-function loc { return (Get-Location).Path }
-function gd { return Get-Date -Format yyyy_MM_dd }
-function gdt { return Get-Date -Format yyyy_MM_dd_HHmmss }
+function Send-Beep {
+    [Console]::Beep(2000, 500)
+}
+
+function Get-LocationString {
+    return (Get-Location).Path
+}
+
+function Get-DateString {
+    return Get-Date -Format yyyy_MM_dd # Uses DateTimeFormat
+}
+
+function Get-DateTimeString {
+    return Get-Date -Format yyyy_MM_dd_HHmmss # Uses DateTimeFormat
+}
+
+New-Alias `
+    -Name loc `
+    -Value Get-LocationString `
+    -Scope Global `
+    -Option ReadOnly `
+    -Force
+
+New-Alias `
+    -Name gd `
+    -Value Get-DateString `
+    -Scope Global `
+    -Option ReadOnly `
+    -Force
+
+New-Alias `
+    -Name gdt `
+    -Value Get-DateTimeString `
+    -Scope Global `
+    -Option ReadOnly `
+    -Force
 
 <#
 .LINK

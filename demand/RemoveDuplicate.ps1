@@ -130,6 +130,7 @@ function Move-ItemDuplicate {
                 $diffPath = Join-Path $dirName $diffName
                 $newPath = $diffPath
 
+                # If new path already exists, add a time stamp to the end
                 while ((Test-Path $newPath)) {
                     $item = Get-Item $_
                     $newName = "$($item.BaseName)_$(Get-Date -Format HHmmss)$($item.Extension)"

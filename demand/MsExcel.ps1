@@ -241,7 +241,7 @@ function New-MsExcelMonthBook {
             -Month $Month
 
         $Destination = $date.ToString($setting.MonthTableDateFormat) `
-            + "_$((Get-Date).ToString("ddHHmmss"))" `
+            + "_$((Get-Date).ToString("ddHHmmss"))" ` # Uses DateTimeFormat
             + $setting.ExcelExtension
 
         $Destination = Join-Path (Get-Location).Path $Destination

@@ -74,7 +74,7 @@ function New-NoteItem {
     )
 
     $fullFileNamePattern =
-        "(?<prefix>\w+)_-_\d{4}(_\d{2}){2}_(?<description>.+)(?<extension>\.\w(\w|\d)*)"
+        "(?<prefix>\w+)_-_\d{4}(_\d{2}){2}_(?<description>.+)(?<extension>\.\w(\w|\d)*)" # Uses DateTimeFormat
 
     $fullNameAttempt = if ($Name) {
         $Name
@@ -100,7 +100,8 @@ function New-NoteItem {
         ""
     }
 
-    if ($Name -match ".+\.\w(\w|\d)+$") {
+    # If the name provided contains a file extension pattern
+    if ($Name -match ".+\.[_a-zA-Z]\w+$") {
         $Name = "_$Name"
     }
 
@@ -111,7 +112,7 @@ function New-NoteItem {
         Join-Path $Directory $Prefix
     }
 
-    $item = "$($Prefix)$(Get-Date -f yyyy_MM_dd)$($Name)"
+    $item = "$($Prefix)$(Get-Date -f yyyy_MM_dd)$($Name)" # Uses DateTimeFormat
     New-Item $item
 }
 

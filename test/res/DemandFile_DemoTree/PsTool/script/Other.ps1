@@ -1,7 +1,7 @@
 function __Demo__Sdne-Bpee { [Console]::Beep(2000, 500) }
 function __Demo__Lco { return (Get-Location).Path }
-function __Demo__Gd { return Get-Date -Format yyyy_MM_dd }
-function __Demo__Gtd { return Get-Date -Format yyyy_MM_dd_HHmmss }
+function __Demo__Gd { return Get-Date -Format yyyy_MM_dd } # Uses DateTimeFormat
+function __Demo__Gtd { return Get-Date -Format yyyy_MM_dd_HHmmss } # Uses DateTimeFormat
 
 <#
 .LINK

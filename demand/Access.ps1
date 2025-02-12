@@ -134,7 +134,7 @@ function Get-OpenWindow {
         }
     }
 
-    $listName = (
+    $listName = '_' + (
         "$((Get-Item ($PsScriptRoot)).FullName)$('_' * 8)".GetEnumerator() |
             Sort-Object { Get-Random } |
             where { $_ -match "\w" }
@@ -456,5 +456,6 @@ New-Alias `
     -Name focusw `
     -Value Set-ForegroundOpenWindow `
     -Scope Global `
+    -Option ReadOnly `
     -Force
 

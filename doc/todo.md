@@ -1,5 +1,9 @@
 # todo
 
+- 2025_02_02
+  - DemandScript
+    - [ ] Register argument completer instead of writing the same one for each function
+
 - Rename-Item
   - [ ] show loading feedback
   - [ ] consider returning something
