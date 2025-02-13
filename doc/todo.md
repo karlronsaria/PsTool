@@ -1,5 +1,11 @@
 # todo
 
+- 2025_01_31
+  - [x] issue: request refactor
+    - where: ``loc``
+    - actual: name does not comply with approved verb list
+    - solution: ``Get-LocationString``
+
 - 2025_02_02
   - DemandScript
     - [ ] Register argument completer instead of writing the same one for each function
