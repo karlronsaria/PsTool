@@ -108,12 +108,16 @@ function Set-Location {
             $steppablePipeline =
                 $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
 
+            $doNotProceed = $false
+            $usedPipeline = $false
+            $startedStepping = $false
+
             if ($PSBoundParameters.Count -eq 0) {
                 return
             }
 
             $steppablePipeline.Begin($PSCmdlet)
-            $doNotProceed = $false
+            $startedStepping = $true
         }
         catch [System.Management.Automation.ItemNotFoundException] {
             # (karlr 2025_01_25): replicate the appearance of a regular cmdlet error message
@@ -131,6 +135,13 @@ function Set-Location {
         try {
             if ($doNotProceed) {
                 return
+            }
+
+            $usedPipeline = $true
+
+            if (-not $startedStepping) {
+                $steppablePipeline.Begin($PSCmdlet)
+                $startedStepping = $true
             }
 
             # (karlr 2025_01_19): if file, set location to parent
@@ -188,7 +199,7 @@ function Set-Location {
                 }
             }
 
-            if ($PSBoundParameters.Count -eq 0) {
+            if (-not $usedPipeline -and $PSBoundParameters.Count -eq 0) {
                 (Get-Location).Path
                 return
             }
