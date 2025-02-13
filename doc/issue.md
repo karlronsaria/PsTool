@@ -1,27 +1,5 @@
 # issue
 
-- [x] 2025_02_12_224254
-  - what: Set-Location
-  - howto
-
-    ```powershell
-    "C:\working\path" | cd
-    ```
-
-  - actual
-
-    ```text
-    PS ~> "C:\working\path" | cd
-    PS ~>
-    ```
-
-  - exptected
-
-    ```text
-    PS ~> "C:\working\path" | cd
-    PS C:\working\path>
-    ```
-
 - [ ] 2024_01_18_025321
   - what: Query-Object
   - howto
@@ -112,6 +90,28 @@
     ```
 
 ## complete
+
+- [x] 2025_02_12_224254
+  - what: Set-Location
+  - howto
+
+    ```powershell
+    "C:\working\path" | cd
+    ```
+
+  - actual
+
+    ```text
+    PS ~> "C:\working\path" | cd
+    PS ~>
+    ```
+
+  - exptected
+
+    ```text
+    PS ~> "C:\working\path" | cd
+    PS C:\working\path>
+    ```
 
 - [x] 2025_02_12_004601
   - what: Set-Location
