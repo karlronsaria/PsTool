@@ -139,13 +139,13 @@ function Set-Location {
 
             $usedPipeline = $true
 
-            if (-not $startedStepping) {
-                $steppablePipeline.Begin($PSCmdlet)
-                $startedStepping = $true
-            }
-
             # (karlr 2025_01_19): if file, set location to parent
             if ($_) {
+                if (-not $startedStepping) {
+                    $steppablePipeline.Begin($PSCmdlet)
+                    $startedStepping = $true
+                }
+
                 # (karlr 2025_01_25): induce throw when item not found
                 $temp = Resolve-Path $_ -ErrorAction Stop
 
