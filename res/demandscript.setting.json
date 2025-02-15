@@ -1,4 +1,5 @@
 {
+    "RequiresLineNumberThreshold": 10,
     "Profiles": {
         "Win32NT": [
             {

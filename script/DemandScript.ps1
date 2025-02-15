@@ -390,21 +390,27 @@ function Import-DemandModule {
     # (karlr 2025_01_03): new best practice
     $params = $PsBoundParameters
 
+    $threshold = (gc "$PsScriptRoot/../res/demandscript.setting.json" |
+        ConvertFrom-Json).
+        RequiresLineNumberThreshold
+
     'WhatIf' |
     foreach {
         [void]$params.Remove($_)
     }
 
+    $activity = "Import-DemandModule"
+
     Write-Progress `
         -Id 1 `
-        -Activity "Import-DemandModule" `
+        -Activity $activity `
         -Status "Searching demand files" `
         -PercentComplete 0
 
     foreach ($file in (Get-DemandScript @params)) {
         Write-Progress `
             -Id 1 `
-            -Activity "Import-DemandModule" `
+            -Activity $activity `
             -Status "File found: $file" `
             -PercentComplete 0
 
@@ -412,25 +418,43 @@ function Import-DemandModule {
         $baseName = (Get-Item $file).BaseName
         $moduleName = "ModuleOnDemand_$baseName" `
 
-        $script = New-Module `
-            -ScriptBlock $(
-                [ScriptBlock]::Create((
-                    gc $file |
-                    foreach {
-                        $_ -replace "\`$PsScriptRoot", "`$(`"$dir`")"
-                    } |
-                    Out-String
-                ))
-            ) `
+        $lines =
+            gc $file |
+            foreach {
+                $_ -replace "\`$PsScriptRoot", "`$(`"$dir`")"
+            }
+
+        $requiresSudo = $null -ne $($lines[0 .. ($threshold - 1)] |
+            Select-String "^\s*#Requires -RunAs")
+
+        $script = $lines | Out-String
+
+        $block = New-Module `
+            -ScriptBlock $([ScriptBlock]::Create($script)) `
             -Name $moduleName `
             -Alias * `
             -Global
 
         if ($WhatIf) {
-            $script
+            $block
         }
         else {
-            Import-Module $script
+            if ($requiresSudo) {
+                # link: Command-line Safety Tricks
+                # - url
+                #   - <https://serverfault.com/questions/11320/command-line-safety-tricks/29261#29261>
+                #   - <https://serverfault.com/questions/95431/in-a-powershell-script-how-can-i-check-if-im-running-with-administrator-privil>
+                # - retrieved: 2025_02_15
+                $currentIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
+                $currentPrincipal = New-Object Security.Principal.WindowsPrincipal($currentIdentity)
+                $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+                if (-not $isAdmin) {
+                    Write-Error "This script has a ""#Requires -RunAs"" line. The requested module will not run properly unless you use an elevated prompt."
+                }
+            }
+
+            Import-Module $block
 
             $list = Get-Module $moduleName |
                 Foreach-Object { $_.ExportedCommands.Keys } |
@@ -439,6 +463,7 @@ function Import-DemandModule {
             # (karlr 2025_01_20): output more information by default
             [PsCustomObject]@{
                 Script = $baseName
+                RequiresSudo = $requiresSudo
                 Commands = $list
                 ModuleName = $moduleName
                 Location = $file
@@ -448,7 +473,7 @@ function Import-DemandModule {
 
     Write-Progress `
         -Id 1 `
-        -Activity "Import-DemandModule" `
+        -Activity $activity `
         -PercentComplete 100 `
         -Complete
 }

@@ -91,6 +91,12 @@
 
 ## complete
 
+- [x] 2025_01_31_125001
+  - where: ``PsTool: demand: CodeSnippetCapture``
+  - howto: ``pwsh -Command "Import-DemandModule CodeSnippetCapture"``
+  - actual: success with no error message
+  - expectend: error message aprox: ``"Requires -RunAs"``
+
 - [x] 2025_02_12_224254
   - what: Set-Location
   - howto
