@@ -1,5 +1,18 @@
 # issue
 
+- [ ] 2025_02_17_014328
+  - where: Location
+  - log
+
+    ```text
+    ~  get-MySchedule -Subdirectory employer -Pattern 'day camp' -Mode Link
+    C:\note\sched\notebook\employer\sched_-_2023_11_07_CodeNinjasEvent.md
+    ~  cd \note
+    C:\note  master  ?3 ~7  get-MySchedule -Subdirectory employer -Pattern 'day camp' -Mode Link | cd
+    C:\Users\karlr
+    ~ 
+    ```
+
 - [ ] 2024_01_18_025321
   - what: Query-Object
   - howto
