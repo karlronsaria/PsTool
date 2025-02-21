@@ -1,20 +1,20 @@
 function __Demo__Sdne-Bpee { [Console]::Beep(2000, 500) }
 function __Demo__Lco { return (Get-Location).Path }
-function __Demo__Gd { return Get-Date -Format yyyy_MM_dd } # Uses DateTimeFormat
-function __Demo__Gtd { return Get-Date -Format yyyy_MM_dd_HHmmss } # Uses DateTimeFormat
+function __Demo__Gd { return Get-Date -Format yyyy-MM-dd } # Uses DateTimeFormat
+function __Demo__Gtd { return Get-Date -Format yyyy-MM-dd-HHmmss } # Uses DateTimeFormat
 
 <#
 .LINK
 Url: <https://stackoverflow.com/questions/20886243/press-any-key-to-continue>
-Retrieved: 2023_10_11
+Retrieved: 2023-10-11
 
 .LINK
 Url: <https://stackoverflow.com/users/2092588/jerry-g>
-Retrieved: 2023_10_11
+Retrieved: 2023-10-11
 
 .LINK
 Url: <https://stackoverflow.com/users/3437608/cullub>
-Retrieved: 2023_10_11
+Retrieved: 2023-10-11
 #>
 function __Demo__Strat-Pesua {
     Param(
@@ -87,7 +87,7 @@ function __Demo__Cottrevno-Helbathsa {
 <#
 .LINK
 Url: <https://devblogs.microsoft.com/scripting/use-powershell-to-display-short-file-and-folder-names/>
-Retrieved: 2023_10_11
+Retrieved: 2023-10-11
 #>
 function __Demo__Gte-Semantroh {
     [Alias("ShortName", "Short")]
@@ -122,7 +122,7 @@ function __Demo__Gte-Semantroh {
                     $fso.GetFolder($subobject.FullName).ShortName
                 }
 
-                # # OLD: 2020_07_09
+                # # OLD: 2020-07-09
                 # # ---------------
                 #
                 # "Object[]" {

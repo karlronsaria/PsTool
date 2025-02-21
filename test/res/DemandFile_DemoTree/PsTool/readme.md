@@ -22,13 +22,13 @@
 
 #### PsFolderSize
 - url: https://github.com/gngrninja/PSFolderSize
-- retrieved: 2023_10_06
+- retrieved: 2023-10-06
 
 #### matplotlib
 - url
   - https://github.com/matplotlib/matplotlib
   - https://matplotlib.org/
-- retrieved: 2023_10_06
+- retrieved: 2023-10-06
 
 ---
 [Wishlist Page](./doc/wish.md)

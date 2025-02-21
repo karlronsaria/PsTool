@@ -12,11 +12,11 @@ I have not compared the 2 options in regards to performance though, as-in which 
 
 .LINK
 Url: <https://github.com/PanosGreg>
-Retrieved: 2024_10_03
+Retrieved: 2024-10-03
 
 .LINK
 Url: <https://www.reddit.com/r/PowerShell/comments/tk1y8q/encrypt_a_file_with_a_keypassword/>
-Retrieved: 2024_10_03
+Retrieved: 2024-10-03
 #>
 
 function Protect-String {
@@ -61,11 +61,11 @@ I have not compared the 2 options in regards to performance though, as-in which 
 
 .LINK
 Url: <https://github.com/PanosGreg>
-Retrieved: 2024_10_03
+Retrieved: 2024-10-03
 
 .LINK
 Url: <https://www.reddit.com/r/PowerShell/comments/tk1y8q/encrypt_a_file_with_a_keypassword/>
-Retrieved: 2024_10_03
+Retrieved: 2024-10-03
 #>
 function Unprotect-String {
     [cmdletbinding()]

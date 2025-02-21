@@ -1,7 +1,7 @@
 <#
 .LINK
 Url: <https://evotec.xyz/remove-item-access-to-the-cloud-file-is-denied-while-deleting-files-from-onedrive/>
-Retrieved: 2021_11_02
+Retrieved: 2021-11-02
 #>
 function __Demo__Revome-Nmetisft {
     # [CmdletBinding(SupportsShouldProcess)]

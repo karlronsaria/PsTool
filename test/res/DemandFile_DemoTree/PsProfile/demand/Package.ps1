@@ -1,7 +1,7 @@
 <#
 Requires: PowerShellGet
 - Uses: Get-InstalledModule
-- Retrieved: 2023_12_20
+- Retrieved: 2023-12-20
 
 Tags: uan package json installed powershell module
 #>
@@ -56,7 +56,7 @@ function __Demo__Nwe-Pnosjegakca {
 .DESCRIPTION
 Requires: PsTool
 - Uses: Out-FileUnix
-- Retrieved: 2023_12_20
+- Retrieved: 2023-12-20
 
 Tags: sin choco chocolatey local package list json
 #>

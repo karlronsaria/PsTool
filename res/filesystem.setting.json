@@ -1,5 +1,5 @@
 {
-    "DateFormat": "yyyy_MM_dd",
+    "DateFormat": "yyyy-MM-dd",
     "LocationFile": {
         "Notebooks": [
             "/note/location.json"

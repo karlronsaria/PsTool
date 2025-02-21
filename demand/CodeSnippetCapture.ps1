@@ -176,7 +176,7 @@ function Save-CodeSnippetCapture {
 
         # link
         # - url: <https://superuser.com/questions/1669700/take-screenshot-on-command-prompt-powershell>
-        # - retrieved: 2025_01_29
+        # - retrieved: 2025-01-29
         $bitmap  = New-Object System.Drawing.Bitmap $width, $height
         $graphic = [System.Drawing.Graphics]::FromImage($bitmap)
         $graphic.CopyFromScreen($left, $top, 0, 0, $bitmap.Size)

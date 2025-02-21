@@ -1,15 +1,15 @@
 <#
 .LINK
 Url: <https://stackoverflow.com/questions/5102115/unix-format-files-with-powershell>
-Retrieved: 2023_04_09
+Retrieved: 2023-04-09
 
 .LINK
 Url: <https://stackoverflow.com/users/2895579/evg656e>
-Retrieved: 2023_04_09
+Retrieved: 2023-04-09
 
 .LINK
 Url: <https://stackoverflow.com/users/621278/anders-zommarin>
-Retrieved: 2023_04_09
+Retrieved: 2023-04-09
 #>
 function ConvertTo-UnixLineEndings {
     Param(
@@ -22,7 +22,7 @@ function ConvertTo-UnixLineEndings {
 
     # link
     # - url: <https://stackoverflow.com/users/621278/anders-zommarin>
-    # - retrieved: 2023_04_09
+    # - retrieved: 2023-04-09
     [string]::Join("`n", (gc $Path)) | Set-Content $Path
     $oldBytes = [io.file]::ReadAllBytes($Path)
 
@@ -47,7 +47,7 @@ function ConvertTo-UnixLineEndings {
 <#
 .LINK
 Url: <https://livebook.manning.com/book/powershell-in-depth/chapter-37/15>
-Retrieved: 2023_04_09
+Retrieved: 2023-04-09
 #>
 function Out-FileUnix {
     [CmdletBinding(

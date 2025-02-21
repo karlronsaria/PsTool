@@ -1,19 +1,19 @@
 # issue
 
-- [ ] 2025_02_17_014328
+- [ ] 2025-02-17-014328
   - where: Location
   - log
 
     ```text
     ~  get-MySchedule -Subdirectory employer -Pattern 'day camp' -Mode Link
-    C:\note\sched\notebook\employer\sched_-_2023_11_07_CodeNinjasEvent.md
+    C:\note\sched\notebook\employer\sched_-_2023-11-07_CodeNinjasEvent.md
     ~  cd \note
     C:\note  master  ?3 ~7  get-MySchedule -Subdirectory employer -Pattern 'day camp' -Mode Link | cd
     C:\Users\karlr
     ~ 
     ```
 
-- [ ] 2024_01_18_025321
+- [ ] 2024-01-18-025321
   - what: Query-Object
   - howto
 
@@ -41,7 +41,7 @@
     no changes added to commit (use "git add" and/or "git commit -a")
     ```
 
-- [ ] 2024_01_17_201116
+- [ ] 2024-01-17-201116
   - howto
 
     ```powershell
@@ -104,13 +104,13 @@
 
 ## complete
 
-- [x] 2025_01_31_125001
+- [x] 2025-01-31-125001
   - where: ``PsTool: demand: CodeSnippetCapture``
   - howto: ``pwsh -Command "Import-DemandModule CodeSnippetCapture"``
   - actual: success with no error message
   - expectend: error message aprox: ``"Requires -RunAs"``
 
-- [x] 2025_02_12_224254
+- [x] 2025-02-12-224254
   - what: Set-Location
   - howto
 
@@ -132,7 +132,7 @@
     PS C:\working\path>
     ```
 
-- [x] 2025_02_12_004601
+- [x] 2025-02-12-004601
   - what: Set-Location
   - howto
 
@@ -161,7 +161,7 @@
     PS C:\note>
     ```
 
-- [x] 2025_01_24_022043
+- [x] 2025-01-24-022043
   - where: ``demand/Access``
   - howto
 
@@ -186,13 +186,13 @@
   - solution
     - add ``-Force`` flag to ``New-Alias``
 
-- [x] 2025_01_13_044140
+- [x] 2025-01-13-044140
   - solution: resource files need to have unique identifiers
   - where: ``PsMarkdown/Link``, ``PsTool/demand/OleObject``
   - howto
 
     ```powershell
-    Move-MarkdownItem .\howto_-_2021_05_18_VsVim_ChangeKeybindingSettings.md C:\note\howto\
+    Move-MarkdownItem .\howto_-_2021-05-18_VsVim_ChangeKeybindingSettings.md C:\note\howto\
     ```
 
   - actual
@@ -220,7 +220,7 @@
          | Cannot create a file when that file already exists.
     ```
 
-- [x] 2024_10_16_000505
+- [x] 2024-10-16-000505
   - howto
     1. when the working directory has an odd number of duplicates of an item
     2. in powershell
@@ -232,7 +232,7 @@
   - actual
 
     ```text
-        Directory: C:\temp\2024_10_16_todd
+        Directory: C:\temp\2024-10-16_todd
 
     Mode                 LastWriteTime         Length Name
     ----                 -------------         ------ ----
@@ -242,11 +242,11 @@
     Line |
       89 |              Move-Item $_.ReferenceObject $dirName
          |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         | Cannot find path 'C:\temp\2024_10_16_todd\DR7ITUhWkAAVUM3 (1).jpg' because it does not exist.
+         | Cannot find path 'C:\temp\2024-10-16_todd\DR7ITUhWkAAVUM3 (1).jpg' because it does not exist.
     d----          10/16/2024 12:03 AM                __dup002
     ```
 
-- [x] 2024_10_16_224609
+- [x] 2024-10-16-224609
   - howto
 
     ```powershell
@@ -278,7 +278,7 @@
     C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\Windows.ps1
     ```
 
-- [x] 2024_10_15_010840
+- [x] 2024-10-15-010840
   - howto
 
     ```powershell
@@ -290,7 +290,7 @@
     ```text
     ```
 
-- [x] 2024_09_18_033326
+- [x] 2024-09-18-033326
   - canceled: This function is working as intended. I just need to learn to use it properly.
 
   - what: Start-Edit
@@ -306,7 +306,7 @@
     Start-Edit: The input object cannot be bound to any parameters for the command either because the command does not take pipeline input or the input and its properties do not match any of the parameters that take pipeline input.
     ```
 
-- [x] 2024_10_16_000842
+- [x] 2024-10-16-000842
   - howto
 
     ```powershell
@@ -323,7 +323,7 @@
          | The input object cannot be bound to any parameters for the command either because the command does not take pipeline input or the input and its properties do not match any of the parameters that take pipeline input.
     ```
 
-- [x] 2024_09_18_012356
+- [x] 2024-09-18-012356
 
   - what: Get-DemandScript
   - howto
@@ -343,7 +343,7 @@
     ...\Scripts\PsTool\demand\ImageConvert.ps1
     ```
 
-- [x] 2024_03_24_013846
+- [x] 2024-03-24-013846
 
   - what: demand/ImageConvert#ConvertFrom-ImageWebp
   - howto
@@ -353,15 +353,15 @@
     ```
 
   - actual
-    - [Unexpected output](./issue/issue_-_2024_03_24.md)
+    - [Unexpected output](./issue/issue_-_2024-03-24.md)
 
-- [x] 2024_07_03_211153
+- [x] 2024-07-03-211153
 
   - what: DemandScript
   - howto: search for module names using ``Get-DemandMatch``, ``Get-DemandScript``, or ``Import-DemandModule``
   - actual: module names, such as ``DateFolder``, cannot be found
 
-- [x] 2023_12_27_042818
+- [x] 2023-12-27-042818
   - todo
     - [ ] unit test
       - ``| Query -1``
@@ -382,20 +382,20 @@
   - expected
     - returns only first element in list
 
-- [x] 2023_12_25_033119
+- [x] 2023-12-25-033119
   - where: Demand#Install-DemandModule
   - howto: use ``InputObject`` argument completer in PowerShell 5 terminal
   - actual
     - fails
 
-- [x] 2023_12_20_223459
+- [x] 2023-12-20-223459
   - where: Demand#Install-DemandModule
   - actual
     - every instance of ``$PsScriptRoot`` evaluates to ``C:\``
   - expacted
     - every instance of ``$PsScriptRoot`` evaluates to module script location
 
-- [x] 2023_11_21_232252
+- [x] 2023-11-21-232252
   - where: ``Out-#Out-NotepadPlusPlus``
   - howto
 
@@ -438,7 +438,7 @@
     d-----         5/25/2021  12:54 AM                howto
     ```
 
-- [x] 2022_03_23_230129
+- [x] 2022-03-23-230129
   - solution: DEPRECATE
   - where: ``Out-#Out-Notepad``
   - howto
@@ -450,9 +450,9 @@
   - system: Win11
   - actual: opens notepad.exe but does not change its window content
 
-![2022_03_23_230129](./res/2022_03_23_230129.png)
+![2022-03-23-230129](./res/2022-03-23-230129.png)
 
-- [x] 2022_03_23_225512
+- [x] 2022-03-23-225512
   - where: ``Pychart#Show-Pychart``
   - howto
 
@@ -463,7 +463,7 @@
   - system: Win11
   - actual: shows blank
 
-![2022_03_23_225512](./res/2022_03_23_225512.png)
+![2022-03-23-225512](./res/2022-03-23-225512.png)
 
 ---
 

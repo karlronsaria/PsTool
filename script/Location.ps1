@@ -94,7 +94,7 @@ function Set-Location {
                 if ($temp) {
                     $temp = Resolve-Path $temp -ErrorAction Stop
 
-                    # (karlr 2025_01_19): if file, set location to parent
+                    # (karlr 2025-01-19): if file, set location to parent
                     if (-not (Test-Path -Path $temp -PathType Container)) {
                         $temp = Split-Path -Path $temp -Parent
                         $temp = Resolve-Path $_ -ErrorAction Stop
@@ -120,7 +120,7 @@ function Set-Location {
             $startedStepping = $true
         }
         catch [System.Management.Automation.ItemNotFoundException] {
-            # (karlr 2025_01_25): replicate the appearance of a regular cmdlet error message
+            # (karlr 2025-01-25): replicate the appearance of a regular cmdlet error message
             $doNotProceed = $true
             Write-Error $_.Exception.ErrorRecord
             return
@@ -139,20 +139,20 @@ function Set-Location {
 
             $usedPipeline = $true
 
-            # (karlr 2025_01_19): if file, set location to parent
+            # (karlr 2025-01-19): if file, set location to parent
             if ($_) {
                 if (-not $startedStepping) {
                     $steppablePipeline.Begin($PSCmdlet)
                     $startedStepping = $true
                 }
 
-                # (karlr 2025_01_25): induce throw when item not found
+                # (karlr 2025-01-25): induce throw when item not found
                 $temp = Resolve-Path $_ -ErrorAction Stop
 
                 if (-not (Test-Path -Path $_ -PathType Container)) {
                     $temp = Split-Path -Path $_ -Parent
 
-                    # (karlr 2025_01_25): induce throw when item not found
+                    # (karlr 2025-01-25): induce throw when item not found
                     $temp = Resolve-Path $temp -ErrorAction Stop
                 }
 
@@ -162,7 +162,7 @@ function Set-Location {
             $steppablePipeline.Process($_)
         }
         catch [System.Management.Automation.ItemNotFoundException] {
-            # (karlr 2025_01_25): replicate the appearance of a regular cmdlet error message
+            # (karlr 2025-01-25): replicate the appearance of a regular cmdlet error message
             $doNotProceed = $true
             Write-Error $_.Exception.ErrorRecord
             return

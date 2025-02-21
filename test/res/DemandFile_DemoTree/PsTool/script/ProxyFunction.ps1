@@ -1,7 +1,7 @@
 <#
 .LINK
 Url: <https://livebook.manning.com/book/powershell-in-depth/chapter-37/15>
-Retrieved: 2023_04_09
+Retrieved: 2023-04-09
 #>
 function __Demo__Gte-Pnoitcnufyxor {
     Param(

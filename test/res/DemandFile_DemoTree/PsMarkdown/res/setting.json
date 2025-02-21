@@ -8,7 +8,7 @@
         "DefaultImageSize": 32,
         "ResourceDir": "res",
         "Delimiter": "!!",
-        "DateTimeFormat": "yyyy_MM_dd_HHmmss",
+        "DateTimeFormat": "yyyy-MM-dd-HHmmss",
         "DateTimePattern": "\\d{4}_\\d{2}_\\d{2}_\\d{6}",
         "SplitDelimiter": ":"
     }

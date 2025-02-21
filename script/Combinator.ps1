@@ -63,7 +63,7 @@ function Start-Edit {
 
         # link
         # - url: <https://stackoverflow.com/questions/57788150/can-i-detect-in-powershell-that-i-am-running-in-vs-codes-integrated-terminal>
-        # - retrieved: 2023_12_07
+        # - retrieved: 2023-12-07
         $name = if ($Editor) {
             $Editor
         }
@@ -240,7 +240,7 @@ function Start-Explore {
             # interact with PsMarkdown#Get-PsMarkdownLink
             # link
             # - url: https://github.com/karlronsaria/PsMarkdown.git
-            # - retrieved: 2023_02_24
+            # - retrieved: 2023-02-24
             { $_ -is [PsCustomObject] } {
                 $properties = $InputObject.PsObject.Properties
 
@@ -310,7 +310,7 @@ function Start-Open {
             # interact with PsMarkdown#Get-PsMarkdownLink
             # link
             # - url: https://github.com/karlronsaria/PsMarkdown.git
-            # - retrieved: 2023_02_24
+            # - retrieved: 2023-02-24
             { $_ -is [PsCustomObject] } {
                 $properties = $InputObject.PsObject.Properties
 
@@ -373,7 +373,7 @@ function ConvertTo-Suggestion {
 function Get-PipelinePropertySuggestion {
     # link
     # - url: <https://stackoverflow.com/questions/65892518/tab-complete-a-parameter-value-based-on-another-parameters-already-specified-va>
-    # - retrieved: 2023_10_10
+    # - retrieved: 2023-10-10
     Param(
         $WordToComplete,
         $CommandAst,
@@ -1029,7 +1029,7 @@ function Get-NextTree {
             }
 
             return $InputObject.PsObject.Properties |
-                where { $_ } # (karlr 2024_09_30): I REALLY THINK I SHOULDN'T HAVE TO DO THIS!
+                where { $_ } # (karlr 2024-09-30): I REALLY THINK I SHOULDN'T HAVE TO DO THIS!
         }
     }
 

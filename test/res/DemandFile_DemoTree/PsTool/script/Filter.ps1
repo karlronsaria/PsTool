@@ -48,7 +48,7 @@ function __Demo__Strat-Etid {
 
         # link
         # - url: <https://stackoverflow.com/questions/57788150/can-i-detect-in-powershell-that-i-am-running-in-vs-codes-integrated-terminal>
-        # - retrieved: 2023_12_07
+        # - retrieved: 2023-12-07
         $name = if ($Editor) {
             $Editor
         }
@@ -197,7 +197,7 @@ function __Demo__Strat-Eerolpx {
             # interact with PsMarkdown#Get-PsMarkdownLink
             # link
             # - url: https://github.com/karlronsaria/PsMarkdown.git
-            # - retrieved: 2023_02_24
+            # - retrieved: 2023-02-24
             { $_ -is [PsCustomObject] } {
                 $properties = $InputObject.PsObject.Properties
 
@@ -267,7 +267,7 @@ function __Demo__Strat-Onep {
             # interact with PsMarkdown#Get-PsMarkdownLink
             # link
             # - url: https://github.com/karlronsaria/PsMarkdown.git
-            # - retrieved: 2023_02_24
+            # - retrieved: 2023-02-24
             { $_ -is [PsCustomObject] } {
                 $properties = $InputObject.PsObject.Properties
 
@@ -327,7 +327,7 @@ function __Demo__Cottrevno-Snoitseggu {
 function __Demo__Gte-Pnoitseggusytreporpenilepi {
     # link
     # - url: <https://stackoverflow.com/questions/65892518/tab-complete-a-parameter-value-based-on-another-parameters-already-specified-va>
-    # - retrieved: 2023_10_10
+    # - retrieved: 2023-10-10
     Param(
         $WordToComplete,
         $CommandAst,

@@ -4,11 +4,11 @@ Tags: imagemagick image convert webp
 
 .LINK
 Url: <https://www.reddit.com/r/webdev/comments/fzsb5k/any_way_to_convert_webp_to_gif_or_jpg_locally_on/g26vdds/?context=3>
-Retrieved: 2023_10_16
+Retrieved: 2023-10-16
 
 .LINK
 Url: <https://www.reddit.com/user/earthiverse/>
-Retrieved: 2023_10_16
+Retrieved: 2023-10-16
 #>
 function ConvertFrom-ImageWebp {
     [CmdletBinding()]
@@ -183,7 +183,7 @@ function Get-ImageResize {
             "$Path-$Size"
         }
 
-        # # (karlr 2024_09_16): ``magick convert `` is deprecated
+        # # (karlr 2024-09-16): ``magick convert `` is deprecated
         # $cmd = "$app convert `"$Path`" -resize $Size `"$itemName`""
 
         $cmd = "$app `"$Path`" -resize $Size `"$itemName`""
@@ -240,13 +240,13 @@ function New-ImageIcon {
     mkdir $dir -Force | Out-Null
 
     foreach ($size in 16, 32, 48, 128, 256) {
-        # # (karlr 2024_09_16): ``magick convert`` is deprecated
+        # # (karlr 2024-09-16): ``magick convert`` is deprecated
         # . $command convert "$($FilePath)" -scale $size "$dir/$size.png"
         . $command "$($FilePath)" -scale $size "$dir/$size.png"
     }
 
     $FilePath = (($FilePath -Replace "\.[^\.]+$") + ".ico")
-    # # (karlr 2024_09_16): ``magick convert`` is deprecated
+    # # (karlr 2024-09-16): ``magick convert`` is deprecated
     # . $command convert "$dir/*.png" $FilePath
     . $command "$dir/*.png" $FilePath
 
@@ -363,7 +363,7 @@ function New-ImageConvert {
         )
 
         mkdir $folders -ErrorAction SilentlyContinue
-        $dateTime = Get-Date -f yyyy_MM_dd_HHmmss # Uses DateTimeFormat
+        $dateTime = Get-Date -f yyyy-MM-dd-HHmmss # Uses DateTimeFormat
         $list = @()
     }
 
@@ -377,7 +377,7 @@ function New-ImageConvert {
             foreach -Begin {
               $count = 0
             } -Process {
-              # # (karlr 2024_09_16): deprecated
+              # # (karlr 2024-09-16): deprecated
               # $cmd = "$app convert $($whatDo.Convert) `"$($_.Name)`" `"$dst`""
 
               $dst = "$Destination/$($folders[0])/$($_.BaseName)_$dateTime.png"

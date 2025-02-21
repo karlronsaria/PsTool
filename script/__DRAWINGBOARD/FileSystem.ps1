@@ -74,7 +74,7 @@ function New-NoteItem {
     )
 
     $fullFileNamePattern =
-        "(?<prefix>\w+)_-_\d{4}(_\d{2}){2}_(?<description>.+)(?<extension>\.\w(\w|\d)*)" # Uses DateTimeFormat
+        "(?<prefix>\w+)_-_\d{4}(-\d{2}){2}_(?<description>.+)(?<extension>\.\w(\w|\d)*)" # Uses DateTimeFormat
 
     $fullNameAttempt = if ($Name) {
         $Name
@@ -112,7 +112,7 @@ function New-NoteItem {
         Join-Path $Directory $Prefix
     }
 
-    $item = "$($Prefix)$(Get-Date -f yyyy_MM_dd)$($Name)" # Uses DateTimeFormat
+    $item = "$($Prefix)$(Get-Date -f yyyy-MM-dd)$($Name)" # Uses DateTimeFormat
     New-Item $item
 }
 

@@ -430,11 +430,11 @@ function Test-OpenWindow {
 <#
 .LINK
 Url: <https://learn.microsoft.com/en-us/windows/win32/api/dwmapi/nf-dwmapi-dwmgetwindowattribute>
-Retrieved: 2025_01_29
+Retrieved: 2025-01-29
 
 .LINK
 Url: <https://learn.microsoft.com/en-us/answers/questions/522265/movewindow-and-setwindowpos-is-moving-window-for-e>
-Retrieved: 2025_01_29
+Retrieved: 2025-01-29
 #>
 function Get-OpenWindowRect {
     Param(

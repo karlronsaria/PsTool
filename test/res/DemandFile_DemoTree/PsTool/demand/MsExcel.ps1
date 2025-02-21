@@ -241,7 +241,7 @@ function __Demo__Nwe-Mkoobhtnomlecxes {
             -Month $Month
 
         $Destination = $date.ToString($setting.MonthTableDateFormat) `
-            + "_$((Get-Date).ToString("ddHHmmss"))" ` # Uses DateTimeFormat
+            + "-$((Get-Date).ToString("ddHHmmss"))" ` # Uses DateTimeFormat
             + $setting.ExcelExtension
 
         $Destination = Join-Path (Get-Location).Path $Destination

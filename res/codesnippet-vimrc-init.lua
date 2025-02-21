@@ -27,7 +27,7 @@ vim.o.list = false
 
 -- # link: transparent background (gui)
 -- - url: <https://blog.chaitanyashahare.com/posts/how-to-make-nvim-backround-transparent/>
--- - retrieved: 2024_09_11
+-- - retrieved: 2024-09-11
 vim.cmd [[
   highlight Normal guibg=none
   highlight NonText guibg=none
@@ -74,12 +74,12 @@ local result = packer.startup(function(use)
         requires = { "rktjmp/lush.nvim" }
     }
 
-    -- ast 2023_12_07
+    -- ast 2023-12-07
     use ('nvim-treesitter/nvim-treesitter')
     use ('PowerShell/tree-sitter-PowerShell')
     use ('neovim/nvim-lspconfig')
 
-    -- ast 2024_03_30
+    -- ast 2024-03-30
     use ('noahfrederick/vim-composer')
 
     -- for _, package in pairs(packages) do
@@ -143,7 +143,7 @@ if status_ok then
   }
 end
 
--- -- (karlr 2023_12_07): I don't know if I like auto-folding.
+-- -- (karlr 2023-12-07): I don't know if I like auto-folding.
 -- vim.opt.foldmethod = "expr"
 -- vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 

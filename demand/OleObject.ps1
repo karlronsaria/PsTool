@@ -194,10 +194,10 @@ function New-MarkdownImageGallery {
             $word = $capture.Groups['word'].Value
             $num = $capture.Groups['num'].Value
 
-            # # (karlr 2025_01_13): resource files need to have unique identifiers
+            # # (karlr 2025-01-13): resource files need to have unique identifiers
             # $newName = "$word$("{0:d2}" -f [int]$num).png"
 
-            # # (karlr 2025_01_13): I decided I'll just add both
+            # # (karlr 2025-01-13): I decided I'll just add both
             $newName = "$($word)$("{0:d2}" -f [int]$num)_$(Get-Date -f $dtFormat).png"
             $newPath = "$resPath/$($newName)"
 

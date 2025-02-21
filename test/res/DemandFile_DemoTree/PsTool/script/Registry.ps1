@@ -4,11 +4,11 @@ Replace all registry key values and/or registry key names under a given path.
 
 .LINK
 Url: <https://stackoverflow.com/questions/26680410/powershell-find-and-replace-on-registry-values>
-Retrieved: 2020_04_09
+Retrieved: 2020-04-09
 
 .LINK
 Url: <https://stackoverflow.com/users/684576/david-maisonave>
-Retrieved: 2020_04_09
+Retrieved: 2020-04-09
 
 .EXAMPLE
 Rename-ItemProperty "ExistingValue" "NewValue" 'HKEY_CURRENT_USER\Software\100000_DummyData'

@@ -1,7 +1,7 @@
-﻿# items
+# items
 
 ## retrieved
-- 2023_09_18
+- 2023-09-18
 
 ## list
 - a-button-icon.png

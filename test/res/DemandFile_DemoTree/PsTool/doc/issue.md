@@ -2,20 +2,20 @@
 
 ## complete
 
-- [x] 2023_12_25_033119
+- [x] 2023-12-25-033119
   - where: Demand#Install-DemandModule
   - howto: use ``InputObject`` argument completer in PowerShell 5 terminal
   - actual
     - fails
 
-- [x] 2023_12_20_223459
+- [x] 2023-12-20-223459
   - where: Demand#Install-DemandModule
   - actual
     - every instance of ``$PsScriptRoot`` evaluates to ``C:\``
   - expacted
     - every instance of ``$PsScriptRoot`` evaluates to module script location
 
-- [x] 2023_11_21_232252
+- [x] 2023-11-21-232252
   - where: ``Out-#Out-NotepadPlusPlus``
   - howto
 
@@ -58,7 +58,7 @@
     d-----         5/25/2021  12:54 AM                howto
     ```
 
-- [x] 2022_03_23_230129
+- [x] 2022-03-23-230129
   - solution: DEPRECATE
   - where: ``Out-#Out-Notepad``
   - howto
@@ -70,9 +70,9 @@
   - system: Win11
   - actual: opens notepad.exe but does not change its window content
 
-![2022_03_23_230129](./res/2022_03_23_230129.png)
+![2022-03-23-230129](./res/2022-03-23-230129.png)
 
-- [x] 2022_03_23_225512
+- [x] 2022-03-23-225512
   - where: ``Pychart#Show-Pychart``
   - howto
 
@@ -83,7 +83,7 @@
   - system: Win11
   - actual: shows blank
 
-![2022_03_23_225512](./res/2022_03_23_225512.png)
+![2022-03-23-225512](./res/2022-03-23-225512.png)
 
 ---
 [← Go Back](../readme.md)

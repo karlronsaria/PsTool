@@ -4,11 +4,11 @@ Tags: oth imagemagick image convert webp
 
 .LINK
 Url: <https://www.reddit.com/r/webdev/comments/fzsb5k/any_way_to_convert_webp_to_gif_or_jpg_locally_on/g26vdds/?context=3>
-Retrieved: 2023_10_16
+Retrieved: 2023-10-16
 
 .LINK
 Url: <https://www.reddit.com/user/earthiverse/>
-Retrieved: 2023_10_16
+Retrieved: 2023-10-16
 #>
 function __Demo__Cmorftrevno-Ipbewegam {
     [CmdletBinding()]
@@ -324,7 +324,7 @@ function __Demo__Nwe-Itrevnocegam {
         )
 
         mkdir $folders -ErrorAction SilentlyContinue
-        $dateTime = Get-Date -f yyyy_MM_dd_HHmmss # Uses DateTimeFormat
+        $dateTime = Get-Date -f yyyy-MM-dd-HHmmss # Uses DateTimeFormat
         $list = @()
     }
 

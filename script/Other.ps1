@@ -7,11 +7,11 @@ function Get-LocationString {
 }
 
 function Get-DateString {
-    return Get-Date -Format yyyy_MM_dd # Uses DateTimeFormat
+    return Get-Date -Format yyyy-MM-dd # Uses DateTimeFormat
 }
 
 function Get-DateTimeString {
-    return Get-Date -Format yyyy_MM_dd_HHmmss # Uses DateTimeFormat
+    return Get-Date -Format yyyy-MM-dd-HHmmss # Uses DateTimeFormat
 }
 
 New-Alias `
@@ -38,15 +38,15 @@ New-Alias `
 <#
 .LINK
 Url: <https://stackoverflow.com/questions/20886243/press-any-key-to-continue>
-Retrieved: 2023_10_11
+Retrieved: 2023-10-11
 
 .LINK
 Url: <https://stackoverflow.com/users/2092588/jerry-g>
-Retrieved: 2023_10_11
+Retrieved: 2023-10-11
 
 .LINK
 Url: <https://stackoverflow.com/users/3437608/cullub>
-Retrieved: 2023_10_11
+Retrieved: 2023-10-11
 #>
 function Start-Pause {
     Param(
@@ -119,7 +119,7 @@ function ConvertTo-Hashtable {
 <#
 .LINK
 Url: <https://devblogs.microsoft.com/scripting/use-powershell-to-display-short-file-and-folder-names/>
-Retrieved: 2023_10_11
+Retrieved: 2023-10-11
 #>
 function Get-ShortName {
     [Alias("ShortName", "Short")]
@@ -154,7 +154,7 @@ function Get-ShortName {
                     $fso.GetFolder($subobject.FullName).ShortName
                 }
 
-                # # OLD: 2020_07_09
+                # # OLD: 2020-07-09
                 # # ---------------
                 #
                 # "Object[]" {

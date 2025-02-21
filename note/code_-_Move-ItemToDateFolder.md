@@ -32,7 +32,7 @@ def MoveFilesToDatedFolders -> str[]
 
     for each file in ls(Path)
         date <- file."{GroupBy}"
-        subdir <- FormatDate(date, "yyyy_MM_dd")
+        subdir <- FormatDate(date, "yyyy-MM-dd")
 
         if not Exist("{Path}/{subdir}")
             yield mkdir("{Path}/{subdir}", force: Force, what_if: WhatIf)
@@ -65,7 +65,7 @@ def Main -> str[]
         Path <- GetCurrentWorkingDirectory().FullName
 
     backup_dir <- "{Path}/temp"
-    backup_dir <- backup_dir + "_" + (GetDate(format: "yyyy_MM_dd_HHmmss"))
+    backup_dir <- backup_dir + "_" + (GetDate(format: "yyyy-MM-dd-HHmmss"))
 
     if Backup
         yield CopyFilesToBackup(

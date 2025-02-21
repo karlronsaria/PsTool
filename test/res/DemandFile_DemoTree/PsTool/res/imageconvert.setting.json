@@ -1,6 +1,6 @@
 {
     "AppPath": "magick",
-    "DateTimeFormat": "yyyy_MM_dd_HHmmss",
+    "DateTimeFormat": "yyyy-MM-dd-HHmmss",
     "Processes": [
         {
             "Name": "WindowsExplorer",

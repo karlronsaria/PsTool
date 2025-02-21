@@ -265,7 +265,7 @@ function Get-DemandScript {
         ) |
         Select-CaseInsensitive
 
-        # (karlr 2024_02_22): Nil values are being introduced into ``ReferenceObject``
+        # (karlr 2024-02-22): Nil values are being introduced into ``ReferenceObject``
         # by this point.
         $list = @($_.Group.Matches | where { $_ }) + @($module)
 
@@ -387,7 +387,7 @@ function Import-DemandModule {
         $WhatIf
     )
 
-    # (karlr 2025_01_03): new best practice
+    # (karlr 2025-01-03): new best practice
     $params = $PsBoundParameters
 
     $threshold = (gc "$PsScriptRoot/../res/demandscript.setting.json" |
@@ -444,7 +444,7 @@ function Import-DemandModule {
                 # - url
                 #   - <https://serverfault.com/questions/11320/command-line-safety-tricks/29261#29261>
                 #   - <https://serverfault.com/questions/95431/in-a-powershell-script-how-can-i-check-if-im-running-with-administrator-privil>
-                # - retrieved: 2025_02_15
+                # - retrieved: 2025-02-15
                 $currentIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
                 $currentPrincipal = New-Object Security.Principal.WindowsPrincipal($currentIdentity)
                 $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -460,7 +460,7 @@ function Import-DemandModule {
                 Foreach-Object { $_.ExportedCommands.Keys } |
                 Select-Object -Unique
 
-            # (karlr 2025_01_20): output more information by default
+            # (karlr 2025-01-20): output more information by default
             [PsCustomObject]@{
                 Script = $baseName
                 RequiresSudo = $requiresSudo

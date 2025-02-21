@@ -25,8 +25,8 @@ Describe 'Get-ItemDateTime' {
             | Should Be $null
     }
 
-    $dateTimeFormat = 'yyyy_MM_dd_HHmmss' # Uses DateTimeFormat
-    $dateTimePattern = '\d{4}(_\d{2}){2}_\d{6}' # Uses DateTimeFormat
+    $dateTimeFormat = 'yyyy-MM-dd-HHmmss' # Uses DateTimeFormat
+    $dateTimePattern = '\d{4}(-\d{2}){2}-\d{6}' # Uses DateTimeFormat
 
     function ConvertTo-DateTimeString {
         Param(

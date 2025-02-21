@@ -1,7 +1,7 @@
 <#
 .LINK
 Url: <https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/out-notepad-send-information-to-notepad>
-Retrieved: 2019_01_01
+Retrieved: 2019-01-01
 #>
 function Out-Notepad {
     [CmdletBinding(DefaultParameterSetName = "ByObject")]

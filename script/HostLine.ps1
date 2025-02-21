@@ -1,7 +1,7 @@
 <#
 .LINK
 Url: <https://www.reddit.com/r/PowerShell/comments/7a4yl9/clearhost_light_delete_only_the_last_x_lines_of/>
-Retrieved: 2023_04_09
+Retrieved: 2023-04-09
 #>
 function Clear-HostLine {
     [CmdletBinding()]

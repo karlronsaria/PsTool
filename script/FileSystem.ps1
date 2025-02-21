@@ -78,7 +78,7 @@ function New-NoteItem {
         ConvertFrom-Json
 
     $fullFileNamePattern =
-        "(?<prefix>[_a-zA-Z]\w*)_-_\d{4}(_\d{2}){2}_(?<description>.+)(?<extension>\.[_a-zA-Z]\w*)" # Uses DateTimeFormat
+        "(?<prefix>[_a-zA-Z]\w*)_-_\d{4}(-\d{2}){2}_(?<description>.+)(?<extension>\.[_a-zA-Z]\w*)" # Uses DateTimeFormat
 
     $fullNameAttempt = if ($Name) {
         $Name

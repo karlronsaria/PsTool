@@ -290,7 +290,7 @@ function Write-IdleProgress {
             0 .. ($MarqueeText.Length - 1) |
             foreach {
                 if ($_ + $length -ge $MarqueeText.Length) {
-                    # # (karlr 2024_09_29)
+                    # # (karlr 2024-09-29)
                     # "$($MarqueeText.Substring($_))$($MarqueeText.Substring(0, $ddength - ($MarqueeText.Length - $_)))"
                     "$($MarqueeText.Substring($_))$($MarqueeText.Substring(0, $_))"
                 }
