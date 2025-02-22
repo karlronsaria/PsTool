@@ -83,8 +83,38 @@ class GrepWalk {
         }
     }
 
+    [pscustomobject] NextChildItem() {
+        if (-not $this.ValidIndex()) {
+            return $null
+        }
+
+        $index = $this.Index
+        $currentPath = @($this.Capture)[$index].Path
+
+        while ($this.ValidIndex($index) -and @($this.Capture)[$index].Path -eq $currentPath) {
+            $index = $index + 1
+        }
+
+        return $this.GoTo($index)
+    }
+
+    [pscustomobject] PrevChildItem() {
+        if (-not $this.ValidIndex()) {
+            return $null
+        }
+
+        $index = $this.Index
+        $currentPath = @($this.Capture)[$index].Path
+
+        while ($this.ValidIndex($index) -and @($this.Capture)[$index].Path -eq $currentPath) {
+            $index = $index - 1
+        }
+
+        return $this.GoTo($index)
+    }
+
     [Microsoft.PowerShell.Commands.MatchInfo[]] GoTo([int] $Index) {
-        if ($this.ValidIndex($Index)) {
+        if (-not $this.ValidIndex($Index)) {
             return $null
         }
 
