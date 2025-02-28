@@ -297,3 +297,42 @@ clean
 
 }
 
+<#
+.SYNOPSIS
+Requires regjump.exe by Sysinternals
+Requires sudo
+
+.LINK
+Url: <https://learn.microsoft.com/en-us/sysinternals/>
+Retrieved: 2025-02-28
+
+.LINK
+Url: <https://github.com/sysinternals>
+Retrieved: 2025-02-28
+#>
+function Open-ItemProperty {
+    [CmdletBinding()]
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        [Alias('Path')]
+        [String]
+        $ItemPath
+    )
+
+    $drives = @{
+        'HKCU' = 'HKEY_CURRENT_USER'
+        'HKLM' = 'HKEY_LOCAL_MACHINE'
+    }
+
+    foreach ($key in $drives.Keys) {
+        $ItemPath = $ItemPath -replace "^$key`:", "$($drives[$key])"
+    }
+
+    $ItemPath = $ItemPath -replace "\/", "\"
+    & sudo regjump.exe $ItemPath
+}
+
+New-Alias `
+    -Name 'regjump' `
+    -Value 'Open-ItemProperty'
+
