@@ -88,14 +88,14 @@ class GrepWalk {
             return $null
         }
 
-        $index = $this.Index
-        $currentPath = @($this.Capture)[$index].Path
+        $myIndex = $this.Index
+        $currentPath = @($this.Capture)[$myIndex].Path
 
-        while ($this.ValidIndex($index) -and @($this.Capture)[$index].Path -eq $currentPath) {
-            $index = $index + 1
+        while ($this.ValidIndex($myIndex) -and @($this.Capture)[$myIndex].Path -eq $currentPath) {
+            $myIndex = $myIndex + 1
         }
 
-        return $this.GoTo($index)
+        return $this.GoTo($myIndex)
     }
 
     [pscustomobject] PrevChildItem() {
@@ -103,14 +103,14 @@ class GrepWalk {
             return $null
         }
 
-        $index = $this.Index
-        $currentPath = @($this.Capture)[$index].Path
+        $myIndex = $this.Index
+        $currentPath = @($this.Capture)[$myIndex].Path
 
-        while ($this.ValidIndex($index) -and @($this.Capture)[$index].Path -eq $currentPath) {
-            $index = $index - 1
+        while ($this.ValidIndex($myIndex) -and @($this.Capture)[$myIndex].Path -eq $currentPath) {
+            $myIndex = $myIndex - 1
         }
 
-        return $this.GoTo($index)
+        return $this.GoTo($myIndex)
     }
 
     [Microsoft.PowerShell.Commands.MatchInfo[]] GoTo([int] $Index) {
