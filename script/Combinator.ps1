@@ -1046,3 +1046,91 @@ function Get-NextTree {
     }
 }
 
+filter Get-Progress {
+    [Alias('Progress')]
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        $InputObject,
+
+        [Parameter(Position = 0)]
+        [ScriptBlock]
+        $Process,
+
+        [ScriptBlock]
+        $Begin,
+
+        [ScriptBlock]
+        $End
+    )
+
+    Begin {
+        function Add-Postamble {
+            Param(
+                [scriptblock]
+                $ScriptBlock,
+
+                [string]
+                $VariableScope
+            )
+
+            $postamble = @"
+Get-Variable ``
+    -Scope 0 |
+where {
+    `$_.Options -notin
+        'Constant',
+        'Constant, AllScope',
+        'ReadOnly',
+        'ReadOnly, AllScope'
+} |
+foreach {
+    Set-Variable ``
+        -Scope $VariableScope ``
+        -Name `$_.Name ``
+        -Value `$_.Value ``
+        -ErrorAction SilentlyContinue
+}
+"@
+
+            return [ScriptBlock]::Create("$($ScriptBlock | Out-String);`r`n$postamble")
+        }
+
+        $Begin = Add-Postamble -ScriptBlock $Begin -VariableScope 1
+        $Process = Add-Postamble -ScriptBlock $Process -VariableScope 1
+        $End = Add-Postamble -ScriptBlock $End -VariableScope 2
+
+        if ($Begin) {
+            & $Begin
+        }
+
+        $activity = "Processing"
+        $list = @()
+    }
+
+    Process {
+        $list += @($InputObject | Where-Object { $_ })
+    }
+
+    End {
+        $count = 0
+
+        foreach ($item in @($list)) {
+            Write-Progress `
+                -Activity $activity `
+                -Status "Item $($count + 1) of $(@($list).Count)" `
+                -PercentComplete (100 * $count / @($list).Count)
+
+            $item | ForEach-Object -Process $Process
+            $count = $count + 1
+        }
+
+        Write-Progress `
+            -Activity $activity `
+            -Completed
+
+        if ($End) {
+            & $End
+        }
+    }
+}
+
