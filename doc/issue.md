@@ -1,53 +1,5 @@
 # issue
 
-- [x] 2025-03-08-181048
-  - what: Combinator#Get-Progress
-  - howto
-
-    ```powershell
-    $est = 'Est'; $uan = 'Uan'; $sin = 'Sin'; 1 .. 10 | progress -Begin { $est; $est = 'New Est' } -Process { $uan; Start-Sleep -Milliseconds 200; $uan = "Uan $_" } -End { $sin; $sin = 'New Sin' }; $est; $uan; $sin
-    ```
-
-  - actual
-
-    ```text
-    Est
-    Uan
-    Uan 1
-    Uan 2
-    Uan 3
-    Uan 4
-    Uan 5
-    Uan 6
-    Uan 7
-    Uan 8
-    Uan 9
-    Sin
-    Est
-    Uan
-    Sin
-    ```
-
-  - expected
-
-    ```text
-    Est
-    Uan
-    Uan 1
-    Uan 2
-    Uan 3
-    Uan 4
-    Uan 5
-    Uan 6
-    Uan 7
-    Uan 8
-    Uan 9
-    Sin
-    New Est
-    Uan 10
-    New Sin
-    ```
-
 - [ ] 2024-01-18-025321
   - what: Query-Object
   - howto
@@ -138,6 +90,54 @@
     ```
 
 ## complete
+
+- [x] 2025-03-08-181048
+  - what: Combinator#Get-Progress
+  - howto
+
+    ```powershell
+    $est = 'Est'; $uan = 'Uan'; $sin = 'Sin'; 1 .. 10 | progress -Begin { $est; $est = 'New Est' } -Process { $uan; Start-Sleep -Milliseconds 200; $uan = "Uan $_" } -End { $sin; $sin = 'New Sin' }; $est; $uan; $sin
+    ```
+
+  - actual
+
+    ```text
+    Est
+    Uan
+    Uan 1
+    Uan 2
+    Uan 3
+    Uan 4
+    Uan 5
+    Uan 6
+    Uan 7
+    Uan 8
+    Uan 9
+    Sin
+    Est
+    Uan
+    Sin
+    ```
+
+  - expected
+
+    ```text
+    Est
+    Uan
+    Uan 1
+    Uan 2
+    Uan 3
+    Uan 4
+    Uan 5
+    Uan 6
+    Uan 7
+    Uan 8
+    Uan 9
+    Sin
+    New Est
+    Uan 10
+    New Sin
+    ```
 
 - [x] 2025-01-31-125001
   - where: ``PsTool: demand: CodeSnippetCapture``
