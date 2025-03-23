@@ -1,26 +1,5 @@
 # issue
 
-- [ ] 2025-03-21-152537
-  - what: Start-Timer
-  - howto
-
-    ```powershell
-    Start-Timer -Seconds (20 * 60)
-    ```
-
-    1. Wait until the timer expires
-
-  - actual
-
-    ```text
-    Write-Progress: C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\script\Timer.ps1:41
-    Line |
-      41 |                      (100 * (($Total - $Remaining) / $Total) + 1)
-         |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         | Cannot validate argument on parameter 'PercentComplete'. The 101 argument is greater than the maximum allowed
-         | range of 100. Supply an argument that is less than or equal to 100 and then try the command again.
-    ```
-
 - [ ] 2024-01-18-025321
   - what: Query-Object
   - howto
@@ -111,6 +90,27 @@
     ```
 
 ## complete
+
+- [x] 2025-03-21-152537
+  - what: Start-Timer
+  - howto
+
+    ```powershell
+    Start-Timer -Seconds (20 * 60)
+    ```
+
+    1. Wait until the timer expires
+
+  - actual
+
+    ```text
+    Write-Progress: C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\script\Timer.ps1:41
+    Line |
+      41 |                      (100 * (($Total - $Remaining) / $Total) + 1)
+         |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         | Cannot validate argument on parameter 'PercentComplete'. The 101 argument is greater than the maximum allowed
+         | range of 100. Supply an argument that is less than or equal to 100 and then try the command again.
+    ```
 
 - [x] 2025-03-08-181048
   - what: Combinator#Get-Progress
