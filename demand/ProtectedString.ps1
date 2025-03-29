@@ -82,11 +82,8 @@ function Unprotect-Object {
         $Query
     )
 
-    $key = Read-Host `
-        -Prompt "Password" `
-        -AsSecureString |
-        ConvertFrom-ProtectedKey |
-        ConvertTo-ProtectedKey
+    $key = New-ProtectedKey `
+        -Prompt "Password"
 
     try {
         $locations = Get-Item "$PsScriptRoot/../res/setting" |

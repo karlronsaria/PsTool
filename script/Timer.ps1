@@ -38,7 +38,7 @@ function Start-Timer {
                 -Status "`rSeconds left: [$Spinner] $Remaining$blank" `
                 -SecondsRemaining $Remaining `
                 -PercentComplete `
-                    [Math]::Min(100, 100 * (($Total - $Remaining) / $Total) + 1)
+                    ([Math]::Min(100, 100 * (($Total - $Remaining) / $Total) + 1))
         }
     }
 

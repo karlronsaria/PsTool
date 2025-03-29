@@ -716,7 +716,7 @@ function Select-FlatObject {
                 }
             }
 
-            $list = $list | Query-Object `
+            $list = $list | Select-FlatObject `
                 -Property $Property
         }
 
@@ -732,7 +732,7 @@ function Select-FlatObject {
             }
         }
 
-        if ($GetFirst) {
+        if ($First) {
             return $list[0]
         }
 
