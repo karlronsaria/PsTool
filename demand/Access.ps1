@@ -71,6 +71,31 @@ Add-Type @"
             int height = rect.Bottom - rect.Top;
             return new int[] { rect.Left, rect.Top, width, height };
         }
+
+        // (karlr 2025-04-01)
+        const UInt32 SWP_NOMOVE = 0x0002;
+        const UInt32 SWP_NOZORDER = 0x0004;
+
+        [DllImport("user32.dll")]
+        static extern bool SetWindowPos(
+            IntPtr hwnd,
+            IntPtr hwndInsertAfter,
+            Int32 x,
+            Int32 y,
+            Int32 cx,
+            Int32 cy,
+            UInt32 uFlags
+        );
+
+        public static bool ResizeWindow(IntPtr hwnd, int width, int height) {
+            return SetWindowPos(
+                hwnd,
+                IntPtr.Zero,
+                0, 0,
+                width, height,
+                SWP_NOMOVE | SWP_NOZORDER
+            );
+        }
     }
 "@
 
@@ -105,17 +130,17 @@ function Get-OpenWindow {
         [ArgumentCompleter({
             Param($A, $B, $C)
 
-            $windows = Get-OpenWindow
-
-            Set-Variable `
-                -Name MyTest `
-                -Scope Global `
-                -Value $windows
-
             return $(
-                $windows.HandleId |
+                Get-OpenWindow |
                 foreach {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+                    $_.HandleId
+                } |
+                foreach {
+                    [System.Management.Automation.CompletionResult]::new(
+                        $_, $_,
+                        'ParameterValue',
+                        $_
+                    )
                 }
             )
         })]
@@ -450,6 +475,24 @@ function Get-OpenWindowRect {
         Width = $result[2]
         Height = $result[3]
     }
+}
+
+<#
+Url: <https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowpos>
+Retrieved: 2025-04-01
+#>
+function Set-OpenWindowRect {
+    Param(
+        $HandleId,
+
+        [int]
+        $Width,
+
+        [int]
+        $Height
+    )
+
+    [the]::ResizeWindow($HandleId, $Width, $Height)
 }
 
 New-Alias `
