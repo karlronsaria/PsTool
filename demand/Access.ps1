@@ -99,6 +99,12 @@ Add-Type @"
     }
 "@
 
+class OpenWindow {
+    [string] $Caption
+    [string] $HandleId # todo: convert to int
+    [bool] $Visible
+}
+
 function Get-OpenWindow {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     Param(
@@ -106,11 +112,6 @@ function Get-OpenWindow {
             Param($A, $B, $C)
 
             $windows = Get-OpenWindow
-
-            Set-Variable `
-                -Name MyTest `
-                -Scope Global `
-                -Value $windows
 
             return $windows.Caption | where {
                 "`"$_`"" -like "`"$C*`""
@@ -130,17 +131,12 @@ function Get-OpenWindow {
         [ArgumentCompleter({
             Param($A, $B, $C)
 
+            $windows = Get-OpenWindow
+
             return $(
-                Get-OpenWindow |
+                $windows.HandleId |
                 foreach {
-                    $_.HandleId
-                } |
-                foreach {
-                    [System.Management.Automation.CompletionResult]::new(
-                        $_, $_,
-                        'ParameterValue',
-                        $_
-                    )
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
                 }
             )
         })]
@@ -193,7 +189,7 @@ function Get-OpenWindow {
             return $true
         }
 
-    [WinAPI]::EnumWindows($closure, [IntPtr]::Zero) | Out-Null
+    $null = [WinAPI]::EnumWindows($closure, [IntPtr]::Zero)
 
     Get-Variable `
         -Scope Global `
@@ -203,6 +199,9 @@ function Get-OpenWindow {
         } |
         where {
             $_.Visible -and $_.Caption.Trim()
+        } |
+        foreach {
+            [OpenWindow] $_
         }
 
     Remove-Variable `
@@ -216,11 +215,6 @@ function Set-ForegroundOpenWindow {
             Param($A, $B, $C)
 
             $windows = Get-OpenWindow
-
-            Set-Variable `
-                -Name MyTest `
-                -Scope Global `
-                -Value $windows
 
             return $windows.Caption | where {
                 "`"$_`"" -like "`"$C*`""
@@ -298,7 +292,7 @@ function Set-ForegroundOpenWindow {
             }
     }
 
-    [WinAPI]::EnumWindows([WinAPI+EnumWindowsProc] $closure, [IntPtr]::Zero) | Out-Null
+    $null = [WinAPI]::EnumWindows([WinAPI+EnumWindowsProc] $closure, [IntPtr]::Zero)
 }
 
 function Close-OpenWindow {
@@ -308,11 +302,6 @@ function Close-OpenWindow {
             Param($A, $B, $C)
 
             $windows = Get-OpenWindow
-
-            Set-Variable `
-                -Name MyTest `
-                -Scope Global `
-                -Value $windows
 
             return $windows.Caption | where {
                 "`"$_`"" -like "`"$C*`""
@@ -333,11 +322,6 @@ function Close-OpenWindow {
             Param($A, $B, $C)
 
             $windows = Get-OpenWindow
-
-            Set-Variable `
-                -Name MyTest `
-                -Scope Global `
-                -Value $windows
 
             return $(
                 $windows.HandleId |
@@ -398,11 +382,6 @@ function Test-OpenWindow {
             Param($A, $B, $C)
 
             $windows = Get-OpenWindow
-
-            Set-Variable `
-                -Name MyTest `
-                -Scope Global `
-                -Value $windows
 
             return $windows.Caption | where {
                 "`"$_`"" -like "`"$C*`""
@@ -482,7 +461,54 @@ Url: <https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-set
 Retrieved: 2025-04-01
 #>
 function Set-OpenWindowRect {
+    [CmdletBinding(DefaultParameterSetName = 'ByPipeline')]
     Param(
+        [Parameter(
+            ParameterSetName = 'ByPipeline',
+            ValueFromPipeline = $true
+        )]
+        [OpenWindow]
+        $InputObject,
+
+        [ArgumentCompleter({
+            Param($A, $B, $C)
+
+            $windows = Get-OpenWindow
+
+            return $windows.Caption | where {
+                "`"$_`"" -like "`"$C*`""
+            } | foreach {
+                "`"$_`""
+            } | foreach {
+                [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+            }
+        })]
+        [Parameter(
+            ParameterSetName = 'ByCaption',
+            Position = 0
+        )]
+        [string]
+        $Caption,
+
+        [ArgumentCompleter({
+            Param($A, $B, $C)
+
+            return $(
+                Get-OpenWindow |
+                foreach {
+                    $_.HandleId
+                } |
+                foreach {
+                    [System.Management.Automation.CompletionResult]::new(
+                        $_, $_,
+                        'ParameterValue',
+                        $_
+                    )
+                }
+            )
+        })]
+        [Parameter(ParameterSetName = 'ByHandleId')]
+        [string]
         $HandleId,
 
         [int]
@@ -492,7 +518,31 @@ function Set-OpenWindowRect {
         $Height
     )
 
-    [the]::ResizeWindow($HandleId, $Width, $Height)
+    Process {
+        if ($InputObject) {
+            $result = [WinAPI]::ResizeWindow($InputObject.HandleId, $Width, $Height)
+            Write-Verbose "Success: $result, HandleId: $($InputObject.HandleId)"
+        }
+    }
+
+    End {
+        $HandleId = switch ($PsCmdlet.ParameterSetName) {
+            'ByCaption' {
+                Get-OpenWindow |
+                    where { $_.Caption -eq $Caption } |
+                    foreach HandleId
+            }
+
+            'ByHandleId' {
+                $HandleId
+            }
+        }
+
+        if ($HandleId) {
+            $result = [WinAPI]::ResizeWindow($HandleId, $Width, $Height)
+            Write-Verbose "Success: $result, HandleId: $HandleId"
+        }
+    }
 }
 
 New-Alias `
