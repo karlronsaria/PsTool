@@ -26,10 +26,12 @@ function Start-Edit {
                         where {
                             $_ -ne 'Other'
                         }
-                    ) |
-                foreach {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
-                }
+                    )
+                # # (karlr 2025-05-01): not working
+                #     ) |
+                # foreach {
+                #     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+                # }
             )
         })]
         [String]
@@ -364,10 +366,13 @@ function ConvertTo-Suggestion {
     }
     else {
         $List
-    }) |
-    foreach {
-        [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
-    }
+    })
+
+    # # (karlr 2025-05-01): not working
+    # }) |
+    # foreach {
+    #     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+    # }
 }
 
 function Get-PipelinePropertySuggestion {
@@ -500,9 +505,12 @@ function Get-PipelinePropertySuggestion {
         else {
             $_
         }
-    } | foreach {
-        [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
     }
+
+    # # (karlr 2025-05-01): not working
+    # } | foreach {
+    #     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+    # }
 }
 
 function Select-FlatObject {

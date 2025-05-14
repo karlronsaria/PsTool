@@ -1,5 +1,28 @@
 # issue
 
+- [ ] 2025-04-27-174931
+  - what: Set-Location
+  - howto
+    - call ``Set-Location`` using a file item as the path argument
+    - note: using pipeline works as intended
+  - actual
+
+    ```text
+    ~  cd C:\Users\karlr\source\repos\demo-PsMarkdownSyntaxTree\PsMarkdownTree\HelloWorld.cs
+    Exception: C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\script\Location.ps1:100
+    Line |
+     100 |                          $temp = Resolve-Path $_ -ErrorAction Stop
+         |                                               ~~
+         | Cannot bind argument to parameter 'Path' because it is null.
+    ```
+
+  - expected
+
+    ```text
+    ~  cd C:\Users\karlr\source\repos\demo-PsMarkdownSyntaxTree\PsMarkdownTree\HelloWorld.cs
+    ~\source\repos\demo-PsMarkdownSyntaxTree\PsMarkdownTree  
+    ```
+
 - [ ] 2024-01-18-025321
   - what: Query-Object
   - howto
