@@ -65,12 +65,13 @@ function Reset-ExplorerSession {
     Start-Process -FilePath explorer.exe
 
     if (-not $NoReopen) {
-        $items | % {
+        $items | foreach {
             Start-Process `
                 -FilePath explorer.exe `
-                -ArgumentList $_ `
+                -ArgumentList $_.Path `
                 -WindowStyle:$WindowStyle `
                 -PassThru:$PassThru
         }
     }
 }
+

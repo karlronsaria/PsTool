@@ -13,7 +13,7 @@ function Get-PackageMoniker {
                 Winget = "C:\shortcut\dos\backup\winget\package*"
             }
 
-            $choco = return [xml](dir $path.Choco | Get-Content | Out-String) |
+            $choco = [xml](dir $path.Choco | Get-Content | Out-String) |
                 foreach ChildNodes |
                 foreach package |
                 foreach id |
@@ -42,7 +42,7 @@ function Get-PackageMoniker {
                 }
             )
         })]
-        [string]
+        [string[]]
         $Name
     )
 
@@ -81,11 +81,14 @@ function Get-PackageMoniker {
     $list = @($choco) + @($winget)
 
     return $(
-        if ($Name) {
-            $list | where Moniker -like "$Name*"
-        }
-        else {
-            $list
+        @($Name | where { $_ }) |
+        foreach {
+            if ($_) {
+                $list | where Moniker -like "$_*"
+            }
+            else {
+                $list
+            }
         }
     )
 }

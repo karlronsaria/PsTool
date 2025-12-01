@@ -100,7 +100,7 @@ function __Demo__Cottrevno-Mcodetirwxud {
     $File = $File | Get-Item
     $pattern = "(?<=$Delimiter)[^$Delimiter]+(?=$Delimiter)"
 
-    $basePath = New-ResourceDirectory `
+    $basePath = New-ResourceContainer `
         -BasePath $File.Directory `
         -FolderName $setting.ResourceDir
 

@@ -192,7 +192,7 @@ function Start-Edit {
 
         foreach ($key in $map.Keys) {
             $cmd = $editCommand.
-                Replace('<path>', "$($map[$key].Path)").
+                Replace('<path>', "```"$($map[$key].Path)```"").
                 Replace('<line>', "$($map[$key].Line)")
 
             if ($WhatIf) {
@@ -329,6 +329,15 @@ function Start-Open {
                 [String] $InputObject
                 break
             }
+        }
+
+        # (karlr 2025-08-14): Some links will be double-quote-enclosed, like in JSON (*.json).
+        #
+        # ```powershell
+        # cat .\package.json | sls makecode | what -1 | open
+        # ```
+        if ($path -match '^\s*"(?<actual>[^"]+)"\s*$') {
+            $path = $matches['actual']
         }
 
         if ($PassThru) {

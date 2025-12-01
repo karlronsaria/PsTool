@@ -545,12 +545,12 @@ function __Demo__Mevo-Mmetinwodkra {
                         continue
                     }
 
-                    $newLink = Convert-MarkdownLinkResolver `
+                    $newLink = Convert-MarkdownLinkRelativity `
                         -OriginPath $link.FilePath `
                         -DestinationPath $link.Capture `
                         -SearchMethod Absolute
 
-                    $newLink = Convert-MarkdownLinkResolver `
+                    $newLink = Convert-MarkdownLinkRelativity `
                         -OriginPath $Destination `
                         -DestinationPath $newLink `
                         -SearchMethod Relative
@@ -600,12 +600,12 @@ function __Demo__Mevo-Mmetinwodkra {
                     $matchInfo = $item.MatchInfo
                     $capture = $matchInfo.Matches[0]
 
-                    $newLink = Convert-MarkdownLinkResolver `
+                    $newLink = Convert-MarkdownLinkRelativity `
                         -OriginPath $item.FilePath `
                         -DestinationPath $capture.Value `
                         -SearchMethod Absolute
 
-                    $newLink = Convert-MarkdownLinkResolver `
+                    $newLink = Convert-MarkdownLinkRelativity `
                         -OriginPath $item.FilePath `
                         -DestinationPath $Destination `
                         -SearchMethod Relative

@@ -1,5 +1,49 @@
 # issue
 
+- [x] 2025-11-22-025253
+  - where: PsTool#script#Combinator#Start-Edit, ``edit``
+  - howto
+
+    ```powershell
+    "C:\note\emp\projek\PythonClub\research\Python-20250122T084419Z-001\Python\Python Curriculum for Students\Book Curriculum\readme.md" | edit
+    ```
+
+    or
+
+    ```powershell
+    "C:\note\emp\projek\PythonClub\research\Python-20250122T084419Z-001\Python\Python Curriculum for Students\Book Curriculum\readme.md" | dir | edit
+    ```
+
+  - actual
+    - Editor nvim open to ``emp\projek\PythonClub\research\Python-20250122T084419Z-001\Python\Python\``
+  - expected
+    - Editor nvim open to ``C:\note\emp\projek\PythonClub\research\Python-20250122T084419Z-001\Python\Python Curriculum for Students\Book Curriculum\readme.md``
+
+- [ ] 2025-07-25-132201
+  - where: PsTool#script#Combinator#Select-FlatObject, ``what``
+  - description: ArgumentCompleter not working properly
+  - howto
+
+    ```powershell
+    es -r Minecraft.*\.exe$ | what 2 | dir | what v
+    ```
+
+    ```text
+    <Tab>
+    ```
+
+  - actual
+
+    ```powershell
+    es -r Minecraft.*\.exe$ | what 2 | dir | what Attributes
+    ```
+
+  - expected
+
+    ```powershell
+    es -r Minecraft.*\.exe$ | what 2 | dir | what VersionInfo
+    ```
+
 - [ ] 2025-04-27-174931
   - what: Set-Location
   - howto

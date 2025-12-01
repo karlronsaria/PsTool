@@ -1,5 +1,8 @@
 # wish
 
+- [ ] 2025-11-22: grepwalk
+  - could accept non-MatchInfo types as input
+    - as long as they have a ``Path`` property
 - [ ] get properties by matching pattern or substring
 - [ ] ``has`` Filter
 - ``FileSystem#Rename-Item``

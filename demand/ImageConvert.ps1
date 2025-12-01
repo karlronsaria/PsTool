@@ -1,6 +1,7 @@
 <#
 .DESCRIPTION
 Tags: imagemagick image convert webp
+[!] Wait. Before you stamp this cmdlet RTFM, it does more than just call ImageMagick in a wrapper. It can identify if an image is animated and convert to the correct file extension.
 
 .LINK
 Url: <https://www.reddit.com/r/webdev/comments/fzsb5k/any_way_to_convert_webp_to_gif_or_jpg_locally_on/g26vdds/?context=3>

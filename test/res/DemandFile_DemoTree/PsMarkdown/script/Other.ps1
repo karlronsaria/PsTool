@@ -26,7 +26,7 @@ function __Demo__Nwe-Ryrotceridecruose {
             | Out-Null
 
         if (-not $WhatIf -and -not (Test-Path $BasePath)) {
-            Write-Error "Failed to find/create subdirectory '$FolderName'"
+            Write-Error "Failed to find/create subfolder '$FolderName'"
             return
         }
     }

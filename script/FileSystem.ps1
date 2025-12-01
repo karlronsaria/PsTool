@@ -650,3 +650,89 @@ function Rename-Item {
 #>
 }
 
+function Get-ChildDocumentItem {
+    [CmdletBinding(DefaultParameterSetName='Items', HelpUri='https://go.microsoft.com/fwlink/?LinkID=2096492')]
+    [Alias('ddir')]
+    param(
+        [Parameter(
+            ParameterSetName='Items',
+            Position=0,
+            ValueFromPipeline=$true,
+            ValueFromPipelineByPropertyName=$true
+        )]
+        [string[]]
+        ${Path},
+
+        [Parameter(
+            ParameterSetName='LiteralItems',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true
+        )]
+        [Alias('PSPath','LP')]
+        [string[]]
+        ${LiteralPath},
+
+        [Parameter(Position=1)]
+        [string]
+        ${Filter},
+
+        [string[]]
+        ${Include},
+
+        [string[]]
+        ${Exclude},
+
+        [Alias('s','r')]
+        [switch]
+        ${Recurse},
+
+        [uint]
+        ${Depth},
+
+        [switch]
+        ${Force},
+
+        [switch]
+        ${Name}
+    )
+
+    begin {
+        $filter = "$PsScriptRoot/../res/filesystem.setting.json" |
+            Get-Item |
+            Get-Content |
+            ConvertFrom-Json |
+            foreach 'DocumentExcludePattern'
+
+        $list = @()
+    }
+
+    process {
+        $list += @(@($_) | Where-Object { $_ })
+    }
+
+    end {
+        try {
+            if ($list.Count -gt 0) {
+                $paramName = switch ($PsCmdlet.ParameterSetName) {
+                    'Items' { 'Path' }
+                    'LiteralItems' { 'LiteralPath' }
+                }
+
+                $PSBoundParameters[$paramName] = $list
+            }
+
+            Get-ChildItem @PSBoundParameters |
+                Where-Object { $_.FullName -notmatch $filter }
+        }
+        catch {
+            throw
+        }
+    }
+
+<#
+.ForwardHelpTargetName Microsoft.PowerShell.Management\Get-ChildItem
+.ForwardHelpCategory Cmdlet
+#>
+}
+
+

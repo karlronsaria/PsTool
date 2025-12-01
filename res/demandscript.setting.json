@@ -1,7 +1,7 @@
 {
     "RequiresLineNumberThreshold": 10,
     "Profiles": {
-        "Win32NT": [
+        "Win32NT_OLD_2025": [
             {
                 "Version": 5,
                 "Location": "WindowsPowerShell/Scripts"
@@ -9,6 +9,16 @@
             {
                 "Version": 7,
                 "Location": "PowerShell/Scripts"
+            }
+        ],
+        "Win32NT": [
+            {
+                "Version": 5,
+                "Location": "pwsh/Scripts"
+            },
+            {
+                "Version": 7,
+                "Location": "pwsh/Scripts"
             }
         ],
         "Unix": [
@@ -35,7 +45,8 @@
     "ScriptPatterns": [ "Tag" ],
     "DefaultVersion": 5,
     "DefaultStartingDirectory": {
-        "Win32NT": "\"$env:OneDrive/Documents\"",
+        "Win32NT_OLD_2025-09-07": "\"$env:OneDrive/Documents\"",
+        "Win32NT": "\"C:/shortcut\"",
         "Unix": "\"~/.config/\""
     },
     "LocalDemandFile": {

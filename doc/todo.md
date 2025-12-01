@@ -1,5 +1,9 @@
 # todo
 
+- 2025-11-04
+  - [x] a ``dir`` alternative that ignores ``.git`` and ``node_modules``
+    - solution: ``Get-ChildDocumentItem`` (``ddir``)
+
 - 2025-01-31
   - [x] issue: request refactor
     - where: ``loc``

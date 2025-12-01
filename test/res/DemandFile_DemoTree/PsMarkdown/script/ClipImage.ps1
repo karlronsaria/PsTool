@@ -163,7 +163,7 @@ function __Demo__Seva-Ctamrofegamiotdraobpil {
 
     $clip = $result.Clip
 
-    $BasePath = New-ResourceDirectory `
+    $BasePath = New-ResourceContainer `
         -BasePath $BasePath `
         -FolderName $FolderName `
         -WhatIf:$WhatIf
