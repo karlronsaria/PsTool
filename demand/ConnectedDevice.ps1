@@ -77,6 +77,13 @@ function Get-ConnectedDeviceItem {
     $NAMESPACE_THIS_PC_CODE = 17
     $FILESYSTEM_DO_NOT_PROMPT = 16
 
+    # Uses DateTimeFormat
+    $dateTimeFormat = "$PsScriptRoot/../res/setting.json" |
+        Get-Item |
+        Get-Content |
+        ConvertFrom-Json |
+        foreach { $_.DateTimeFormat }
+
     function New-Closure {
         Param(
             [ScriptBlock]
@@ -115,7 +122,8 @@ function Get-ConnectedDeviceItem {
     function Select-Subtree {
         Param(
             $InputObject,
-            $Query
+            $Query,
+            $Destination
         )
 
         if ($null -eq $InputObject) {
@@ -140,6 +148,7 @@ function Get-ConnectedDeviceItem {
                         where {
                             $_.Name.ToLower() -eq $property.Name.ToLower()
                         } |
+                        where { $_ } |
                         foreach {
                             [pscustomobject]@{
                                 "$($_.Name)" = Select-Subtree `
@@ -155,6 +164,7 @@ function Get-ConnectedDeviceItem {
                     where {
                         $_.Name.ToLower() -eq $subquery.ToLower()
                     } |
+                    where { $_ } |
                     foreach {
                         $temp = [pscustomobject]@{
                             "$($_.Name)" = $_
@@ -162,41 +172,36 @@ function Get-ConnectedDeviceItem {
 
                         $deviceAction = {
                             $dest = $Parameters.Destination
-                            $datetime = Get-Date -Format 'yyyy-MM-dd-HHmmss' # Uses DateTimeFormat
-
-                            if (-not (Test-Path $dest)) {
-                                $dest = mkdir $dest | foreach FullName
-                            }
-
+                            $datetime = Get-Date -Format $Parameters.DateTimeFormat
                             $dest = mkdir (Join-Path $dest $datetime) | foreach FullName
                             $shell = New-Object -ComObject Shell.Application
 
                             $shell.
                                 NameSpace($dest).
                                 ($Parameters.MethodName)($Parameters.ComObject, $Parameters.Option)
+
+                            return $dest
                         }
 
                         $deviceFunction = {
                             Param($Destination)
 
-                            $datetime = Get-Date -Format 'yyyy-MM-dd-HHmmss' # Uses DateTimeFormat
-
-                            if (-not (Test-Path $Destination)) {
-                                $Destination = mkdir $Destination | foreach FullName
-                            }
-
-                            $Destination = mkdir (Join-Path $Destination $datetime) | foreach FullName
+                            $datetime = Get-Date -Format $Parameters.DateTimeFormat
+                            $Destination = mkdir (Join-Path $Destination $dateTime) | foreach FullName
                             $shell = New-Object -ComObject Shell.Application
 
                             $shell.
                                 NameSpace($Destination).
                                 ($Parameters.MethodName)($Parameters.ComObject, $Parameters.Option)
+
+                            return $Destination
                         }
 
                         $save = New-Closure `
                             -Parameters $([pscustomobject]@{
                                 Destination = $Destination
                                 Options = $FILESYSTEM_DO_NOT_PROMPT
+                                DateTimeFormat = $dateTimeFormat
                                 ComObject = $_
                                 MethodName = 'CopyHere'
                             }) `
@@ -206,6 +211,7 @@ function Get-ConnectedDeviceItem {
                             -Parameters $([pscustomobject]@{
                                 Destination = $Destination
                                 Options = $FILESYSTEM_DO_NOT_PROMPT
+                                DateTimeFormat = $dateTimeFormat
                                 ComObject = $_
                                 MethodName = 'MoveHere'
                             }) `
@@ -214,6 +220,7 @@ function Get-ConnectedDeviceItem {
                         $saveTo = New-Closure `
                             -Parameters $([pscustomobject]@{
                                 Options = $FILESYSTEM_DO_NOT_PROMPT
+                                DateTimeFormat = $dateTimeFormat
                                 ComObject = $_
                                 MethodName = 'CopyHere'
                             }) `
@@ -222,10 +229,24 @@ function Get-ConnectedDeviceItem {
                         $moveTo = New-Closure `
                             -Parameters $([pscustomobject]@{
                                 Options = $FILESYSTEM_DO_NOT_PROMPT
+                                DateTimeFormat = $dateTimeFormat
                                 ComObject = $_
                                 MethodName = 'MoveHere'
                             }) `
                             -ScriptBlock $deviceFunction
+
+                        $upload = New-Closure `
+                            -Parameters $([pscustomobject]@{
+                                Options = $FILESYSTEM_DO_NOT_PROMPT
+                                DateTimeFormat = $dateTimeFormat
+                                ComObject = $_
+                            }) `
+                            -ScriptBlock {
+                                Param($Source)
+
+                                $Parameters.ComObject.
+                                    CopyHere($Parameters.Source, $Parameters.Option)
+                            }
 
                         $temp | Add-Member `
                             -MemberType ScriptMethod `
@@ -247,6 +268,11 @@ function Get-ConnectedDeviceItem {
                             -Name 'MoveTo' `
                             -Value $moveTo
 
+                        $temp | Add-Member `
+                            -MemberType ScriptMethod `
+                            -Name 'Upload' `
+                            -Value $upload
+
                         $temp
                     }
                 }
@@ -267,8 +293,6 @@ function Get-ConnectedDeviceItem {
         $Destination = Get-Location | foreach Path
     }
 
-    $saveTo = $shell.NameSpace($Destination)
-
     if ($filterBy -ne 'All') {
         $devices = $devices |
         where {
@@ -287,7 +311,8 @@ function Get-ConnectedDeviceItem {
         foreach {
             Select-Subtree `
                 -InputObject $_ `
-                -Query $select
+                -Query $select `
+                -Destination $Destination
         }
     }
 }
