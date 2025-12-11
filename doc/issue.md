@@ -1,5 +1,55 @@
 # issue
 
+- [ ] 2025-12-10-150840
+  - where: PsTool/demand/MtpDevice#Get-MtpDeviceItem
+  - case 1: SaveTo
+    - howto
+
+      ```powershell
+      demand MtpDevice
+      Get-MtpDeviceItem -Query '{ "Internal storage": ["Downloads", "Pictures", "DCIM"] }' |
+        foreach { $_.'Internal storage' } |
+        foreach { $_.SaveTo('C:/temp/mobile') }
+      ```
+
+    - actual
+
+      ```text
+      Script       : MtpDevice
+      RequiresSudo : False
+      Commands     : Get-MtpDeviceItem
+      ModuleName   : ModuleOnDemand_MtpDevice
+      Location     : C:\shortcut\pwsh\Scripts\PsTool\demand\MtpDevice.ps1
+
+      C:\temp\mobile\2025-12-10-151345
+      MethodInvocationException: Exception calling "MoveTo" with "1" argument(s): "You cannot call a method on a null-valued expression."
+      MethodInvocationException: Exception calling "MoveTo" with "1" argument(s): "You cannot call a method on a null-valued expression."
+      ```
+
+  - case 2: MoveTo
+    - howto
+
+      ```powershell
+      demand MtpDevice
+      Get-MtpDeviceItem -Query '{ "Internal storage": ["Downloads", "Pictures", "DCIM"] }' |
+        foreach { $_.'Internal storage' } |
+        foreach { $_.MoveTo('C:/temp/mobile') }
+      ```
+
+    - actual
+
+      ```text
+      Script       : MtpDevice
+      RequiresSudo : False
+      Commands     : Get-MtpDeviceItem
+      ModuleName   : ModuleOnDemand_MtpDevice
+      Location     : C:\shortcut\pwsh\Scripts\PsTool\demand\MtpDevice.ps1
+
+      C:\temp\mobile\2025-12-10-151345
+      MethodInvocationException: Exception calling "MoveTo" with "1" argument(s): "You cannot call a method on a null-valued expression."
+      MethodInvocationException: Exception calling "MoveTo" with "1" argument(s): "You cannot call a method on a null-valued expression."
+      ```
+
 - [x] 2025-11-22-025253
   - where: PsTool#script#Combinator#Start-Edit, ``edit``
   - howto
