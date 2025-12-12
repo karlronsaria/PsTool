@@ -1063,8 +1063,9 @@ function Get-NextTree {
     }
 }
 
-filter Get-Progress {
+function Get-Progress {
     [Alias('Progress')]
+    [CmdletBinding()]
     Param(
         [Parameter(ValueFromPipeline = $true)]
         $InputObject,
@@ -1079,6 +1080,37 @@ filter Get-Progress {
         [ScriptBlock]
         $End
     )
+
+    DynamicParam {
+        $dictionary = New-Object -Type System.Management.Automation.RuntimeDefinedParameterDictionary
+        $params = (Get-Command Write-Progress).Parameters
+        $addedKeys = @()
+
+        $params.Keys |
+            foreach { $params[$_] } |
+            where {
+                "$($_.Attributes.TypeId)" -notmatch 'AliasAttribute' -and
+                "$($_.Attributes.TypeId)" -notmatch 'ShouldProcessParameterAttribute'
+            } |
+            foreach {
+                $attrs = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
+
+                foreach ($attr in $_.Attributes) {
+                    $attrs.Add($attr)
+                }
+
+                $clone = New-Object System.Management.Automation.RuntimeDefinedParameter(
+                    $_.Name,
+                    $_.ParameterType,
+                    $attrs
+                )
+                
+                $dictionary.Add($_.Name, $clone)
+                $addedKeys += @($_.Name)
+            }
+
+        return $dictionary
+    }
 
     Begin {
         function Add-Postamble {
@@ -1115,11 +1147,18 @@ foreach {
         $Begin = Add-Postamble -ScriptBlock $Begin -VariableScope 1
         $Process = Add-Postamble -ScriptBlock $Process -VariableScope 1
         $End = Add-Postamble -ScriptBlock $End -VariableScope 2
+        $params = @{}
 
-        if ($Begin) {
-            & $Begin
+        foreach ($key in $PSBoundParameters.Keys) {
+            $params[$key] = $PSBoundParameters[$key]
         }
 
+        if ($Begin) {
+            # This block of code is overwriting the entries to PSBoundParameters that
+            # were added from DynamicParam.
+            & $Begin
+        }
+        
         $activity = "Processing"
         $list = @()
     }
@@ -1132,18 +1171,35 @@ foreach {
         $count = 0
 
         foreach ($item in @($list)) {
-            Write-Progress `
-                -Activity $activity `
-                -Status "Item $($count + 1) of $(@($list).Count)" `
-                -PercentComplete (100 * $count / @($list).Count)
+            $dict = @{
+                Activity = $activity
+                Status = "Item $($count + 1) of $(@($list).Count)"
+                PercentComplete = (100 * $count / @($list).Count)
+            }
+            
+            $addedKeys |
+            where { $_ -notin $dict.Keys -and $params.ContainsKey($_) } |
+            foreach {
+                $dict[$_] = $params[$_]
+            }
 
+            Write-Progress @dict
             $item | ForEach-Object -Process $Process
             $count = $count + 1
         }
+        
+        $dict = @{
+            Activity = $activity
+            Completed = $true
+        }
 
-        Write-Progress `
-            -Activity $activity `
-            -Completed
+        $addedKeys |
+        where { $_ -notin $dict.Keys -and $params.ContainsKey($_) } |
+        foreach {
+            $dict[$_] = $params[$_]
+        }
+
+        Write-Progress @dict
 
         if ($End) {
             & $End
