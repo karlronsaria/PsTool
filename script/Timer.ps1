@@ -80,3 +80,37 @@ function Start-Timer {
     }
 }
 
+<#
+.NOTES
+Uses voidtools es.exe, the Everything command-line tool
+#>
+function Start-Sound {
+    Param(
+        [ArgumentCompleter({
+            Param($A, $B, $C)
+
+            $ErrorActionPreference = 'Break'
+            $what = es -r ".*\.wav$"
+
+            $suggest = $what |
+            Where-Object {
+                $_ -like "*$C*"
+            }
+
+            $(if (-not $suggest) {
+                $what
+            }
+            else {
+                $suggest
+            }) |
+            ForEach-Object {
+                "`"$_`""
+            }
+        })]
+        [string]
+        $Path
+    )
+
+    (New-Object System.Media.SoundPlayer $Path).PlaySync()
+}
+

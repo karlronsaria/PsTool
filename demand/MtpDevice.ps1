@@ -127,6 +127,7 @@ function Get-MtpDeviceItem {
         )
 
         $deviceAction = {
+            $ErrorActionPreference = 'Continue'
             $dest = $Parameters.Destination
             $datetime = Get-Date -Format $Parameters.DateTimeFormat
             $dest = mkdir (Join-Path $dest $datetime) | foreach FullName
@@ -142,6 +143,7 @@ function Get-MtpDeviceItem {
         $deviceFunction = {
             Param($Destination)
 
+            $ErrorActionPreference = 'Continue'
             $datetime = Get-Date -Format $Parameters.DateTimeFormat
             $Destination = mkdir (Join-Path $Destination $dateTime) | foreach FullName
             $shell = New-Object -ComObject Shell.Application
@@ -156,7 +158,7 @@ function Get-MtpDeviceItem {
         $save = New-Closure `
             -Parameters $([pscustomobject]@{
                 Destination = $Destination
-                Options = $FILESYSTEM_DO_NOT_PROMPT
+                Option = $FILESYSTEM_DO_NOT_PROMPT
                 DateTimeFormat = $dateTimeFormat
                 ComObject = $ComObject
                 MethodName = 'CopyHere'
@@ -166,7 +168,7 @@ function Get-MtpDeviceItem {
         $move = New-Closure `
             -Parameters $([pscustomobject]@{
                 Destination = $Destination
-                Options = $FILESYSTEM_DO_NOT_PROMPT
+                Option = $FILESYSTEM_DO_NOT_PROMPT
                 DateTimeFormat = $dateTimeFormat
                 ComObject = $ComObject
                 MethodName = 'MoveHere'
@@ -175,7 +177,7 @@ function Get-MtpDeviceItem {
 
         $saveTo = New-Closure `
             -Parameters $([pscustomobject]@{
-                Options = $FILESYSTEM_DO_NOT_PROMPT
+                Option = $FILESYSTEM_DO_NOT_PROMPT
                 DateTimeFormat = $dateTimeFormat
                 ComObject = $ComObject
                 MethodName = 'CopyHere'
@@ -184,7 +186,7 @@ function Get-MtpDeviceItem {
 
         $moveTo = New-Closure `
             -Parameters $([pscustomobject]@{
-                Options = $FILESYSTEM_DO_NOT_PROMPT
+                Option = $FILESYSTEM_DO_NOT_PROMPT
                 DateTimeFormat = $dateTimeFormat
                 ComObject = $ComObject
                 MethodName = 'MoveHere'
@@ -193,13 +195,14 @@ function Get-MtpDeviceItem {
 
         $upload = New-Closure `
             -Parameters $([pscustomobject]@{
-                Options = $FILESYSTEM_DO_NOT_PROMPT
+                Option = $FILESYSTEM_DO_NOT_PROMPT
                 DateTimeFormat = $dateTimeFormat
                 ComObject = $ComObject
             }) `
             -ScriptBlock {
                 Param($Source)
 
+                $ErrorActionPreference = 'Continue'
                 $fullName = (Get-Item $Source).FullName
 
                 $Parameters.
@@ -210,12 +213,13 @@ function Get-MtpDeviceItem {
 
         $uploadTo = New-Closure `
             -Parameters $([pscustomobject]@{
-                Options = $FILESYSTEM_DO_NOT_PROMPT
+                Option = $FILESYSTEM_DO_NOT_PROMPT
                 DateTimeFormat = $dateTimeFormat
             }) `
             -ScriptBlock {
                 Param($Source, $ComObject)
 
+                $ErrorActionPreference = 'Continue'
                 $fullName = (Get-Item $Source).FullName
 
                 $ComObject.
@@ -287,9 +291,14 @@ function Get-MtpDeviceItem {
                         where { $_ }
 
                     if (-not $items) {
-                        $folder.NewFolder($subquery)
-                        Sleep 1
-                        $items = @($folder.Items() | where { $_.Name -eq $subquery })
+                        try {
+                            $folder.NewFolder($subquery)
+                            Sleep 1
+                            $items = @($folder.Items() | where { $_.Name -eq $subquery })
+                        }
+                        catch {
+                            Write-Error "Cannot access device resources. Check your device connection."
+                        }
                     }
 
                     foreach ($item in $items) {
@@ -315,9 +324,14 @@ function Get-MtpDeviceItem {
                             where { $_ }
 
                         if (-not $items) {
-                            $folder.NewFolder($property.Name)
-                            Sleep 1
-                            $items = @($folder.Items() | where { $_.Name -eq $property.Name })
+                            try {
+                                $folder.NewFolder($property.Name)
+                                Sleep 1
+                                $items = @($folder.Items() | where { $_.Name -eq $property.Name })
+                            }
+                            catch {
+                                Write-Error "Cannot access device resources. Check your device connection."
+                            }
                         }
 
                         foreach ($item in $items) {
