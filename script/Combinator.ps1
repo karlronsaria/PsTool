@@ -1104,7 +1104,7 @@ function Get-Progress {
                     $_.ParameterType,
                     $attrs
                 )
-                
+
                 $dictionary.Add($_.Name, $clone)
                 $addedKeys += @($_.Name)
             }
@@ -1122,6 +1122,11 @@ function Get-Progress {
                 $VariableScope
             )
 
+            # A PowerShell implementation of the Uplevel command (such as in the Tcl programming language)
+            # to give a function the same behavior as ForEach-Object.
+            # # link
+            # - url: <https://en.wikipedia.org/wiki/Tcl_(programming_language)#Uplevel>
+            # - retrieved: 2026-01-05
             $postamble = @"
 Get-Variable ``
     -Scope 0 |
@@ -1158,7 +1163,7 @@ foreach {
             # were added from DynamicParam.
             & $Begin
         }
-        
+
         $activity = "Processing"
         $list = @()
     }

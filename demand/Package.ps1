@@ -9,8 +9,8 @@ function Get-PackageMoniker {
             Param($A, $B, $C)
 
             $path = [PsCustomObject]@{
-                Choco = "C:\shortcut\dos\backup\choco\package*"
-                Winget = "C:\shortcut\dos\backup\winget\package*"
+                Choco = "C:\shortcut\dos\backup\choco\packages.config"
+                Winget = "C:\shortcut\dos\backup\winget\package.json"
             }
 
             $choco = [xml](dir $path.Choco | Get-Content | Out-String) |
@@ -47,8 +47,8 @@ function Get-PackageMoniker {
     )
 
     $path = [PsCustomObject]@{
-        Choco = "C:\shortcut\dos\backup\choco\package*"
-        Winget = "C:\shortcut\dos\backup\winget\package*"
+        Choco = "C:\shortcut\dos\backup\choco\packages.config"
+        Winget = "C:\shortcut\dos\backup\winget\package.json"
     }
 
     $choco = [xml](dir $path.Choco | Get-Content | Out-String) |

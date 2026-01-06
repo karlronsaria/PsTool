@@ -1,0 +1,5 @@
+{
+    "SaveDirectoryExp": "\"$($env:AppData)/.minecraft/saves\"",
+    "BackupDirectoryExp": "\"$($env:SystemDrive)/game/minecraft\""
+}
+

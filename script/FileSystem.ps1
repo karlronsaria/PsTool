@@ -697,11 +697,11 @@ function Get-ChildDocumentItem {
     )
 
     begin {
-        $filter = "$PsScriptRoot/../res/filesystem.setting.json" |
+        $myExcludes = "$PsScriptRoot/../res/filesystem.setting.json" |
             Get-Item |
             Get-Content |
             ConvertFrom-Json |
-            foreach 'DocumentExcludePattern'
+            foreach 'Exclude'
 
         $list = @()
     }
@@ -722,7 +722,7 @@ function Get-ChildDocumentItem {
             }
 
             Get-ChildItem @PSBoundParameters |
-                Where-Object { $_.FullName -notmatch $filter }
+                Where-Object { $_.FullName -notin $myExcludes }
         }
         catch {
             throw
