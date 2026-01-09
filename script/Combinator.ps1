@@ -9,9 +9,6 @@ function Start-Edit {
         )]
         $InputObject,
 
-        [Switch]
-        $Sudo,
-
         [ArgumentCompleter({
             return $(
                 ConvertTo-Suggestion `
@@ -37,6 +34,9 @@ function Start-Edit {
         [String]
         $Editor,
 
+        [Switch]
+        $Sudo,
+
         [Parameter(ParameterSetName = 'General')]
         [Int]
         $LineNumber = 0,
@@ -50,8 +50,10 @@ function Start-Edit {
     )
 
     Begin {
-        $setting = gc "$PsScriptRoot\..\res\combinator.setting.json" |
-        ConvertFrom-Json
+        $setting = "$PsScriptRoot\..\res\combinator.setting.json" |
+            Get-Item |
+            Get-Content |
+            ConvertFrom-Json
 
         $editors =
             $setting.
