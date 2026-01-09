@@ -720,9 +720,11 @@ function Get-ChildDocumentItem {
 
                 $PSBoundParameters[$paramName] = $list
             }
+            
+            $excludePattern = "\\($($myExcludes -join "|"))\\"
 
             Get-ChildItem @PSBoundParameters |
-                Where-Object { $_.FullName -notin $myExcludes }
+                Where-Object { $_.FullName -notmatch $excludePattern }
         }
         catch {
             throw

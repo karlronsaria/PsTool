@@ -784,9 +784,8 @@ function Get-StringReplace {
     Process {
         $captures = [Regex]::Matches($InputObject, $Pattern)
         $index = 0
-        $objects = @()
 
-        $objects += @(foreach ($capture in $captures) {
+        $objects = @(foreach ($capture in $captures) {
             $prefix = if ($capture.Index -ne 0) {
                 $InputObject[$index .. ($capture.Index - 1)] -join ''
             }
@@ -806,7 +805,7 @@ function Get-StringReplace {
             })
         }
 
-        @($objects | foreach {
+        $list = $objects | foreach {
             $caseSlice = ''
             $remainder = ''
 
@@ -833,14 +832,10 @@ function Get-StringReplace {
                 }
             }
 
-            "$(
-                $_.Prefix -join ''
-            )$(
-                $caseSlice -join ''
-            )$(
-                $remainder -join ''
-            )"
-        }) -join ''
+            "$($_.Prefix -join '')$($caseSlice -join '')$($remainder -join '')"
+        }
+        
+        @($list) -join ''
     }
 }
 
