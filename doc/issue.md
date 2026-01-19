@@ -50,6 +50,21 @@
       MethodInvocationException: Exception calling "MoveTo" with "1" argument(s): "You cannot call a method on a null-valued expression."
       ```
 
+- [x] 2026-01-12-152521
+  - where: mynote
+  - affects: New-NoteItem (nni)
+  - description: I've found myself able to misstype item names, resulting in unsearchable files due to unrecognized extensions
+  - howto
+
+    ```powershell
+    nni howto_Veracrypt.md
+    ```
+
+  - actual
+    - file created with name ``howto_Veracrypt.md_-_2026-01-09 | edit``
+    - search using command ``dir .\howto\*.md | sls veracrypt``
+    - get no results
+
 - [x] 2025-11-22-025253
   - where: PsTool#script#Combinator#Start-Edit, ``edit``
   - howto

@@ -1,5 +1,53 @@
 <#
 .DESCRIPTION
+Tags: ffmpeg video gif
+#>
+function ConvertTo-ImageGif {
+    Param(
+        [Parameter(ValueFromPipeline)]
+        $InputObject,
+
+        [ValidateSet('floyd_steinberg', 'bayer:bayer_scale=5')]
+        [string]
+        $Dither
+    )
+
+    Begin {
+        $rate = 15
+        $width = 600
+
+        $opts = @(
+            "fps=$rate,scale=${width}:-1:flags=lanczos,split[a][b]",
+            "[a]palettegen=stats_mode=diff[p]",
+            "[b][p]paletteuse=dither=$Dither"
+        )
+
+        $opts = $opts -join ';'
+        $app = 'ffmpeg'
+
+        if (-not (Get-Command $app -ea Silent)) {
+            Write-Output "Requires ffmpeg to be installed on this device."
+            return
+        }
+    }
+
+    Process {
+        foreach ($subpath in @($InputObject | where { $_ })) {
+            $item = Get-Item $subpath
+            $cmd = "$app -i `"$($item.FullName)`" -vf `"$opts`" `"$($item.BaseName).gif`""
+
+            if ($WhatIf) {
+                $cmd
+            }
+            else {
+                Invoke-Expression $cmd
+            }
+        }
+    }
+}
+
+<#
+.DESCRIPTION
 Tags: imagemagick image convert webp
 [!] Wait. Before you stamp this cmdlet RTFM, it does more than just call ImageMagick in a wrapper. It can identify if an image is animated and convert to the correct file extension.
 
@@ -45,10 +93,7 @@ function ConvertFrom-ImageWebp {
     )
 
     Begin {
-        $setting = gc "$PsScriptRoot/../res/imageconvert.setting.json" |
-            ConvertFrom-Json
-
-        $cmd = $setting.AppPath
+        $cmd = 'magick'
         $list = @()
 
         if (-not (Get-Command $cmd -ea Silent)) {
@@ -166,10 +211,7 @@ function Get-ImageResize {
     )
 
     Begin {
-        $setting = gc "$PsScriptRoot/../res/imageconvert.setting.json" |
-            ConvertFrom-Json
-
-        $app = $setting.AppPath
+        $app = 'magick'
     }
 
     Process {
@@ -218,7 +260,7 @@ function New-ImageIcon {
     $setting = gc "$PsScriptRoot/../res/imageconvert.setting.json" `
         | ConvertFrom-Json
 
-    $command = $setting.AppPath
+    $command = 'magick'
 
     if (-not (Get-Command $command -ErrorAction SilentlyContinue)) {
         return ([PsCustomObject]@{
@@ -328,7 +370,7 @@ function New-ImageConvert {
         $setting = gc "$PsScriptRoot/../res/imageconvert.setting.json" |
             ConvertFrom-Json
 
-        $app = $setting.AppPath
+        $app = 'magick'
 
         $whatDo = switch ($PsCmdlet.ParameterSetName) {
             "ByProfile" {

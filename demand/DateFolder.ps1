@@ -19,12 +19,9 @@ function Compare-ItemCopy {
         (Get-Item -Path $Source).FullName
     }
 
-    $Source = $Source.TrimEnd("\")
-    $Destination = $Destination.TrimEnd("\")
-
     Compare-Object `
-        (gci $Source -Recurse).FullName `
-        (gci $Destination -Recurse).FullName
+        (Get-ChildItem $Source -Recurse).FullName `
+        (Get-ChildItem $Destination -Recurse).FullName
 }
 
 <#
@@ -102,6 +99,7 @@ Tags: move date folder
 function Move-ItemToDateFolder {
     [CmdletBinding()]
     Param(
+        [Parameter(ValueFromPipeline = $true)]
         [String]
         $Path,
 
@@ -136,104 +134,85 @@ function Move-ItemToDateFolder {
         $WhatIf
     )
 
-    $ErrorActionPreference = "Stop"
+    Begin {
+        function Copy-ItemToBackup {
+            Param(
+                $InputObject,
 
-    if (-not $Path) {
-        $Path = (Get-Location).Path
-    }
+                [String]
+                $DirName,
 
-    $backup_dir = "$Path\temp"
+                [Switch]
+                $Force,
 
-    function Copy-FilesToBackup {
-        Param(
-            [String]
-            $Path,
+                [Switch]
+                $WhatIf
+            )
 
-            [String]
-            $Dir,
+            $item = Get-Item $InputObject
+            $path = Split-Path $item.FullName -Parent
+            $path = Join-Path $path $DirName
 
-            [Switch]
-            $Force,
+            if (-not (Test-Path $path)) {
+                mkdir `
+                    -Path $path `
+                    -Force:$Force `
+                    -WhatIf:$WhatIf
+            }
 
-            [Switch]
-            $WhatIf
-        )
+            $dest = Join-Path $path $item.Name
 
-        if (-not (Test-Path $Dir)) {
-            mkdir `
-                -Path $Dir `
+            Copy-Item `
+                -Path $item.FullName `
+                -Destination $dest `
                 -Force:$Force `
                 -WhatIf:$WhatIf
         }
 
-        gci $Path -File |
-        foreach {
-            copy `
-                -Path $_.FullName `
-                -Destination "$Dir\$($_.Name)" `
-                -Force:$Force `
-                -WhatIf:$WhatIf
-        }
-    }
+        function Start-MoveItem {
+            Param(
+                $InputObject,
 
-    function Start-MoveItem {
-        Param(
-            [String]
-            $Path,
+                [String]
+                $GroupBy = "CreationTime",
 
-            [ArgumentCompleter({
-                return ConvertTo-Suggestion `
-                    -WordToComplete $args[2] `
-                    -List $(
-                        [System.IO.FileSystemInfo].
-                        GetProperties() |
-                        foreach { $_.Name } |
-                        where { $_ -like "*Time*" }
-                    )
-            })]
-            [ValidateScript({
-                $_ -in $(
-                    [System.IO.FileSystemInfo].
-                    GetProperties() |
-                    foreach { $_.Name } |
-                    where { $_ -like "*Time*" }
-                )
-            })]
-            [String]
-            $GroupBy = "CreationTime",
+                [Switch]
+                $Force,
 
-            [Switch]
-            $Force,
+                [Switch]
+                $WhatIf
+            )
 
-            [Switch]
-            $WhatIf
-        )
-
-        $Path = $Path.TrimEnd("\")
-
-        gci $Path -File | foreach {
-            $date = $_."$GroupBy".Date
+            $path = Get-Item $InputObject | Split-Path -Parent
+            $date = $InputObject."$GroupBy".Date
 
             $subdir = Get-Date `
                 -Date $date `
                 -Format "yyyy-MM-dd" # Uses DateTimeFormat
 
-            if (-not (Test-Path "$Path\$subdir")) {
+            $path = Join-Path $path $subdir
+
+            if (-not (Test-Path $path)) {
                 mkdir `
-                    -Path "$Path\$subdir" `
+                    -Path $path `
                     -Force:$Force `
                     -WhatIf:$WhatIf
             }
 
-            $dest = "$Path\$subdir\$($_.Name)"
-            $properties = $_ | Get-ItemDateTime
-            move $_.FullName $dest -Force:$Force -WhatIf:$WhatIf
+            $dest = Join-Path $path $InputObject.Name
+            $properties = $InputObject | Get-ItemDateTime
+
+            Move-Item `
+                -Path $InputObject.FullName `
+                -Destination $dest `
+                -Force:$Force `
+                -WhatIf:$WhatIf
 
             $item = if ($WhatIf) {
                 $null
             }
             else {
-                gci -Path $dest
+                Get-ChildItem -Path $dest
             }
 
             if ($item) {
@@ -246,21 +225,36 @@ function Move-ItemToDateFolder {
                 }
             }
         }
+
+        $ErrorActionPreference = "Stop"
+        $backupName = "temp_$(Get-Date -Format "yyyy-MM-dd-HHmmss")" # Uses DateTimeFormat
+        $list = @()
     }
 
-    $backup_dir =
-        "$($backup_dir)_$(Get-Date -Format "yyyy-MM-dd-HHmmss")" # Uses DateTimeFormat
-
-    if ($Backup) {
-        Copy-FilesToBackup `
-            -Path $Path `
-            -Dir $backup_dir `
-            -Force:$Force `
-            -WhatIf:$WhatIf
+    Process {
+        $list += @(Get-ChildItem $Path)
     }
 
-    Start-MoveItem `
-        -Path $Path `
-        -Force:$Force `
-        -WhatIf:$WhatIf
+    End {
+        if (@($list | where { $_ }).Count -eq 0) {
+            $list = Get-Location |
+                foreach Path |
+                Get-ChildItem -File
+        }
+
+        $list | foreach {
+            if ($Backup) {
+                Copy-ItemToBackup `
+                    -InputObject $_ `
+                    -DirName $backupName `
+                    -Force:$Force `
+                    -WhatIf:$WhatIf
+            }
+
+            Start-MoveItem `
+                -InputObject $_ `
+                -Force:$Force `
+                -WhatIf:$WhatIf
+        }
+    }
 }

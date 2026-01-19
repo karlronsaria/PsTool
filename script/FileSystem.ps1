@@ -73,6 +73,13 @@ function New-NoteItem {
         $Extension
     )
 
+    if (-not $Name) {
+        Write-Error @'
+Waht? No $Name? Naaah. Y'all can't do that.
+'@
+        return
+    }
+
     $setting = Get-Item "$PsScriptRoot/../res/filesystem.setting.json" |
         Get-Content |
         ConvertFrom-Json
