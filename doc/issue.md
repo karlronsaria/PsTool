@@ -1,5 +1,17 @@
 # issue
 
+- [ ] 2026-02-09-152952
+  - where: PsTool/script/FileSystem#Rename-Item
+  - howto
+
+    ```powershell
+    rni myfile.md
+    ```
+
+  - actual
+    - quickform prompt occurs twice and only performs the rename using the second prompt
+  - expected
+    - quickform prompt occurs once
 - [ ] 2025-12-10-150840
   - where: PsTool/demand/MtpDevice#Get-MtpDeviceItem
   - case 1: SaveTo

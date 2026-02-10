@@ -19,7 +19,7 @@ function Rename-AllSansWhiteSpace {
         $Reverse
     )
 
-    $dir = dir $Path
+    $dir = Get-ChildItem $Path
 
     if ($Reverse) {
         $match = $Delimiter
@@ -170,10 +170,11 @@ function Get-MyUrlLink {
         [ArgumentCompleter({
             Param($A, $B, $WordToComplete, $CommandAst)
 
-            $setting = (dir "$PsScriptRoot/../res/filesystem.setting.json" |
+            $setting = "$PsScriptRoot/../res/filesystem.setting.json" |
+                Get-Item |
                 Get-Content |
-                ConvertFrom-Json).
-                LocationFile
+                ConvertFrom-Json |
+                foreach LocationFile
 
             $all = $setting.Notebooks |
                 Get-Item |
@@ -186,9 +187,20 @@ function Get-MyUrlLink {
 
             $locations = @()
             $pipelineElements = $CommandAst.Parent.PipelineElements
+            $index = 0
 
-            if ($null -ne $pipelineElements -and @($pipelineElements).Count -gt 1) {
-                $locations = iex $pipelineElements[0].Extent.Text
+            while ($index -lt (@($pipelineElements).Count - 1)) {
+                $command = $pipelineElements[$index].Extent.Text
+
+                $locations = if (@($locations).Count -eq 0) {
+                    iex $command
+                }
+                else {
+                    $script = [scriptblock]::Create("$command")
+                    $locations | & $script
+                }
+
+                $index += 1
             }
 
             if ($null -ne $locations -and @($locations).Count -gt 0) {
@@ -199,9 +211,11 @@ function Get-MyUrlLink {
             }
 
             return $(
-                (@($all.Name) +
-                @($all.Tag) +
-                @($all.Tags)) |
+                (
+                    @($all.Name) +
+                    @($all.Tag) +
+                    @($all.Tags)
+                ) |
                 Sort-Object |
                 select -Unique -CaseInsensitive | # todo
                 where {
@@ -273,16 +287,28 @@ function Get-MyUrl {
         [ArgumentCompleter({
             Param($A, $B, $WordToComplete, $CommandAst)
 
-            $setting = (dir "$PsScriptRoot/../res/filesystem.setting.json" |
+            $setting = "$PsScriptRoot/../res/filesystem.setting.json" |
+                Get-Item |
                 Get-Content |
-                ConvertFrom-Json).
-                LocationFile
+                ConvertFrom-Json |
+                foreach LocationFile
 
             $locations = @()
             $pipelineElements = $CommandAst.Parent.PipelineElements
+            $index = 0
 
-            if ($null -ne $pipelineElements -and @($pipelineElements).Count -gt 0) {
-                $locations = iex $pipelineElements[0].Extent.Text
+            while ($index -lt (@($pipelineElements).Count - 1)) {
+                $command = $pipelineElements[$index].Extent.Text
+
+                $locations = if (@($locations).Count -eq 0) {
+                    iex $command
+                }
+                else {
+                    $script = [scriptblock]::Create("$command")
+                    $locations | & $script
+                }
+
+                $index += 1
             }
 
             if ($null -eq $locations -or @($locations).Count -eq 0) {
@@ -535,74 +561,87 @@ function Rename-Item {
 
                 return $paramDictionary
             }
-        } catch {
-            throw
+        } 
+        catch {
+            Write-Error $_.Exception.ErrorRecord
+            return
         }
     }
 
     begin {
-        try {
-            $continue = $true
+        function Get-InputFromQuickform {
+            Param([string] $Name)
 
-            if (-not $NewName) {
-                $name = switch ($PsCmdlet.ParameterSetName) {
-                    'ByPath' { $Path }
-                    'ByLiteralPath' { $LiteralPath }
-                }
-
-                $name = (Get-Item $name).Name
-
-                $menu = @"
+            $menu = @"
 {
-    "Preferences": { "Caption": "Rename-Item: $name" },
+    "Preferences": { "Caption": "Rename-Item: $Name" },
     "MenuSpecs": [
         {
             "Name": "NewName",
             "Type": "Field",
-            "Default": "$name"
+            "Default": "$Name"
         }
     ]
 }
 "@
 
-                Write-Progress `
-                    -Id 1 `
-                    -Activity "Loading quickform" `
-                    -Status "Importing module" `
-                    -PercentComplete 33
+            Write-Progress `
+                -Id 1 `
+                -Activity "Loading quickform" `
+                -Status "Importing module" `
+                -PercentComplete 33
 
-                Import-Module -Name PsQuickform
+            Import-Module -Name PsQuickform
 
-                Write-Progress `
-                    -Id 1 `
-                    -Activity "Loading quickform" `
-                    -Status "Loading menu" `
-                    -PercentComplete 66
+            Write-Progress `
+                -Id 1 `
+                -Activity "Loading quickform" `
+                -Status "Loading menu" `
+                -PercentComplete 66
 
-                $result = $menu |
-                    ConvertFrom-Json |
-                    Show-QformMenu
+            $result = $menu |
+                ConvertFrom-Json |
+                Show-QformMenu
 
-                Write-Progress `
-                    -Id 1 `
-                    -Activity "Loading quickform" `
-                    -PercentComplete 100 `
-                    -Complete
+            Write-Progress `
+                -Id 1 `
+                -Activity "Loading quickform" `
+                -PercentComplete 100 `
+                -Complete
 
-                if (-not $result.Confirm) {
-                    $continue = $false
-                    return
-                }
+            return $result
+        }
 
-                $answer = $result.MenuAnswers.NewName
+        try {
+            $continue = $true
 
-                if (-not $answer -or $answer -eq $name) {
-                    $continue = $false
-                    return
-                }
+            # if (-not $NewName) {
+            #     $name = switch ($PsCmdlet.ParameterSetName) {
+            #         'ByPath' { $Path }
+            #         'ByLiteralPath' { $LiteralPath }
+            #     }
 
-                $PSBoundParameters['NewName'] = $answer
-            }
+            #     if (-not $name) {
+            #         return
+            #     }
+
+            #     $name = Get-Item $name | ForEach-Object Name
+            #     $result = Get-InputFromQuickform -Name $name
+
+            #     if (-not $result.Confirm) {
+            #         $continue = $false
+            #         return
+            #     }
+
+            #     $answer = $result.MenuAnswers.NewName
+
+            #     if (-not $answer -or $answer -eq $name) {
+            #         $continue = $false
+            #         return
+            #     }
+
+            #     $PSBoundParameters['NewName'] = $answer
+            # }
 
             $outBuffer = $null
 
@@ -622,8 +661,10 @@ function Rename-Item {
             $steppablePipeline =
                 $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
             $steppablePipeline.Begin($PSCmdlet)
-        } catch {
-            throw
+        } 
+        catch {
+            Write-Error $_.Exception.ErrorRecord
+            return
         }
     }
 
@@ -633,9 +674,42 @@ function Rename-Item {
                 return
             }
 
+            if (-not $NewName) {
+                $name = switch ($PsCmdlet.ParameterSetName) {
+                    'ByPath' { $Path }
+                    'ByLiteralPath' { $LiteralPath }
+                }
+
+                if (-not $name) {
+                    return
+                }
+
+                $name = Get-Item $name | ForEach-Object Name
+                $result = Get-InputFromQuickform -Name $name
+
+                if (-not $result.Confirm) {
+                    $continue = $false
+                    return
+                }
+
+                $answer = $result.MenuAnswers.NewName
+
+                if (-not $answer -or $answer -eq $name) {
+                    $continue = $false
+                    return
+                }
+
+                $PSBoundParameters['NewName'] = $answer
+                Rename-Item @PSBoundParameters
+                $continue = $false
+                return
+            }
+
             $steppablePipeline.Process($_)
-        } catch {
-            throw
+        } 
+        catch {
+            Write-Error $_.Exception.ErrorRecord
+            return
         }
     }
 
@@ -646,8 +720,10 @@ function Rename-Item {
             }
 
             $steppablePipeline.End()
-        } catch {
-            throw
+        } 
+        catch {
+            Write-Error $_.Exception.ErrorRecord
+            return
         }
     }
 
@@ -734,7 +810,8 @@ function Get-ChildDocumentItem {
                 Where-Object { $_.FullName -notmatch $excludePattern }
         }
         catch {
-            throw
+            Write-Error $_.Exception.ErrorRecord
+            return
         }
     }
 

@@ -92,12 +92,45 @@ function Set-Location {
                 $temp = $PsBoundParameters[$PsCmdlet.ParameterSetName]
 
                 if ($temp) {
-                    $temp = Resolve-Path $temp -ErrorAction Stop
+                    # issue 2026-01-27-190413
+                    # - description: Using Resolve-Path on a string with bracket characters in it seems
+                    #   to strip it of its Container status. This appears to be a system bug.
+                    # - howto
+                    #
+                    #   ```powershell
+                    #   $path = '.\sword-003-`[xr1lgLAragg`]\'
+                    #   $path | Test-Path -PathType Container
+                    #   $path | Resolve-Path | Test-Path -PathType Container
+                    #   ```
+                    #
+                    # - actual
+                    #
+                    #   ```text
+                    #   True
+                    #   False
+                    #   ```
+                    #
+                    # - expected
+                    #
+                    #   ```text
+                    #   True
+                    #   True
+                    #   ```
+                    #
+                    if ($temp -match "\[|\]") {
+                        if (-not (Test-Path $temp -PathType Container)) {
+                            $temp = Split-Path -Path $temp -Parent
+                        }
+                    }
+                    else {
+                        $temp = Resolve-Path $temp -ErrorAction Stop
 
-                    # (karlr 2025-01-19): if file, set location to parent
-                    if (-not (Test-Path -Path $temp -PathType Container)) {
-                        $temp = Split-Path -Path $temp -Parent
-                        $temp = Resolve-Path $_ -ErrorAction Stop
+                        # (karlr 2025-01-19): if file, set location to parent
+                        if (-not (Test-Path -Path $temp -PathType Container)) {
+                            $temp = Split-Path -Path $temp -Parent
+                            $temp = Resolve-Path $temp -ErrorAction Stop
+                        }
+
                     }
 
                     $PsBoundParameters[$PsCmdlet.ParameterSetName] = $temp
@@ -119,15 +152,13 @@ function Set-Location {
             $steppablePipeline.Begin($PSCmdlet)
             $startedStepping = $true
         }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            # (karlr 2025-01-25): replicate the appearance of a regular cmdlet error message
+        # # (karlr 2026-02-10): just catch everything
+        # catch [System.Management.Automation.ItemNotFoundException] {
+        catch {
+            # # (karlr 2025-01-25): replicate the appearance of a regular cmdlet error message
             $doNotProceed = $true
             Write-Error $_.Exception.ErrorRecord
             return
-        }
-        catch {
-            $doNotProceed = $true
-            throw $_
         }
     }
 

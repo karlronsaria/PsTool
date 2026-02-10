@@ -9,7 +9,7 @@ function ConvertTo-ImageGif {
 
         [ValidateSet('floyd_steinberg', 'bayer:bayer_scale=5')]
         [string]
-        $Dither
+        $Dither = 'bayer:bayer_scale=5'
     )
 
     Begin {

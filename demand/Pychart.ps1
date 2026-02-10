@@ -56,7 +56,9 @@ function Show-Pychart {
         foreach ($subitem in $InputObject) {
             $label = switch ($LabelProperty) {
                 { $_ -is [ScriptBlock] } {
-                    $subitem | foreach $LabelProperty
+                    $subitem | foreach {
+                        $subitem.$LabelProperty
+                    }
                 }
 
                 default {
@@ -66,7 +68,9 @@ function Show-Pychart {
 
             $value = switch ($ValueProperty) {
                 { $_ -is [ScriptBlock] } {
-                    $subitem | foreach $ValueProperty
+                    $subitem | foreach {
+                        $subitem.$ValueProperty
+                    }
                 }
 
                 default {
@@ -98,8 +102,10 @@ function Show-Pychart {
     }
 
     End {
-        $setting = gc "$PsScriptRoot\..\res\pychart.setting.json" `
-            | ConvertFrom-Json
+        $setting = "$PsScriptRoot\..\res\pychart.setting.json" |
+            Get-Item |
+            Get-Content |
+            ConvertFrom-Json
 
         $main = $table `
             | Sort-Object `
@@ -107,6 +113,9 @@ function Show-Pychart {
                 -Descending `
             | select `
                 -First $setting.MaxLabels `
+            | where {
+                $total -ne 0
+            } `
             | where {
                 $_.Value / $total -gt $setting.Delta
             }

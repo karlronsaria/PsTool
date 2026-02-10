@@ -1209,3 +1209,39 @@ foreach {
     }
 }
 
+function ConvertTo-List {
+    [Alias('Cons')]
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        $InputObject,
+
+        [Parameter(Position = 0)]
+        [ValidateSet(
+            'contains', 'notcontains', 'join', 'split',
+            'eq', 'ne', 'gt', 'ge', 'lt', 'le',
+            'like', 'notlike',
+            'match', 'notmatch',
+            'in', 'notin',
+            'and', 'or', 'xor',
+            'is', 'isnot',
+            'replace'
+        )]
+        [string]
+        $Operator,
+
+        [Parameter(Position = 1)]
+        $Operand
+    )
+
+    Begin {
+        $list = @()
+    }
+
+    Process {
+        $list += @($InputObject)
+    }
+
+    End {
+        & ([scriptblock]::Create("Param(`$List, `$Operand) `$List -$Operator `$Operand")) $list $Operand
+    }
+}
