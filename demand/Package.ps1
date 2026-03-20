@@ -51,23 +51,23 @@ function Get-PackageMoniker {
                 where { $_ } | # (karlr 2026-01-23)
                 select -Unique
 
-            $npm = npm list -g --depth=0 --json |
-                ConvertFrom-Json |
-                foreach dependencies |
-                foreach PsObject |
-                foreach Properties |
-                where MemberType -eq 'NoteProperty' |
-                foreach Name |
-                foreach {
-                    $temp = @($_.Split('/'))
+            # $npm = npm list -g --depth=0 --json |
+            #     ConvertFrom-Json |
+            #     foreach dependencies |
+            #     foreach PsObject |
+            #     foreach Properties |
+            #     where MemberType -eq 'NoteProperty' |
+            #     foreach Name |
+            #     foreach {
+            #         $temp = @($_.Split('/'))
 
-                    switch (@($temp).Count) {
-                        1 { @($temp)[0] }
-                        default { @($temp | select -Skip 1) -Join '/' }
-                    }
-                }
+            #         switch (@($temp).Count) {
+            #             1 { @($temp)[0] }
+            #             default { @($temp | select -Skip 1) -Join '/' }
+            #         }
+            #     }
 
-            $list = @($cargo) + @($choco) + @($winget) + @($npm)
+            $list = @($cargo) + @($choco) + @($winget) # + @($npm)
 
             $suggest = $list |
                 where { $_ -like "$C*" }
@@ -196,34 +196,34 @@ function Get-PackageMoniker {
             }
         }
 
-    $npm = npm list -g --depth=0 --json |
-        ConvertFrom-Json |
-        foreach dependencies |
-        foreach PsObject |
-        foreach Properties |
-        where MemberType -eq 'NoteProperty' |
-        foreach Name |
-        foreach {
-            $temp = @($_.Split('/'))
+    # $npm = npm list -g --depth=0 --json |
+    #     ConvertFrom-Json |
+    #     foreach dependencies |
+    #     foreach PsObject |
+    #     foreach Properties |
+    #     where MemberType -eq 'NoteProperty' |
+    #     foreach Name |
+    #     foreach {
+    #         $temp = @($_.Split('/'))
 
-            switch (@($temp).Count) {
-                1 { @($temp)[0] }
-                default { @($temp | select -Skip 1) -Join '/' }
-            }
-        } |
-        foreach {
-            Write-PackageProgress `
-                -Activity $activity `
-                -Status "npm: $_" `
-                -Count $count
+    #         switch (@($temp).Count) {
+    #             1 { @($temp)[0] }
+    #             default { @($temp | select -Skip 1) -Join '/' }
+    #         }
+    #     } |
+    #     foreach {
+    #         Write-PackageProgress `
+    #             -Activity $activity `
+    #             -Status "npm: $_" `
+    #             -Count $count
 
-            [PSCustomObject]@{
-                Moniker = $_
-                Manager = 'npm'
-            }
-        }
+    #         [PSCustomObject]@{
+    #             Moniker = $_
+    #             Manager = 'npm'
+    #         }
+    #     }
 
-    $list = @($cargo) + @($choco) + @($winget) + @($npm)
+    $list = @($cargo) + @($choco) + @($winget) # + @($npm)
 
     Write-Progress `
         -Activity $activity `

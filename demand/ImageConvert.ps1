@@ -133,28 +133,46 @@ function ConvertFrom-ImageWebp {
     }
 
     End {
-        $count = 0
+        $list | foreach -Parallel {
+            $Command = $using:cmd
+            $Destination = $using:Destination
+            $file = $_
 
-        foreach ($file in $list) {
-            if (-not ($Destination)) {
+            if (-not $Destination) {
                 $Destination = $file.DirectoryName
             }
 
-            $frames = (& $cmd identify $file.FullName).Count
+            $frames = (& $Command identify $file.FullName).Count
             $src = $file.FullName
 
             $ext = if ($frames -eq 1) {
-                "png"
+                ".png"
             }
             elseif ($frames -gt 1) {
-                "gif"
+                ".gif"
             }
             else {
                 ""
             }
 
-            $dst = "$Destination\$($file.BaseName).$ext"
+            $dst = Join-Path $Destination "$($file.BaseName)$ext"
+            $Command = "$Command `"$src`" `"$dst`""
 
+            if ($WhatIf) {
+                $Command
+            }
+            else {
+                iex $Command
+            }
+
+            [PsCustomObject]@{
+                Source = $src
+                Destination = $dst
+            }
+        } |
+        foreach -Begin {
+            $count = 0
+        } -Process {
             $progress = @{
                 Activity =
                     "Converting item $($count + 1) of $($list.Count)"
@@ -165,28 +183,14 @@ function ConvertFrom-ImageWebp {
             }
 
             Write-Progress @progress
-            $command = "$cmd `"$src`" `"$dst`""
-
-            if ($WhatIf) {
-                $command
-            }
-            else {
-                iex $command
-            }
-
-            if ($PassThru) {
-                [PsCustomObject]@{
-                    Source = $src
-                    Destination = $dst
-                }
-            }
-
             $count = $count + 1
-        }
 
-        Write-Progress `
-            -Activity "Conversion finished." `
-            -Completed
+            if ($PassThru) { $_ }
+        } -End {
+            Write-Progress `
+                -Activity "Conversion finished." `
+                -Completed
+        }
     }
 }
 

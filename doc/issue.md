@@ -1,101 +1,5 @@
 # issue
 
-- [ ] 2026-02-09-152952
-  - where: PsTool/script/FileSystem#Rename-Item
-  - howto
-
-    ```powershell
-    rni myfile.md
-    ```
-
-  - actual
-    - quickform prompt occurs twice and only performs the rename using the second prompt
-  - expected
-    - quickform prompt occurs once
-- [ ] 2025-12-10-150840
-  - where: PsTool/demand/MtpDevice#Get-MtpDeviceItem
-  - case 1: SaveTo
-    - howto
-
-      ```powershell
-      demand MtpDevice
-      Get-MtpDeviceItem -Query '{ "Internal storage": ["Downloads", "Pictures", "DCIM"] }' |
-        foreach { $_.'Internal storage' } |
-        foreach { $_.SaveTo('C:/temp/mobile') }
-      ```
-
-    - actual
-
-      ```text
-      Script       : MtpDevice
-      RequiresSudo : False
-      Commands     : Get-MtpDeviceItem
-      ModuleName   : ModuleOnDemand_MtpDevice
-      Location     : C:\shortcut\pwsh\Scripts\PsTool\demand\MtpDevice.ps1
-
-      C:\temp\mobile\2025-12-10-151345
-      MethodInvocationException: Exception calling "MoveTo" with "1" argument(s): "You cannot call a method on a null-valued expression."
-      MethodInvocationException: Exception calling "MoveTo" with "1" argument(s): "You cannot call a method on a null-valued expression."
-      ```
-
-  - case 2: MoveTo
-    - howto
-
-      ```powershell
-      demand MtpDevice
-      Get-MtpDeviceItem -Query '{ "Internal storage": ["Downloads", "Pictures", "DCIM"] }' |
-        foreach { $_.'Internal storage' } |
-        foreach { $_.MoveTo('C:/temp/mobile') }
-      ```
-
-    - actual
-
-      ```text
-      Script       : MtpDevice
-      RequiresSudo : False
-      Commands     : Get-MtpDeviceItem
-      ModuleName   : ModuleOnDemand_MtpDevice
-      Location     : C:\shortcut\pwsh\Scripts\PsTool\demand\MtpDevice.ps1
-
-      C:\temp\mobile\2025-12-10-151345
-      MethodInvocationException: Exception calling "MoveTo" with "1" argument(s): "You cannot call a method on a null-valued expression."
-      MethodInvocationException: Exception calling "MoveTo" with "1" argument(s): "You cannot call a method on a null-valued expression."
-      ```
-
-- [x] 2026-01-12-152521
-  - where: mynote
-  - affects: New-NoteItem (nni)
-  - description: I've found myself able to misstype item names, resulting in unsearchable files due to unrecognized extensions
-  - howto
-
-    ```powershell
-    nni howto_Veracrypt.md
-    ```
-
-  - actual
-    - file created with name ``howto_Veracrypt.md_-_2026-01-09 | edit``
-    - search using command ``dir .\howto\*.md | sls veracrypt``
-    - get no results
-
-- [x] 2025-11-22-025253
-  - where: PsTool#script#Combinator#Start-Edit, ``edit``
-  - howto
-
-    ```powershell
-    "C:\note\emp\projek\PythonClub\research\Python-20250122T084419Z-001\Python\Python Curriculum for Students\Book Curriculum\readme.md" | edit
-    ```
-
-    or
-
-    ```powershell
-    "C:\note\emp\projek\PythonClub\research\Python-20250122T084419Z-001\Python\Python Curriculum for Students\Book Curriculum\readme.md" | dir | edit
-    ```
-
-  - actual
-    - Editor nvim open to ``emp\projek\PythonClub\research\Python-20250122T084419Z-001\Python\Python\``
-  - expected
-    - Editor nvim open to ``C:\note\emp\projek\PythonClub\research\Python-20250122T084419Z-001\Python\Python Curriculum for Students\Book Curriculum\readme.md``
-
 - [ ] 2025-07-25-132201
   - where: PsTool#script#Combinator#Select-FlatObject, ``what``
   - description: ArgumentCompleter not working properly
@@ -234,6 +138,103 @@
     ```
 
 ## complete
+
+- [x] 2026-02-09-152952
+  - where: PsTool/script/FileSystem#Rename-Item
+  - howto
+
+    ```powershell
+    rni myfile.md
+    ```
+
+  - actual
+    - quickform prompt occurs twice and only performs the rename using the second prompt
+  - expected
+    - quickform prompt occurs once
+
+- [x] 2025-12-10-150840
+  - where: PsTool/demand/MtpDevice#Get-MtpDeviceItem
+  - case 1: SaveTo
+    - howto
+
+      ```powershell
+      demand MtpDevice
+      Get-MtpDeviceItem -Query '{ "Internal storage": ["Downloads", "Pictures", "DCIM"] }' |
+        foreach { $_.'Internal storage' } |
+        foreach { $_.SaveTo('C:/temp/mobile') }
+      ```
+
+    - actual
+
+      ```text
+      Script       : MtpDevice
+      RequiresSudo : False
+      Commands     : Get-MtpDeviceItem
+      ModuleName   : ModuleOnDemand_MtpDevice
+      Location     : C:\shortcut\pwsh\Scripts\PsTool\demand\MtpDevice.ps1
+
+      C:\temp\mobile\2025-12-10-151345
+      MethodInvocationException: Exception calling "MoveTo" with "1" argument(s): "You cannot call a method on a null-valued expression."
+      MethodInvocationException: Exception calling "MoveTo" with "1" argument(s): "You cannot call a method on a null-valued expression."
+      ```
+
+  - case 2: MoveTo
+    - howto
+
+      ```powershell
+      demand MtpDevice
+      Get-MtpDeviceItem -Query '{ "Internal storage": ["Downloads", "Pictures", "DCIM"] }' |
+        foreach { $_.'Internal storage' } |
+        foreach { $_.MoveTo('C:/temp/mobile') }
+      ```
+
+    - actual
+
+      ```text
+      Script       : MtpDevice
+      RequiresSudo : False
+      Commands     : Get-MtpDeviceItem
+      ModuleName   : ModuleOnDemand_MtpDevice
+      Location     : C:\shortcut\pwsh\Scripts\PsTool\demand\MtpDevice.ps1
+
+      C:\temp\mobile\2025-12-10-151345
+      MethodInvocationException: Exception calling "MoveTo" with "1" argument(s): "You cannot call a method on a null-valued expression."
+      MethodInvocationException: Exception calling "MoveTo" with "1" argument(s): "You cannot call a method on a null-valued expression."
+      ```
+
+- [x] 2026-01-12-152521
+  - where: mynote
+  - affects: New-NoteItem (nni)
+  - description: I've found myself able to misstype item names, resulting in unsearchable files due to unrecognized extensions
+  - howto
+
+    ```powershell
+    nni howto_Veracrypt.md
+    ```
+
+  - actual
+    - file created with name ``howto_Veracrypt.md_-_2026-01-09 | edit``
+    - search using command ``dir .\howto\*.md | sls veracrypt``
+    - get no results
+
+- [x] 2025-11-22-025253
+  - where: PsTool#script#Combinator#Start-Edit, ``edit``
+  - howto
+
+    ```powershell
+    "C:\note\emp\projek\PythonClub\research\Python-20250122T084419Z-001\Python\Python Curriculum for Students\Book Curriculum\readme.md" | edit
+    ```
+
+    or
+
+    ```powershell
+    "C:\note\emp\projek\PythonClub\research\Python-20250122T084419Z-001\Python\Python Curriculum for Students\Book Curriculum\readme.md" | dir | edit
+    ```
+
+  - actual
+    - Editor nvim open to ``emp\projek\PythonClub\research\Python-20250122T084419Z-001\Python\Python\``
+  - expected
+    - Editor nvim open to ``C:\note\emp\projek\PythonClub\research\Python-20250122T084419Z-001\Python\Python Curriculum for Students\Book Curriculum\readme.md``
 
 - [x] 2025-03-21-152537
   - what: Start-Timer

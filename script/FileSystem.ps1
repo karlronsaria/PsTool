@@ -651,7 +651,14 @@ function Rename-Item {
             )) {
                 $PSBoundParameters['OutBuffer'] = 1
             }
-
+            
+            $needDummyNewName = $false
+            
+            if ($PSBoundParameters.Keys -notcontains 'NewName') {
+                $needDummyNewName = $true
+                $PSBoundParameters['NewName'] = "DummyName"
+            }
+            
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand(
                 'Microsoft.PowerShell.Management\Rename-Item',
                 [System.Management.Automation.CommandTypes]::Cmdlet
@@ -673,8 +680,8 @@ function Rename-Item {
             if (-not $continue) {
                 return
             }
-
-            if (-not $NewName) {
+            
+            if (-not $NewName -or $needDummyNewName) {
                 $name = switch ($PsCmdlet.ParameterSetName) {
                     'ByPath' { $Path }
                     'ByLiteralPath' { $LiteralPath }
