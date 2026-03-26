@@ -836,7 +836,7 @@ function Get-StringReplace {
 
             "$($_.Prefix -join '')$($caseSlice -join '')$($remainder -join '')"
         }
-        
+
         @($list) -join ''
     }
 }
@@ -933,6 +933,24 @@ function Convert-Json {
         ${InputObject},
 
         # [ValidateRange([System.Management.Automation.ValidateRangeKind]::Positive)]
+        [ArgumentCompleter({
+            [OutputType([System.Management.Automation.CompletionResult])]
+            param(
+                [string] $CommandName,
+                [string] $ParameterName,
+                [string] $WordToComplete,
+                [System.Management.Automation.Language.CommandAst] $CommandAst,
+                [System.Collections.IDictionary] $FakeBoundParameters
+            )
+
+            $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
+
+            100 .. 1 | ForEach-Object {
+                $CompletionResults.Add($_)
+            }
+
+            return $CompletionResults
+        })]
         [ValidateScript({ $_ -ge 0 })]
         [int]
         ${Depth},
@@ -1178,7 +1196,7 @@ foreach {
                 Status = "Item $($count + 1) of $(@($list).Count)"
                 PercentComplete = (100 * $count / @($list).Count)
             }
-            
+
             $addedKeys |
             where { $_ -notin $dict.Keys -and $params.ContainsKey($_) } |
             foreach {
@@ -1189,7 +1207,7 @@ foreach {
             $item | ForEach-Object -Process $Process
             $count = $count + 1
         }
-        
+
         $dict = @{
             Activity = $activity
             Completed = $true

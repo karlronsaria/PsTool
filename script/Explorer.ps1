@@ -1,9 +1,11 @@
 <#
 .LINK
 Url: <https://stackoverflow.com/questions/58783530/powershell-script-to-list-all-open-explorer-windows>
+Retrieved: 2025-07-09
 
 .LINK
 Url: <https://stackoverflow.com/users/45375/mklement0>
+Retrieved: 2025-07-09
 #>
 function Get-ExplorerInstance {
     [CmdletBinding()]

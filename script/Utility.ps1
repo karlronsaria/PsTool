@@ -54,7 +54,10 @@ function Set-Clipboard {
                 return
             }
 
-            $_ = $_.ToString()
+            if ($null -ne $_) {
+                $_ = $_.ToString()
+            }
+
             $steppablePipeline.Process($_)
         } catch {
             throw

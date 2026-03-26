@@ -20,7 +20,7 @@ class Cycleable: System.Collections.ICollection {
     [void] CopyTo([Array] $Array, [Int] $Index) {
         while ($Index -lt $Array.Count -and $Index -lt $this.Sequence.Count) {
             $Array[$Index] = $this.Sequence[$Index]
-            [void] $Index++
+            $Index++
         }
     }
 
@@ -288,7 +288,7 @@ function Write-IdleProgress {
     if ($PsCmdlet.ParameterSetName -eq "MarqueeText") {
         $SpinnerText =
             0 .. ($MarqueeText.Length - 1) |
-            foreach {
+            ForEach-Object {
                 if ($_ + $length -ge $MarqueeText.Length) {
                     # # (karlr 2024-09-29)
                     # "$($MarqueeText.Substring($_))$($MarqueeText.Substring(0, $ddength - ($MarqueeText.Length - $_)))"
@@ -300,7 +300,9 @@ function Write-IdleProgress {
             }
     }
 
-    $SpinnerText | cycle | foreach {
+    $SpinnerText |
+    ConvertTo-Cycle |
+    ForEach-Object {
         $colorText = ConvertTo-ColorText `
             -InputObject $_ `
             -Red $color.Red `

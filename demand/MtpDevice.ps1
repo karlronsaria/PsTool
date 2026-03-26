@@ -8,16 +8,21 @@ class MtpDevice {
     static [int] $FILESYSTEM_DO_NOT_PROMPT = 16
     static [int] $DEFAULT_DELAY_MS = 500
     static [string] $DEFAULT_DATETIME_FORMAT = 'yyyy-MM-dd-HHmmss' # Uses DateTimeFormat
+    static [char] $PATH_SEPARATOR = '/'
 
     static [hashtable] $ABBREVIATIONS = @{
         'int' = 'Internal storage'
+    }
+
+    static [hashtable] $PLEASE_ABBREVIATE = @{
+        'Internal storage' = 'int'
     }
 
     hidden [System.__ComObject] $Com_
     hidden [string] $DateTimeFormat_ = [MtpDevice]::DEFAULT_DATETIME_FORMAT
     hidden [int] $ReadWriteOptions_ = [MtpDevice]::FILESYSTEM_DO_NOT_PROMPT
     hidden [int] $DelayMs_ = [MtpDevice]::DEFAULT_DELAY_MS
-    
+
     hidden MtpDevice() {
         $this | Add-Member `
             -MemberType ScriptProperty `
@@ -28,22 +33,22 @@ class MtpDevice {
     MtpDevice([System.__ComObject] $Com) {
         $this.Com_ = $Com
     }
-    
+
     [object]
     Com() {
         return $this.Com_
     }
-    
+
     [int]
     Delay() {
         return $this.DelayMs_
     }
-    
+
     [int]
     ReadWriteOptions() {
         return $this.ReadWriteOptions_
     }
-    
+
     [string]
     DateTimeFormat() {
         return $this.DateTimeFormat_
@@ -54,7 +59,7 @@ class MtpDevice {
         $this.DelayMs_ = $DelayMs
         return $this
     }
-    
+
     [MtpDevice]
     SetOptions([int] $Options) {
         $this.ReadWriteOptions_ = $Options
@@ -64,6 +69,120 @@ class MtpDevice {
     [MtpDevice]
     SetDateTimeFormat([string] $DateTimeFormat) {
         $this.DateTimeFormat_ = $DateTimeFormat
+        return $this
+    }
+    
+    hidden [void]
+    AddSubtreeItem(
+        [string] $Name,
+        [System.__ComObject] $FolderCom,
+        [scriptblock] $ScriptForEach
+    ) {
+        $items = $FolderCom.Items() |
+            Where-Object {
+                $lowerquery = $Name.ToLower()
+                $_.Name.ToLower() -in @($lowerquery, [MtpDevice]::ABBREVIATIONS[$lowerquery])
+            } |
+            Where-Object { $_ }
+
+        if (-not $items) {
+            try {
+                $FolderCom.NewFolder($Name)
+                Start-Sleep -Milliseconds $this.DelayMs_
+
+                $items = @(
+                    $FolderCom.Items() |
+                    Where-Object {
+                        $lowerquery = $Name.ToLower()
+                        $_.Name.ToLower() -in @($lowerquery, [MtpDevice]::ABBREVIATIONS[$lowerquery])
+                    }
+                )
+            }
+            catch {
+                Write-Error "Cannot access device resources. Check your device connection."
+            }
+        }
+
+        foreach ($item in $items) {
+            $value = [MtpDevice]::new($item).
+                SetDelay($this.DelayMs_).
+                SetOptions($this.Options_).
+                SetDateTimeFormat($this.DateTimeFormat_)
+
+            $abbreviation = [MtpDevice]::PLEASE_ABBREVIATE[$item.Name]
+
+            $propName = if ($abbreviation) {
+                $abbreviation
+            }
+            else {
+                $item.Name
+            }
+
+            $this | Add-Member `
+                -MemberType NoteProperty `
+                -Name $propName `
+                -Value $value
+                
+            if ($ScriptForEach) {
+                $ScriptForEach.Invoke($value)
+            }
+        }
+    }
+    
+    hidden static [scriptblock]
+    NewClosure(
+        [scriptblock] $ScriptBlock,
+        $Parameters
+    ) {
+        return & {
+            Param($Parameters)
+            return $ScriptBlock.GetNewClosure()
+        } $Parameters
+    }
+    
+    [MtpDevice]
+    MtpPath([string] $Path) {
+        return $this.MtpPath($Path, [MtpDevice]::PATH_SEPARATOR)
+    }
+    
+    [MtpDevice]
+    MtpPath([string] $Path, [string] $Separator) {
+        if ($null -eq $this.Com_) {
+            return $this
+        }
+
+        $folder = $this.Com_.GetFolder
+
+        if ($null -eq $folder) {
+            return $this
+        }
+        
+        if ($null -eq $Path) {
+            $folder.Items() |
+            ForEach-Object {
+                $value = [MtpDevice]::new($_).
+                    SetDelay($this.DelayMs_).
+                    SetOptions($this.Options_).
+                    SetDateTimeFormat($this.DateTimeFormat_)
+
+                $this | Add-Member `
+                    -MemberType NoteProperty `
+                    -Name $_.Name `
+                    -Value $value
+            }
+
+            return $this
+        }
+
+        $parts = $Path.Split($Separator)
+        $ptr = $this
+        
+        foreach ($part in $parts) {
+
+            $ptr.AddSubtreeItem($part, $ptr.Com_.GetFolder, $null)
+            $ptr = $ptr.$part
+        }
+        
         return $this
     }
 
@@ -78,7 +197,7 @@ class MtpDevice {
         if ($null -eq $folder) {
             return $this
         }
-
+        
         if ($null -eq $Query) {
             $folder.Items() |
             ForEach-Object {
@@ -99,86 +218,25 @@ class MtpDevice {
         foreach ($subquery in @($Query | Where-Object { $_ })) {
             switch ($subquery) {
                 { $_ -is [string] } {
-                    $items = $folder.Items() |
-                        Where-Object {
-                            $lowerquery = $subquery.ToLower()
-                            $_.Name.ToLower() -in @($lowerquery, [MtpDevice]::ABBREVIATIONS[$lowerquery])
-                        } |
-                        Where-Object { $_ }
-
-                    if (-not $items) {
-                        try {
-                            $folder.NewFolder($subquery)
-                            Start-Sleep -Milliseconds $this.DelayMs_
-
-                            $items = @(
-                                $folder.Items() |
-                                Where-Object {
-                                    $lowerquery = $subquery.ToLower()
-                                    $_.Name.ToLower() -in @($lowerquery, [MtpDevice]::ABBREVIATIONS[$lowerquery])
-                                }
-                            )
-                        }
-                        catch {
-                            Write-Error "Cannot access device resources. Check your device connection."
-                        }
-                    }
-
-                    foreach ($item in $items) {
-                        $value = [MtpDevice]::new($item).
-                            SetDelay($this.DelayMs_).
-                            SetOptions($this.Options_).
-                            SetDateTimeFormat($this.DateTimeFormat_)
-
-                        $this | Add-Member `
-                            -MemberType NoteProperty `
-                            -Name $item.Name `
-                            -Value $value
-                    }
-
+                    $this.AddSubtreeItem($subquery, $folder, $null)
                     break
                 }
 
                 { $_ -is [pscustomobject] } {
                     foreach ($property in $_.PsObject.Properties) {
-                        $items = $folder.Items() |
-                            Where-Object {
-                                $lowerquery = $property.Name.ToLower()
-                                $_.Name.ToLower() -in @($lowerquery, [MtpDevice]::ABBREVIATIONS[$lowerquery])
-                            } |
-                            Where-Object { $_ }
-
-                        if (-not $items) {
-                            try {
-                                $folder.NewFolder($property.Name)
-                                Start-Sleep -Milliseconds $this.DelayMs_
-
-                                $items = @(
-                                    $folder.Items() |
-                                    Where-Object {
-                                        $lowerquery = $property.Name.ToLower()
-                                        $_.Name.ToLower() -in @($lowerquery, [MtpDevice]::ABBREVIATIONS[$lowerquery])
-                                    }
-                                )
-                            }
-                            catch {
-                                Write-Error "Cannot access device resources. Check your device connection."
-                            }
-                        }
-
-                        foreach ($item in $items) {
-                            $value = [MtpDevice]::new($item).
-                                SetDelay($this.DelayMs_).
-                                SetOptions($this.Options_).
-                                SetDateTimeFormat($this.DateTimeFormat_)
-
-                            $this | Add-Member `
-                                -MemberType NoteProperty `
-                                -Name $item.Name `
-                                -Value $value
-
-                            $value.Subtree($property.Value)
-                        }
+                        $doForEach = [MtpDevice]::NewClosure(
+                            {
+                                Param($MtpDevice)
+                                $MtpDevice.Subtree($Parameters)
+                            },
+                            $property.Value `
+                        )
+                        
+                        $this.AddSubtreeItem(
+                            $property.Name,
+                            $folder,
+                            $doForEach
+                        )
                     }
 
                     break
@@ -214,7 +272,7 @@ class MtpDevice {
             Where-Object { -not $_.IsFileSystem } |
             ForEach-Object { [MtpDevice]::new($_) }
     }
-    
+
     static [string[]]
     AvailableDeviceNames() {
         $shell = New-Object -ComObject Shell.Application
@@ -224,12 +282,12 @@ class MtpDevice {
             Where-Object { -not $_.IsFileSystem } |
             ForEach-Object { $_.Name }
     }
-    
+
     static [MtpDevice]
     Error() {
         return [MtpDevice]::new()
     }
-    
+
     static [object]
     GetTree([object] $FileSystemCom) {
         if (-not $FileSystemCom) {
@@ -240,7 +298,7 @@ class MtpDevice {
             { $_ -is [string] } {
                 return $FileSystemCom
             }
-            
+
             default {
                 $tree = [pscustomobject]@{}
 
@@ -256,7 +314,7 @@ class MtpDevice {
                         -Name $_.Name `
                         -Value $([MtpDevice]::GetTree($_.Value))
                 }
-                
+
                 return $tree
             }
         }
@@ -264,11 +322,69 @@ class MtpDevice {
         return $null
     }
     
+    static [string[]]
+    GetContainerPath([string] $DeviceName, [string] $PartialPath) {
+        $separator = [MtpDevice]::PATH_SEPARATOR
+        $shell = New-Object -ComObject Shell.Application
+
+        $fileSystem = $shell.NameSpace([MtpDevice]::NAMESPACE_THIS_PC_CODE).Items() |
+            Where-Object {
+                $_.Name.ToLower() -eq $DeviceName.ToLower()
+            } |
+            ForEach-Object {
+                $_.GetFolder
+            }
+
+        $parts = $PartialPath.Split($separator).Trim('"')
+        $ptr = $fileSystem
+        $treeSoFar = $parts | Select-Object -SkipLast 1
+        
+        foreach ($part in $treeSoFar) {
+            $part = $part.ToLower()
+
+            $ptr = $ptr.Items() |
+                Where-Object {
+                    $_.Name.ToLower() -in @($part, [MtpDevice]::ABBREVIATIONS[$part])
+                } |
+                ForEach-Object {
+                    $_.GetFolder
+                }
+        }
+        
+        return $($ptr.Items() |
+            Where-Object {
+                $_.IsFolder
+            } |
+            ForEach-Object {
+                $_.Name
+            } |
+            Where-Object {
+                $_.ToLower() -like "$(($parts | Select-Object -Last 1).ToLower())*"
+            } |
+            ForEach-Object {
+                $abbreviation = [MtpDevice]::PLEASE_ABBREVIATE[$_]
+
+                if ($abbreviation) {
+                    $abbreviation
+                }
+                else {
+                    $_
+                }
+            } |
+            Sort-Object |
+            ForEach-Object {
+                @(@($parts | Select-Object -SkipLast 1) + @($_)) -join $separator
+            } |
+            ForEach-Object {
+                if ($_ -like "* *") { "`"$_`"" } else { $_ }
+            })
+    }
+
     [object]
     Tree() {
         return [MtpDevice]::GetTree($this)
     }
-    
+
     [string]
     ToJson() {
         return $this.Tree() | ConvertTo-Json -Depth 100
@@ -353,10 +469,11 @@ class MtpDevice {
 function Get-MtpDeviceItem {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     Param(
-        [Parameter(ParameterSetName = 'Name')]
+        [Parameter(ParameterSetName = 'ByNameAndQuery')]
+        [Parameter(ParameterSetName = 'ByNameAndPath')]
         [ArgumentCompleter({
             Param($A, $B, $C)
-            
+
             $names = [MtpDevice]::AvailableDeviceNames()
 
             $suggest = $names |
@@ -380,7 +497,8 @@ function Get-MtpDeviceItem {
         [string]
         $Name,
 
-        [Parameter(ParameterSetName = 'Type')]
+        [Parameter(ParameterSetName = 'ByTypeAndQuery')]
+        [Parameter(ParameterSetName = 'ByTypeAndPath')]
         [ArgumentCompleter({
             Param($A, $B, $C)
 
@@ -412,36 +530,73 @@ function Get-MtpDeviceItem {
         [string]
         $Type,
 
+        [Parameter(ParameterSetName = 'ByNameAndQuery')]
+        [Parameter(ParameterSetName = 'ByTypeAndQuery')]
         [string[]]
-        $Query
+        $Query,
+
+        [Parameter(ParameterSetName = 'ByNameAndPath')]
+        [Parameter(ParameterSetName = 'ByTypeAndPath')]
+        [ArgumentCompleter({
+            [OutputType([System.Management.Automation.CompletionResult])]
+            param(
+                [string] $CommandName,
+                [string] $ParameterName,
+                [string] $WordToComplete,
+                [System.Management.Automation.Language.CommandAst] $CommandAst,
+                [System.Collections.IDictionary] $FakeBoundParameters
+            )
+
+            $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
+
+            [MtpDevice]::GetContainerPath(
+                $FakeBoundParameters['Name'],
+                $WordToComplete
+            ) |
+            ForEach-Object {
+                $CompletionResults.Add($_)
+            }
+
+            return $CompletionResults
+        })]
+        [string]
+        $MtpPath
     )
 
-    $filterBy = $PsCmdlet.ParameterSetName
-
-    $devices = if ($filterBy -ne 'All') {
+    $devices = if ($PsCmdlet.ParameterSetName -eq 'All') {
         [MtpDevice]::All()
     }
     else {
-        [MtpDevice]::All($filterBy, $PsBoundParameters[$filterBy].Value)
+        if ($Name) {
+            [MtpDevice]::All('Name', $Name)
+        }
+        elseif ($Type) {
+            [MtpDevice]::All('Type', $Type)
+        }
     }
 
     $devices = $devices |
         Where-Object { $_ }
-        
+
     if (-not $devices) {
         return [MtpDevice]::Error()
     }
 
-    if (-not $Query) {
-        return $devices
+    if ($Query) {
+        foreach ($subquery in $Query) {
+            $select = $subquery |
+                ConvertFrom-Json -Depth 100
+
+            $devices |
+                ForEach-Object { $_.Subtree($select) }
+        }
     }
-
-    foreach ($subquery in $Query) {
-        $select = $subquery |
-            ConvertFrom-Json -Depth 100
-
+    elseif ($MtpPath) {
         $devices |
-            ForEach-Object { $_.Subtree($select) }
+            ForEach-Object { $_.MtpPath($MtpPath) }
+    }
+    else {
+        $devices
     }
 }
 
