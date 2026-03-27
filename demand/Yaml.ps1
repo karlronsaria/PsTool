@@ -506,8 +506,6 @@ function ConvertFrom-Yaml {
                 $stack[0] = [PsCustomObject]@{}
                 $prevLevel = 0
                 $level = 0
-                # $str = ''
-
             }
 
             Process {
