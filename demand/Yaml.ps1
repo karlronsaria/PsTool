@@ -8,18 +8,140 @@ enum YamlLexType {
     End
 }
 
-class YamlScanner: System.Collections.IEnumerator {
-    [YamlLexType] $LastLexType = [YamlLexType]::None
-    [string] $Content
-    [string] $Buffer
-    [CharEnumerator] $Scanner
-    [System.Collections.Generic.Queue[pscustomobject]] $Queue
+class Yaml: System.Collections.ICollection {
+    hidden [System.Collections.IEnumerable] $Sequence = @()
 
+    Yaml([System.Collections.IEnumerable] $Sequence) {
+        $this.Sequence = $Sequence
+    }
+
+    [int] get_Count() {
+        return $this.Sequence.Count
+    }
+
+    [Boolean] get_IsSynchronized() {
+        return $true
+    }
+
+    [Object] get_SyncRoot() {
+        return $this
+    }
+
+    [void] CopyTo([Array] $Array, [Int] $Index) {
+        while ($Index -lt $Array.Count -and $Index -lt $this.Sequence.Count) {
+            $Array[$Index] = $this.Sequence[$Index]
+            $Index++
+        }
+    }
+
+    [System.Collections.IEnumerator] GetEnumerator() {
+        return [System.Collections.IEnumerator] [YamlRowEnumerator]::new($this.Sequence)
+    }
+}
+
+class YamlRowEnumerator: System.Collections.IEnumerator {
+    hidden [int] $Level = 0
+    hidden [bool] $ListItem = $false
+    hidden [YamlTokenEnumerator] $Scanner
     hidden [pscustomobject] $Current_ = $null
 
-    YamlScanner([string[]] $Content) {
-        $this.Content = $Content -join "`n"
-        $this.Scanner = $this.Content.GetEnumerator()
+    YamlRowEnumerator([string[]] $Content) {
+        $this.Scanner = [YamlTokenEnumerator]::new($Content)
+    }
+
+    YamlRowEnumerator([System.CharEnumerator] $Scanner) {
+        $this.Scanner = [YamlTokenEnumerator]::new($Scanner)
+    }
+
+    YamlRowEnumerator([YamlTokenEnumerator] $Scanner) {
+        $this.Scanner = $Scanner
+    }
+
+    [object] get_Current() {
+        return $this.Current_
+    }
+
+    [void] Reset() {
+        $this.Scanner.Reset()
+        $this.Level = 0
+        $this.ListItem = $false
+    }
+
+    [bool] MoveNext() {
+        $result = 0
+
+        while ($result -eq 0) {
+            $result = $this.NextRow()
+        }
+
+        return $result -ne -1
+    }
+
+    [int] NextRow() {
+        if (-not $this.Scanner.MoveNext()) {
+            $this.Current_ = $null
+            return -1
+        }
+
+        $InputObject = $this.Scanner.Current
+
+        switch ([YamlLexType]$InputObject.LexType) {
+            { $_ -eq [YamlLexType]::Colon } {
+                $this.Current_ = $null
+                $this.Level++
+                return 0
+            }
+
+            { $_ -eq [YamlLexType]::Indent } {
+                $this.Current_ = $null
+                $this.Level = $InputObject.Length
+                return 0
+            }
+
+            { $_ -eq [YamlLexType]::ListItem } {
+                $this.Current_ = $null
+                $this.ListItem = $true
+                return 0
+            }
+
+            { $_ -eq [YamlLexType]::Symbol } {
+                $this.Current_ =
+                    [pscustomobject]@{
+                        Level = $this.Level
+                        RowType =
+                            if ($this.ListItem) {
+                                [YamlLexType]::ListItem
+                            }
+                            else {
+                                [YamlLexType]::Symbol
+                            }
+                        Content = $InputObject.Content
+                    }
+
+                $this.ListItem = $false
+                return 1
+            }
+        }
+
+        return 0
+    }
+}
+
+class YamlTokenEnumerator: System.Collections.IEnumerator {
+    hidden [YamlLexType] $LastLexType = [YamlLexType]::None
+    hidden [char] $Buffer
+    hidden [System.CharEnumerator] $Scanner
+    hidden [System.Collections.Generic.Queue[pscustomobject]] $Queue
+    hidden [pscustomobject] $Current_ = $null
+
+    YamlTokenEnumerator([string[]] $Content) {
+        $str = $Content -join "`n"
+        $this.Scanner = $str.GetEnumerator()
+        $this.Queue = [System.Collections.Generic.Queue[pscustomobject]]::new()
+    }
+
+    YamlTokenEnumerator([System.CharEnumerator] $Scanner) {
+        $this.Scanner = $Scanner
         $this.Queue = [System.Collections.Generic.Queue[pscustomobject]]::new()
     }
 
@@ -29,13 +151,13 @@ class YamlScanner: System.Collections.IEnumerator {
 
     [void] Reset() {
         $this.LastLexType = [YamlLexType]::None
-        $this.Buffer = ''
+        $this.Buffer = [char]0
         $this.Scanner.Reset()
         $this.Queue.Clear()
     }
 
     [bool] MoveNext() {
-        $this.Current_ = $this.Next()
+        $this.Current_ = $this.NextToken()
         return $null -ne $this.Current_ -and $this.Current_.Success
     }
 
@@ -91,12 +213,12 @@ class YamlScanner: System.Collections.IEnumerator {
         return [pscustomobject]@{
             Success = $true
             LexType = $this.LastLexType
-            Value = $value
+            Content = $value
         }
     }
 
     [pscustomobject]
-    Next() {
+    NextToken() {
         if ($this.Queue.Count -gt 0) {
             $token = $this.Queue.Dequeue()
             $this.LastLexType = $token.LexType
@@ -105,9 +227,9 @@ class YamlScanner: System.Collections.IEnumerator {
 
         $next = $true
         $current = $this.Buffer
-        $this.Buffer = ''
+        $this.Buffer = [char]0
 
-        if ([string]::IsNullOrEmpty($current)) {
+        if ($null -eq $current -or [char]0 -eq $current) {
             $next = $this.Scanner.MoveNext()
             $current = $this.Scanner.Current
         }
@@ -125,12 +247,14 @@ class YamlScanner: System.Collections.IEnumerator {
             }
 
             if ($current -eq ' ') {
+                # Negative scan
                 $token = $this.ScanIndent()
                 $this.Buffer = $this.Scanner.Current
                 return $token
             }
 
             if ($current -eq '-') {
+                # Negative scan
                 $token = $this.ScanListItem()
                 $this.Buffer = $this.Scanner.Current
                 return $token
@@ -165,7 +289,7 @@ class YamlScanner: System.Collections.IEnumerator {
                     return [pscustomobject]@{
                         Success = $true
                         LexType = $this.LastLexType
-                        Value = $builder.ToString().Trim()
+                        Content = $builder.ToString().Trim()
                     }
                 }
 
@@ -191,7 +315,7 @@ class YamlScanner: System.Collections.IEnumerator {
                     return [pscustomobject]@{
                         Success = $true
                         LexType = $this.LastLexType
-                        Value = $builder.ToString().Trim()
+                        Content = $builder.ToString().Trim()
                     }
                 }
 
@@ -208,7 +332,7 @@ class YamlScanner: System.Collections.IEnumerator {
                     return [pscustomobject]@{
                         Success = $true
                         LexType = $this.LastLexType
-                        Value = $builder.ToString().Trim()
+                        Content = $builder.ToString().Trim()
                     }
                 }
 
@@ -229,7 +353,7 @@ class YamlScanner: System.Collections.IEnumerator {
                     return [pscustomobject]@{
                         Success = $true
                         LexType = $this.LastLexType
-                        Value = $builder.ToString().Trim()
+                        Content = $builder.ToString().Trim()
                     }
                 }
                 else {
@@ -250,13 +374,138 @@ class YamlScanner: System.Collections.IEnumerator {
             return [pscustomobject]@{
                 Success = $true
                 LexType = $this.LastLexType
-                Value = $builder.ToString().Trim()
+                Content = $builder.ToString().Trim()
             }
         }
 
         return [pscustomobject]@{
             Success = $false
             LexType = [YamlLexType]::End
+        }
+    }
+}
+
+class SyntaxStack {
+    hidden [array] $Stack
+    hidden [int] $PrevLevel
+    hidden [int] $Level
+
+    SyntaxStack([int] $Size) {
+        $this.Stack = @($null) * ($Size + 1)
+        $this.Stack[0] = [PsCustomObject]@{}
+        $this.PrevLevel = 0
+        $this.Level = 0
+    }
+
+    [SyntaxStack]
+    Add([pscustomobject] $InputObject) {
+        $this.Level = $InputObject.Level + 1
+
+        if ($this.Level -ge @($this.Stack).Count) {
+            $this.Stack += @(@($null) * (2 * ($this.Level - @($this.Stack).Count + 1)))
+        }
+
+        while ($this.PrevLevel -gt $this.Level) {
+            $this.Stack[$this.PrevLevel] = $null
+            $this.PrevLevel--
+        }
+
+        $content = $InputObject.Content
+        $this.Stack[$this.Level] = [PsCustomObject]@{}
+        $nextIndex = $this.Level - 1
+
+        while ($null -eq $this.Stack[$nextIndex]) {
+            $nextIndex--
+        }
+
+        [SyntaxStack]::AddProperty(
+            $this.Stack[$nextIndex],
+            $content,
+            $this.Stack[$this.Level]
+        )
+
+        $this.PrevLevel = $this.Level
+        return $this
+    }
+
+    [pscustomobject]
+    ToTree() {
+        [SyntaxStack]::ConvertLeafToString($this.Stack[0])
+        return $this.Stack[0]
+    }
+
+    static [bool]
+    IsEmptyObject([object] $InputObject) {
+        return 0 -eq @($InputObject.PsObject.Properties).Count
+    }
+
+    static [bool]
+    IsLeaf([object] $InputObject) {
+        $props = $InputObject.PsObject.Properties |
+            Where-Object { 'NoteProperty' -eq $_.MemberType }
+
+        return @($props).Count -eq 1 -and $(
+            $(
+                $value = @($props)[0].Value;
+                $value -is [PsCustomObject]
+            ) -and
+            $null -eq ($value.PsObject.Properties |
+                Where-Object { 'NoteProperty' -eq $_.MemberType })
+        )
+    }
+
+    static [void]
+    AddProperty(
+        [object] $InputObject,
+        [string] $Name,
+        [object] $Value
+    ) {
+        $property = $InputObject.PsObject.Properties |
+        Where-Object {
+            $_.Name -eq $Name
+        }
+
+        if ($null -eq $property) {
+            $InputObject | Add-Member `
+                -MemberType NoteProperty `
+                -Name $Name `
+                -Value $Value
+
+            return
+        }
+
+        if (@($property.Value).Count -eq 1) {
+            $property.Value = @($property.Value)
+        }
+
+        if (([SyntaxStack]::IsEmptyObject($property.Value[-1]))) {
+            $property.Value[-1] = @($Value)
+        }
+        else {
+            $property.Value += @($Value)
+        }
+    }
+
+    static [void]
+    ConvertLeafToString([object] $InputObject) {
+        $props = $InputObject.PsObject.Properties |
+            Where-Object { 'NoteProperty' -eq $_.MemberType }
+
+        foreach ($prop in $props) {
+            $value = $prop.Value
+
+            if ([SyntaxStack]::IsLeaf($value)) {
+                $valueProps = $value.PsObject.Properties |
+                    Where-Object { 'NoteProperty' -eq $_.MemberType }
+
+                $InputObject.($prop.Name) =
+                    @($valueProps)[0].Name
+            }
+            else {
+                $value | ForEach-Object {
+                    [SyntaxStack]::ConvertLeafToString($_)
+                }
+            }
         }
     }
 }
@@ -270,273 +519,6 @@ function ConvertFrom-Yaml {
 
     Begin {
         $list = @()
-
-        function ConvertTo-Table {
-            Param(
-                [Parameter(ValueFromPipeline = $true)]
-                [pscustomobject]
-                $InputObject
-            )
-
-            Begin {
-                $level = 0
-                $listItem = $false
-                $list = @()
-                $maxLevel = 0
-            }
-
-            Process {
-                if (-not $InputObject.Success) {
-                    return
-                }
-
-                switch ([YamlLexType]$InputObject.LexType) {
-                    { $_ -eq [YamlLexType]::Colon } {
-                        $level++
-                        break
-                    }
-
-                    { $_ -eq [YamlLexType]::Indent } {
-                        $level = $InputObject.Length
-                        break
-                    }
-
-                    { $_ -eq [YamlLexType]::ListItem } {
-                        $listItem = $true
-                        break
-                    }
-
-                    { $_ -eq [YamlLexType]::Symbol } {
-                        $list += @([pscustomobject]@{
-                            Level = $level
-                            RowType =
-                                if ($listItem) {
-                                    [YamlLexType]::ListItem
-                                }
-                                else {
-                                    [YamlLexType]::Symbol
-                                }
-                            Value = $InputObject.Value
-                        })
-
-                        if ($level -gt $maxLevel) {
-                            $maxLevel = $level
-                        }
-
-                        $listItem = $false
-                        break
-                    }
-                }
-            }
-
-            End {
-                [pscustomobject]@{
-                    MaxLevel = $maxLevel
-                    Table = $list
-                }
-            }
-        }
-
-        function Test-EmptyObject {
-            Param(
-                [PsCustomObject]
-                $InputObject
-            )
-
-            return 0 -eq @($InputObject.PsObject.Properties).Count
-        }
-
-        function Add-Property {
-            Param(
-                $InputObject,
-
-                [String]
-                $Name,
-
-                $Value,
-
-                [Switch]
-                $Overwrite,
-
-                [Switch]
-                $Table
-            )
-
-            $property = $InputObject.PsObject.Properties | where {
-                $_.Name -eq $Name
-            }
-
-            if ($null -eq $property) {
-                $InputObject | Add-Member `
-                    -MemberType NoteProperty `
-                    -Name $Name `
-                    -Value $Value
-
-                return
-            }
-
-            if (@($property.Value).Count -eq 1) {
-                $property.Value = @($property.Value)
-            }
-
-            if ((Test-EmptyObject $property.Value[-1])) {
-                $property.Value[-1] = @($Value)
-            }
-            else {
-                $property.Value += @($Value)
-            }
-        }
-
-        <#
-        .SYNOPSIS
-        f: P(key, value) -> key -> value
-        #>
-        function Get-NoteProperty {
-            Param(
-                [Parameter(
-                    ValueFromPipeline = $true,
-                    Position = 0
-                )]
-                [PsCustomObject]
-                $InputObject,
-
-                [String]
-                $PropertyName,
-
-                $Default
-            )
-
-            $properties = $InputObject.PsObject.Properties `
-                | where { 'NoteProperty' -eq $_.MemberType }
-
-            if ([String]::IsNullOrEmpty($PropertyName)) {
-                return $properties
-            }
-
-            try {
-                return $(if ($null -eq $properties -or @($properties).Count -eq 0) {
-                    [PsCustomObject]@{
-                        Success = $false
-                        Name = $PropertyName
-                        Value = $null
-                    }
-                } elseif ($PropertyName -in $properties.Name) {
-                    [PsCustomObject]@{
-                        Success = $true
-                        Name = $PropertyName
-                        Value = $InputObject.$PropertyName
-                    }
-                } elseif ($null -ne $Default) {
-                    [PsCustomObject]@{
-                        Success = $false
-                        Name = $PropertyName
-                        Value = $Default.$PropertyName
-                    }
-                } else {
-                    [PsCustomObject]@{
-                        Success = $false
-                        Name = $PropertyName
-                        Value = $null
-                    }
-                })
-            }
-            catch {
-                return [PsCustomObject]@{
-                    Success = $false
-                    Name = $PropertyName
-                    Value = $null
-                }
-            }
-
-            return [PsCustomObject]@{
-                Success = $false
-                Name = $PropertyName
-                Value = $null
-            }
-        }
-
-        function Test-IsLeaf {
-            Param(
-                [PsCustomObject]
-                $InputObject
-            )
-
-            $props = Get-NoteProperty $InputObject
-
-            return @($props).Count -eq 1 -and $(
-                    $value = @($props)[0].Value;
-                    $value -is [PsCustomObject]
-                ) -and
-                $null -eq (Get-NoteProperty $value)
-        }
-
-        function Convert-LeafToString {
-            Param(
-                [PsCustomObject]
-                $InputObject
-            )
-
-            foreach ($prop in (Get-NoteProperty $InputObject)) {
-                $value = $prop.Value
-
-                if (Test-IsLeaf $value) {
-                    $InputObject.($prop.Name) =
-                        @(Get-NoteProperty $value)[0].Name
-                }
-                else {
-                    $value | foreach {
-                        Convert-LeafToString $_
-                    }
-                }
-            }
-        }
-
-        function ConvertTo-Tree {
-            Param(
-                [Parameter(ValueFromPipeline = $true)]
-                [pscustomobject]
-                $InputObject,
-
-                [int]
-                $MaxLevel
-            )
-
-            Begin {
-                $stack = @($null) * ($MaxLevel + 2)
-                $stack[0] = [PsCustomObject]@{}
-                $prevLevel = 0
-                $level = 0
-            }
-
-            Process {
-                $level = $InputObject.Level + 1
-
-                while ($prevLevel -gt $level) {
-                    $stack[$prevLevel] = $null
-                    $prevLevel--
-                }
-
-                $content = $InputObject.Value
-                $stack[$level] = [PsCustomObject]@{}
-                $nextIndex = $level - 1
-
-                while ($null -eq $stack[$nextIndex]) {
-                    $nextIndex--
-                }
-
-                Add-Property `
-                    -InputObject $stack[$nextIndex] `
-                    -Name $content `
-                    -Value $stack[$level]
-
-                $prevLevel = $level
-            }
-
-            End {
-                Convert-LeafToString $stack[0]
-                return $stack[0]
-            }
-        }
     }
 
     Process {
@@ -544,13 +526,14 @@ function ConvertFrom-Yaml {
     }
 
     End {
-        $scan = [YamlScanner]::new($list) |
-            ForEach-Object { $_ } |
-            ConvertTo-Table
+        $stack = [SyntaxStack]::new([math]::Log($list.Count))
 
-        $scan.Table |
-            ConvertTo-Tree `
-                -MaxLevel $scan.MaxLevel
+        [Yaml]::new($list) |
+            ForEach-Object {
+                [void] $stack.Add($_)
+            }
+
+        return $stack.ToTree()
     }
 }
 

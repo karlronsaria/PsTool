@@ -909,7 +909,8 @@ function ConvertTo-List {
             $InputObject |
             foreach {
                 $_.PsObject.Properties
-            } | foreach {
+            } |
+            foreach {
                 [PsCustomObject]@{
                     Name = $_.Name
                     Value = $_.Value
