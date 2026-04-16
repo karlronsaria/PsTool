@@ -1243,11 +1243,42 @@ function ConvertTo-List {
             'in', 'notin',
             'and', 'or', 'xor',
             'is', 'isnot',
-            'replace'
+            'replace',
+            'at'
         )]
         [string]
         $Operator,
 
+        [ArgumentCompleter({
+            [OutputType([System.Management.Automation.CompletionResult])]
+            param(
+                [string] $CommandName,
+                [string] $ParameterName,
+                [string] $WordToComplete,
+                [System.Management.Automation.Language.CommandAst] $CommandAst,
+                [System.Collections.IDictionary] $FakeBoundParameters
+            )
+            
+            $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
+            
+            $pipeline = $CommandAst.Parent.PipelineElements |
+                ForEach-Object { $_ }
+                
+            $pipeline = $pipeline | Select-Object -SkipLast 1
+            $result = Invoke-Expression ($pipeline -join ' | ')
+            
+            if ($null -eq $result) {
+                return @()
+            }
+            
+            if ($FakeBoundParameters['Operator'] -eq 'at') {
+                foreach ($key in $result.Keys) {
+                    $CompletionResults.Add($key)
+                }
+            }
+            
+            return $CompletionResults
+        })]
         [Parameter(Position = 1)]
         $Operand
     )
@@ -1261,6 +1292,17 @@ function ConvertTo-List {
     }
 
     End {
-        & ([scriptblock]::Create("Param(`$List, `$Operand) `$List -$Operator `$Operand")) $list $Operand
+        $expression = if ($Operator -eq 'at') {
+            "Param(`$List, `$Operand) `$List[`$Operand]"
+        }
+        else {
+            "Param(`$List, `$Operand) `$List -$Operator `$Operand"
+        }
+        
+        if (@($list).Count -eq 1) {
+            $list = $list[0]
+        }
+
+        & ([scriptblock]::Create($expression)) $list $Operand
     }
 }

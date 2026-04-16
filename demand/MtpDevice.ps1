@@ -71,7 +71,7 @@ class MtpDevice {
         $this.DateTimeFormat_ = $DateTimeFormat
         return $this
     }
-    
+
     hidden [void]
     AddSubtreeItem(
         [string] $Name,
@@ -122,13 +122,13 @@ class MtpDevice {
                 -MemberType NoteProperty `
                 -Name $propName `
                 -Value $value
-                
+
             if ($ScriptForEach) {
                 $ScriptForEach.Invoke($value)
             }
         }
     }
-    
+
     hidden static [scriptblock]
     NewClosure(
         [scriptblock] $ScriptBlock,
@@ -139,12 +139,12 @@ class MtpDevice {
             return $ScriptBlock.GetNewClosure()
         } $Parameters
     }
-    
+
     [MtpDevice]
     MtpPath([string] $Path) {
         return $this.MtpPath($Path, [MtpDevice]::PATH_SEPARATOR)
     }
-    
+
     [MtpDevice]
     MtpPath([string] $Path, [string] $Separator) {
         if ($null -eq $this.Com_) {
@@ -156,7 +156,7 @@ class MtpDevice {
         if ($null -eq $folder) {
             return $this
         }
-        
+
         if ($null -eq $Path) {
             $folder.Items() |
             ForEach-Object {
@@ -176,13 +176,13 @@ class MtpDevice {
 
         $parts = $Path.Split($Separator)
         $ptr = $this
-        
+
         foreach ($part in $parts) {
 
             $ptr.AddSubtreeItem($part, $ptr.Com_.GetFolder, $null)
             $ptr = $ptr.$part
         }
-        
+
         return $this
     }
 
@@ -197,7 +197,7 @@ class MtpDevice {
         if ($null -eq $folder) {
             return $this
         }
-        
+
         if ($null -eq $Query) {
             $folder.Items() |
             ForEach-Object {
@@ -231,7 +231,7 @@ class MtpDevice {
                             },
                             $property.Value `
                         )
-                        
+
                         $this.AddSubtreeItem(
                             $property.Name,
                             $folder,
@@ -321,7 +321,7 @@ class MtpDevice {
 
         return $null
     }
-    
+
     static [string[]]
     GetContainerPath([string] $DeviceName, [string] $PartialPath) {
         $separator = [MtpDevice]::PATH_SEPARATOR
@@ -338,7 +338,7 @@ class MtpDevice {
         $parts = $PartialPath.Split($separator).Trim('"')
         $ptr = $fileSystem
         $treeSoFar = $parts | Select-Object -SkipLast 1
-        
+
         foreach ($part in $treeSoFar) {
             $part = $part.ToLower()
 
@@ -350,7 +350,7 @@ class MtpDevice {
                     $_.GetFolder
                 }
         }
-        
+
         return $($ptr.Items() |
             Where-Object {
                 $_.IsFolder
