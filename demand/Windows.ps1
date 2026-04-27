@@ -34,26 +34,26 @@ function Get-LocalPackage {
     }
 
     if ($DisplayName) {
-        $packages = $packages | where {
+        $packages = $packages | Where-Object {
             $_.DisplayName -like $DisplayName
         }
     }
 
     if ($DisplayVersion) {
-        $packages = $packages | where {
+        $packages = $packages | Where-Object {
             $_.DisplayVersion -like $DisplayVersion
         }
     }
 
     if ($Publisher) {
-        $packages = $packages | where {
+        $packages = $packages | Where-Object {
             $_.Publisher -like $Publisher
         }
     }
 
     $packages = $packages |
-        where { $_.DisplayName } |
-        foreach {
+        Where-Object { $_.DisplayName } |
+        ForEach-Object {
             [PsCustomObject]@{
                 DisplayName = $_.DisplayName
                 DisplayVersion = $_.DisplayVersion
@@ -72,7 +72,7 @@ function Get-LocalPackage {
         }
 
     if ($InstallByDate) {
-        $packages = $packages | where {
+        $packages = $packages | Where-Object {
             $null -ne $_.InstallDate -and `
             $_.InstallDate -le $InstallByDate
         }

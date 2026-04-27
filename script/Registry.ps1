@@ -91,7 +91,7 @@ function Rename-ItemProperty {
 
     foreach ($item in (
         $worklist |
-        foreach {
+        ForEach-Object {
             Get-ItemProperty -Path "$powershellRegPrefix$_"
         }
     )) {
@@ -179,7 +179,7 @@ param(
         Param($A, $B, $C)
 
         $names = [enum]::GetNames([Microsoft.Win32.RegistryValueKind])
-        $suggests = $names | where { $_ -like "$C*" }
+        $suggests = $names | Where-Object { $_ -like "$C*" }
 
         $suggests =
             if (@($suggests).Count -eq 0) {
@@ -190,7 +190,7 @@ param(
             }
 
         return $suggests |
-            foreach {
+            ForEach-Object {
                 [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
             }
     })]
@@ -216,8 +216,8 @@ param(
     [Parameter(ValueFromPipelineByPropertyName=$true)]
     [pscredential]
     [System.Management.Automation.CredentialAttribute()]
-    ${Credential})
-
+    ${Credential}
+)
 
 dynamicparam
 {
