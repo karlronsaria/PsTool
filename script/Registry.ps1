@@ -3,12 +3,14 @@
 Replace all registry key values and/or registry key names under a given path.
 
 .LINK
-Url: <https://stackoverflow.com/questions/26680410/powershell-find-and-replace-on-registry-values>
-Retrieved: 2020-04-09
+* question
+  - Url: <https://stackoverflow.com/questions/26680410/powershell-find-and-replace-on-registry-values>
+  - Retrieved: 2020-04-09
 
 .LINK
-Url: <https://stackoverflow.com/users/684576/david-maisonave>
-Retrieved: 2020-04-09
+* user
+  - Url: <https://stackoverflow.com/users/684576/david-maisonave>
+  - Retrieved: 2020-04-09
 
 .EXAMPLE
 Rename-ItemProperty "ExistingValue" "NewValue" 'HKEY_CURRENT_USER\Software\100000_DummyData'
@@ -231,7 +233,7 @@ dynamicparam
             {
                 $param = $param.Value
 
-                if(-not $MyInvocation.MyCommand.Parameters.ContainsKey($param.Name))
+                if (-not $MyInvocation.MyCommand.Parameters.ContainsKey($param.Name))
                 {
                     $dynParam = [Management.Automation.RuntimeDefinedParameter]::new($param.Name, $param.ParameterType, $param.Attributes)
                     $paramDictionary.Add($param.Name, $dynParam)
@@ -303,12 +305,14 @@ Requires regjump.exe by Sysinternals
 Requires sudo
 
 .LINK
-Url: <https://learn.microsoft.com/en-us/sysinternals/>
-Retrieved: 2025-02-28
+* microsoft.com, sysinternals
+  - Url: <https://learn.microsoft.com/en-us/sysinternals/>
+  - Retrieved: 2025-02-28
 
 .LINK
-Url: <https://github.com/sysinternals>
-Retrieved: 2025-02-28
+* github.com, sysinternals
+  - Url: <https://github.com/sysinternals>
+  - Retrieved: 2025-02-28
 #>
 function Open-ItemProperty {
     [CmdletBinding()]

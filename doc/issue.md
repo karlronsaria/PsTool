@@ -1,5 +1,26 @@
 # issue
 
+- [ ] issue 2026-04-29-153821
+  - system
+    - vscode
+      - 1.117.0
+      - 10c8e557c8b9f9ed0a87f61f1c9a44bde731c409
+      - x64
+  - where: vscode, PsTool/Combinator#Start-Edit
+  - howto
+    1. ``cd \dev\py\``
+    2. ``code .``
+    3. In vscode PowerShell terminal
+
+       ```powershell
+       edit .\label_and_button.py
+       ```
+
+  - actual
+    - an empty file with name "label_and_button.py" open in vscode
+  - expected
+    - original file "label_and_button.py" open in vscode
+
 - [ ] 2025-07-25-132201
   - where: PsTool#script#Combinator#Select-FlatObject, ``what``
   - description: ArgumentCompleter not working properly
@@ -138,6 +159,15 @@
     ```
 
 ## complete
+
+- [x] issue 2026-06-01-181401
+  - where: FileSystem#New-NoteItem
+  - howto
+    1. ``nni answer Complex.h``
+- actual
+  ``answer_-_2026-06-01Complex.h``
+- expected
+  ``answer_-_2026-06-01_Complex.h``
 
 - [x] 2026-02-09-152952
   - where: PsTool/script/FileSystem#Rename-Item

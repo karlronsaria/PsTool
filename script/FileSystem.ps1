@@ -111,7 +111,7 @@ Waht? No $Name? Naaah. Y'all can't do that.
         ""
     }
 
-    if ($Name -match ".+\.[_a-zA-Z]\w+$") {
+    if ($Name -match ".+\.[_a-zA-Z]\w*$") {
         $Name = "_$Name"
     }
 
