@@ -67,7 +67,7 @@ function Connect-NetCaptivePortal {
     )
 
     if ($osIsWin) {
-        start $Url
+        Start-Process $Url
     }
     else {
         curl $Url
