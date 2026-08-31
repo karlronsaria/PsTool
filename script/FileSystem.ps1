@@ -143,13 +143,13 @@ class MyUrl {
         $obj.
             PsObject.
             Properties |
-            where {
+            Where-Object {
                 $_.MemberType -eq 'NoteProperty'
             } |
-            where {
+            Where-Object {
                 $_.Name -notmatch "Name|Where|Tags?"
             } |
-            foreach {
+            ForEach-Object {
                 $this | Add-Member `
                     -MemberType NoteProperty `
                     -Name $_.Name `
@@ -174,13 +174,13 @@ function Get-MyUrlLink {
                 Get-Item |
                 Get-Content |
                 ConvertFrom-Json |
-                foreach LocationFile
+                ForEach-Object LocationFile
 
             $all = $setting.Notebooks |
                 Get-Item |
                 Get-Content |
                 ConvertFrom-Json |
-                foreach {
+                ForEach-Object {
                     $_.Location
                     $_.Locations
                 }
@@ -193,7 +193,7 @@ function Get-MyUrlLink {
                 $command = $pipelineElements[$index].Extent.Text
 
                 $locations = if (@($locations).Count -eq 0) {
-                    iex $command
+                    Invoke-Expression $command
                 }
                 else {
                     $script = [scriptblock]::Create("$command")
@@ -205,7 +205,7 @@ function Get-MyUrlLink {
 
             if ($null -ne $locations -and @($locations).Count -gt 0) {
                 $all = $all |
-                    where {
+                    Where-Object {
                         $_.Name -in $locations.Name
                     }
             }
@@ -217,11 +217,11 @@ function Get-MyUrlLink {
                     @($all.Tags)
                 ) |
                 Sort-Object |
-                select -Unique -CaseInsensitive | # todo
-                where {
+                Select-Object -Unique -CaseInsensitive | # todo
+                Where-Object {
                     $_ -like "$WordToComplete*"
                 } |
-                foreach {
+                ForEach-Object {
                     if ($_ -match "\s") {
                         "`"$_`""
                     }
@@ -229,7 +229,7 @@ function Get-MyUrlLink {
                         $_
                     }
                 } |
-                foreach {
+                ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
                 }
             )
@@ -266,7 +266,7 @@ function Get-MyUrlLink {
         return $(
             $list |
             Get-MyUrl @PsBoundParameters |
-            foreach {
+            ForEach-Object {
                 if ($NoExpansion) {
                     $_.Where
                 }
@@ -291,7 +291,7 @@ function Get-MyUrl {
                 Get-Item |
                 Get-Content |
                 ConvertFrom-Json |
-                foreach LocationFile
+                ForEach-Object LocationFile
 
             $locations = @()
             $pipelineElements = $CommandAst.Parent.PipelineElements
@@ -301,7 +301,7 @@ function Get-MyUrl {
                 $command = $pipelineElements[$index].Extent.Text
 
                 $locations = if (@($locations).Count -eq 0) {
-                    iex $command
+                    Invoke-Expression $command
                 }
                 else {
                     $script = [scriptblock]::Create("$command")
@@ -316,7 +316,7 @@ function Get-MyUrl {
                     Get-Item |
                     Get-Content |
                     ConvertFrom-Json |
-                    foreach {
+                    ForEach-Object {
                         $_.Location
                         $_.Locations
                     }
@@ -327,11 +327,11 @@ function Get-MyUrl {
                 @($locations.Tag) +
                 @($locations.Tags)) |
                 Sort-Object |
-                select -Unique -CaseInsensitive | # todo
-                where {
+                Select-Object -Unique -CaseInsensitive | # todo
+                Where-Object {
                     $_ -like "$WordToComplete*"
                 } |
-                foreach {
+                ForEach-Object {
                     if ($_ -match "\s") {
                         "`"$_`""
                     }
@@ -339,7 +339,7 @@ function Get-MyUrl {
                         $_
                     }
                 } |
-                foreach {
+                ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
                 }
             )
@@ -363,7 +363,7 @@ function Get-MyUrl {
     )
 
     Begin {
-        $setting = (dir "$PsScriptRoot/../res/filesystem.setting.json" |
+        $setting = (Get-Item "$PsScriptRoot/../res/filesystem.setting.json" |
             Get-Content |
             ConvertFrom-Json).
             LocationFile
@@ -385,11 +385,11 @@ function Get-MyUrl {
                 Get-Item |
                 Get-Content |
                 ConvertFrom-Json |
-                foreach {
+                ForEach-Object {
                     $_.Location
                     $_.Locations
                 } |
-                foreach {
+                ForEach-Object {
                     [MyUrl]::new($_)
                 }
         }
@@ -401,13 +401,13 @@ function Get-MyUrl {
                 -GroupBy 'Where' `
                 -SelectBy 'Name', 'Tag', 'Tags' `
                 -Mode $Mode |
-            foreach {
+            ForEach-Object {
                 $obj = [PsCustomObject]@{}
 
                 $_.PsObject.Properties |
-                where { $_.MemberType -in 'Property', 'NoteProperty' } |
-                where { $_.Name -ne 'Where' } |
-                foreach {
+                Where-Object { $_.MemberType -in 'Property', 'NoteProperty' } |
+                Where-Object { $_.Name -ne 'Where' } |
+                ForEach-Object {
                     $obj | Add-Member `
                         -MemberType NoteProperty `
                         -Name $_.Name `
@@ -433,7 +433,7 @@ function Get-MyUrl {
                             $psMatches = [Regex]::Matches($value, "\$[^\$\\\/]+")
 
                             $psMatches |
-                            foreach -Begin {
+                            ForEach-Object -Begin {
                                 $count = 0
                             } -Process {
                                 $count = $count + 1
@@ -459,7 +459,7 @@ function Get-MyUrl {
                             $value
                         }
                     ) |
-                    foreach {
+                    ForEach-Object {
                         $_ -replace $(if ($ToUnix) {
                             "\\", "/"
                         }
@@ -651,14 +651,14 @@ function Rename-Item {
             )) {
                 $PSBoundParameters['OutBuffer'] = 1
             }
-            
+
             $needDummyNewName = $false
-            
+
             if ($PSBoundParameters.Keys -notcontains 'NewName') {
                 $needDummyNewName = $true
                 $PSBoundParameters['NewName'] = "DummyName"
             }
-            
+
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand(
                 'Microsoft.PowerShell.Management\Rename-Item',
                 [System.Management.Automation.CommandTypes]::Cmdlet
@@ -680,7 +680,7 @@ function Rename-Item {
             if (-not $continue) {
                 return
             }
-            
+
             if (-not $NewName -or $needDummyNewName) {
                 $name = switch ($PsCmdlet.ParameterSetName) {
                     'ByPath' { $Path }
@@ -791,7 +791,7 @@ function Get-ChildDocumentItem {
             Get-Item |
             Get-Content |
             ConvertFrom-Json |
-            foreach 'Exclude'
+            ForEach-Object 'Exclude'
 
         $list = @()
     }
@@ -810,7 +810,7 @@ function Get-ChildDocumentItem {
 
                 $PSBoundParameters[$paramName] = $list
             }
-            
+
             $excludePattern = "\\($($myExcludes -join "|"))\\"
 
             Get-ChildItem @PSBoundParameters |

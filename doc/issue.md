@@ -21,7 +21,7 @@
   - expected
     - original file "label_and_button.py" open in vscode
 
-- [ ] 2025-07-25-132201
+- [ ] issue 2025-07-25-132201
   - where: PsTool#script#Combinator#Select-FlatObject, ``what``
   - description: ArgumentCompleter not working properly
   - howto
@@ -46,7 +46,7 @@
     es -r Minecraft.*\.exe$ | what 2 | dir | what VersionInfo
     ```
 
-- [ ] 2025-04-27-174931
+- [ ] issue 2025-04-27-174931
   - what: Set-Location
   - howto
     - call ``Set-Location`` using a file item as the path argument
@@ -69,7 +69,7 @@
     ~\source\repos\demo-PsMarkdownSyntaxTree\PsMarkdownTree  
     ```
 
-- [ ] 2024-01-18-025321
+- [ ] issue 2024-01-18-025321
   - what: Query-Object
   - howto
 
@@ -97,7 +97,7 @@
     no changes added to commit (use "git add" and/or "git commit -a")
     ```
 
-- [ ] 2024-01-17-201116
+- [ ] issue 2024-01-17-201116
   - howto
 
     ```powershell
@@ -169,7 +169,7 @@
 - expected
   ``answer_-_2026-06-01_Complex.h``
 
-- [x] 2026-02-09-152952
+- [x] issue 2026-02-09-152952
   - where: PsTool/script/FileSystem#Rename-Item
   - howto
 
@@ -182,7 +182,7 @@
   - expected
     - quickform prompt occurs once
 
-- [x] 2025-12-10-150840
+- [x] issue 2025-12-10-150840
   - where: PsTool/demand/MtpDevice#Get-MtpDeviceItem
   - case 1: SaveTo
     - howto
@@ -232,7 +232,7 @@
       MethodInvocationException: Exception calling "MoveTo" with "1" argument(s): "You cannot call a method on a null-valued expression."
       ```
 
-- [x] 2026-01-12-152521
+- [x] issue 2026-01-12-152521
   - where: mynote
   - affects: New-NoteItem (nni)
   - description: I've found myself able to misstype item names, resulting in unsearchable files due to unrecognized extensions
@@ -247,7 +247,7 @@
     - search using command ``dir .\howto\*.md | sls veracrypt``
     - get no results
 
-- [x] 2025-11-22-025253
+- [x] issue 2025-11-22-025253
   - where: PsTool#script#Combinator#Start-Edit, ``edit``
   - howto
 
@@ -266,7 +266,7 @@
   - expected
     - Editor nvim open to ``C:\note\emp\projek\PythonClub\research\Python-20250122T084419Z-001\Python\Python Curriculum for Students\Book Curriculum\readme.md``
 
-- [x] 2025-03-21-152537
+- [x] issue 2025-03-21-152537
   - what: Start-Timer
   - howto
 
@@ -287,7 +287,7 @@
          | range of 100. Supply an argument that is less than or equal to 100 and then try the command again.
     ```
 
-- [x] 2025-03-08-181048
+- [x] issue 2025-03-08-181048
   - what: Combinator#Get-Progress
   - howto
 
@@ -335,13 +335,13 @@
     New Sin
     ```
 
-- [x] 2025-01-31-125001
+- [x] issue 2025-01-31-125001
   - where: ``PsTool: demand: CodeSnippetCapture``
   - howto: ``pwsh -Command "Import-DemandModule CodeSnippetCapture"``
   - actual: success with no error message
   - expectend: error message aprox: ``"Requires -RunAs"``
 
-- [x] 2025-02-12-224254
+- [x] issue 2025-02-12-224254
   - what: Set-Location
   - howto
 
@@ -363,7 +363,7 @@
     PS C:\working\path>
     ```
 
-- [x] 2025-02-12-004601
+- [x] issue 2025-02-12-004601
   - what: Set-Location
   - howto
 
@@ -392,7 +392,7 @@
     PS C:\note>
     ```
 
-- [x] 2025-01-24-022043
+- [x] issue 2025-01-24-022043
   - where: ``demand/Access``
   - howto
 
@@ -417,7 +417,7 @@
   - solution
     - add ``-Force`` flag to ``New-Alias``
 
-- [x] 2025-01-13-044140
+- [x] issue 2025-01-13-044140
   - solution: resource files need to have unique identifiers
   - where: ``PsMarkdown/Link``, ``PsTool/demand/OleObject``
   - howto
@@ -451,7 +451,7 @@
          | Cannot create a file when that file already exists.
     ```
 
-- [x] 2024-10-16-000505
+- [x] issue 2024-10-16-000505
   - howto
     1. when the working directory has an odd number of duplicates of an item
     2. in powershell
@@ -477,7 +477,7 @@
     d----          10/16/2024 12:03 AM                __dup002
     ```
 
-- [x] 2024-10-16-224609
+- [x] issue 2024-10-16-224609
   - howto
 
     ```powershell
@@ -509,7 +509,7 @@
     C:\Users\karlr\OneDrive\Documents\WindowsPowerShell\Scripts\PsTool\demand\Windows.ps1
     ```
 
-- [x] 2024-10-15-010840
+- [x] issue 2024-10-15-010840
   - howto
 
     ```powershell
@@ -521,7 +521,7 @@
     ```text
     ```
 
-- [x] 2024-09-18-033326
+- [x] issue 2024-09-18-033326
   - canceled: This function is working as intended. I just need to learn to use it properly.
 
   - what: Start-Edit
@@ -537,7 +537,7 @@
     Start-Edit: The input object cannot be bound to any parameters for the command either because the command does not take pipeline input or the input and its properties do not match any of the parameters that take pipeline input.
     ```
 
-- [x] 2024-10-16-000842
+- [x] issue 2024-10-16-000842
   - howto
 
     ```powershell
@@ -554,7 +554,7 @@
          | The input object cannot be bound to any parameters for the command either because the command does not take pipeline input or the input and its properties do not match any of the parameters that take pipeline input.
     ```
 
-- [x] 2024-09-18-012356
+- [x] issue 2024-09-18-012356
 
   - what: Get-DemandScript
   - howto
@@ -574,7 +574,7 @@
     ...\Scripts\PsTool\demand\ImageConvert.ps1
     ```
 
-- [x] 2024-03-24-013846
+- [x] issue 2024-03-24-013846
 
   - what: demand/ImageConvert#ConvertFrom-ImageWebp
   - howto
@@ -586,13 +586,13 @@
   - actual
     - [Unexpected output](./issue/issue_-_2024-03-24.md)
 
-- [x] 2024-07-03-211153
+- [x] issue 2024-07-03-211153
 
   - what: DemandScript
   - howto: search for module names using ``Get-DemandMatch``, ``Get-DemandScript``, or ``Import-DemandModule``
   - actual: module names, such as ``DateFolder``, cannot be found
 
-- [x] 2023-12-27-042818
+- [x] issue 2023-12-27-042818
   - todo
     - [ ] unit test
       - ``| Query -1``
@@ -613,20 +613,20 @@
   - expected
     - returns only first element in list
 
-- [x] 2023-12-25-033119
+- [x] issue 2023-12-25-033119
   - where: Demand#Install-DemandModule
   - howto: use ``InputObject`` argument completer in PowerShell 5 terminal
   - actual
     - fails
 
-- [x] 2023-12-20-223459
+- [x] issue 2023-12-20-223459
   - where: Demand#Install-DemandModule
   - actual
     - every instance of ``$PsScriptRoot`` evaluates to ``C:\``
   - expacted
     - every instance of ``$PsScriptRoot`` evaluates to module script location
 
-- [x] 2023-11-21-232252
+- [x] issue 2023-11-21-232252
   - where: ``Out-#Out-NotepadPlusPlus``
   - howto
 
@@ -669,7 +669,7 @@
     d-----         5/25/2021  12:54 AM                howto
     ```
 
-- [x] 2022-03-23-230129
+- [x] issue 2022-03-23-230129
   - solution: DEPRECATE
   - where: ``Out-#Out-Notepad``
   - howto
@@ -683,7 +683,7 @@
 
 ![2022-03-23-230129](./res/2022-03-23-230129.png)
 
-- [x] 2022-03-23-225512
+- [x] issue 2022-03-23-225512
   - where: ``Pychart#Show-Pychart``
   - howto
 
