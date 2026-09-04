@@ -1,0 +1,12 @@
+{
+    "NotebookPath": "../notebook/",
+    "Format": {
+        "locate": [
+            "where"
+        ],
+        "story": [
+            "what"
+        ]
+    }
+}
+
