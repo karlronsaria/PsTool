@@ -7,7 +7,6 @@ function Find-MdPath {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     Param(
         [Parameter(ValueFromPipeline = $true)]
-        [pscustomobject]
         $InputObject,
         
         [ValidateSet('code', 'link')]

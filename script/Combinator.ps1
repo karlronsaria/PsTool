@@ -1045,37 +1045,25 @@ function Get-NextTree {
     [Alias('Desc')]
     Param(
         [Parameter(ValueFromPipeline = $true)]
-        [PsCustomObject]
         $InputObject
     )
 
-    Begin {
-        function Get-Property {
-            Param(
-                $InputObject
-            )
+    Process {
+        foreach ($tree in @($InputObject | Where-Object { $_ })) {
+            $branch = $tree
 
-            if ($null -eq $InputObject `
-                -or (-not ($InputObject -is [PsCustomObject])) `
-            ) {
-                return @()
+            $props = $branch.PsObject.Properties |
+                Where-Object { $_.MemberType -eq 'NoteProperty' }
+
+            while (@($props).Count -eq 1) {
+                $branch = @($props)[0].Value
+
+                $props = $branch.PsObject.Properties |
+                    Where-Object { $_.MemberType -eq 'NoteProperty' }
             }
 
-            return $InputObject.PsObject.Properties |
-                where { $_ } # (karlr 2024-09-30): I REALLY THINK I SHOULDN'T HAVE TO DO THIS!
+            $branch
         }
-    }
-
-    Process {
-        $temp = $InputObject
-        $properties = Get-Property $temp
-
-        while ($properties.Count -eq 1) {
-            $temp = $properties[0].Value
-            $properties = Get-Property $temp
-        }
-
-        return $temp
     }
 }
 
