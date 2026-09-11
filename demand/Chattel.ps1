@@ -45,19 +45,18 @@ function Get-ChattelItemDescriptor {
     }
 
     if (-not $items) {
-        $items = "$PsScriptRoot/../res/setting.json" |
+        $items = "$PsScriptRoot/../res/chattel.setting.json" |
             Get-Item |
             Get-Content |
             ConvertFrom-Json |
-            ForEach-Object { Join-Path $PsScriptRoot $_.NotebookPath } |
-            ForEach-Object { Join-Path $_ 'item.md' } |
+            ForEach-Object { Join-Path $_.NotebookPath 'item.md' } |
             Get-Item |
             Get-Content |
             Get-MarkdownTree |
             ForEach-Object item |
             ForEach-Object _Table
     }
-
+    
     $list = [System.Collections.Generic.List[string]]::new()
 
     $items.descriptor |
@@ -103,11 +102,10 @@ function Get-ChattelItem {
         $Id
     )
 
-    $tree = Get-Item "$PsScriptRoot/../res/setting.json" |
+    $tree = Get-Item "$PsScriptRoot/../res/chattel.setting.json" |
         Get-Content |
         ConvertFrom-Json |
-        ForEach-Object { Join-Path $PsScriptRoot $_.NotebookPath } |
-        ForEach-Object { Join-Path $_ 'item.md' } |
+        ForEach-Object { Join-Path $_.NotebookPath 'item.md' } |
         Get-Item |
         Get-Content |
         Get-MarkdownTree |
@@ -160,11 +158,10 @@ function Get-ChattelStory {
     )
 
     Process {
-        Get-Item "$PsScriptRoot/../res/setting.json" |
+        Get-Item "$PsScriptRoot/../res/chattel.setting.json" |
             Get-Content |
             ConvertFrom-Json |
-            ForEach-Object { Join-Path $PsScriptRoot $_.NotebookPath } |
-            ForEach-Object { Join-Path $_ 'story.md' } |
+            ForEach-Object { Join-Path $_.NotebookPath 'story.md' } |
             Get-Item |
             Get-Content |
             Get-MarkdownTree |
@@ -220,11 +217,10 @@ function New-ChattelStory {
             }
         }
 
-        $storyPath = Get-Item "$PsScriptRoot/../res/setting.json" |
+        $storyPath = Get-Item "$PsScriptRoot/../res/chattel.setting.json" |
             Get-Content |
             ConvertFrom-Json |
-            ForEach-Object { Join-Path $PsScriptRoot $_.NotebookPath } |
-            ForEach-Object { Join-Path $_ 'story.md' }
+            ForEach-Object { Join-Path $_.NotebookPath 'story.md' }
     }
 
     Process {
@@ -291,12 +287,11 @@ function Get-ChattelTimeItem {
 
             $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
 
-            "$PsScriptRoot/../res/setting.json" |
+            "$PsScriptRoot/../res/chattel.setting.json" |
                 Get-Item |
                 Get-Content |
                 ConvertFrom-Json |
-                ForEach-Object { Join-Path $PsScriptRoot $_.NotebookPath } |
-                ForEach-Object { Join-Path $_ 'item/*.md' } |
+                ForEach-Object { Join-Path $_.NotebookPath 'item/*.md' } |
                 Get-ChildItem |
                 Select-String "(?<=^\s*##\s+)\S.*$" |
                 ForEach-Object Matches |
@@ -317,12 +312,11 @@ function Get-ChattelTimeItem {
             return
         }
 
-        $tree = "$PsScriptRoot/../res/setting.json" |
+        $tree = "$PsScriptRoot/../res/chattel.setting.json" |
             Get-Item |
             Get-Content |
             ConvertFrom-Json |
-            ForEach-Object { Join-Path $PsScriptRoot $_.NotebookPath } |
-            ForEach-Object { Join-Path $_ 'item' } |
+            ForEach-Object { Join-Path $_.NotebookPath 'item' } |
             ForEach-Object { Join-Path $_ "item_-_$($ItemId).md" } |
             Get-Item |
             Get-Content |
@@ -365,12 +359,11 @@ function New-ChattelTimeItem {
 
             $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
 
-            "$PsScriptRoot/../res/setting.json" |
+            "$PsScriptRoot/../res/chattel.setting.json" |
                 Get-Item |
                 Get-Content |
                 ConvertFrom-Json |
-                ForEach-Object { Join-Path $PsScriptRoot $_.NotebookPath } |
-                ForEach-Object { Join-Path $_ 'item/*.md' } |
+                ForEach-Object { Join-Path $_.NotebookPath 'item/*.md' } |
                 Get-ChildItem |
                 Select-String "(?<=^\s*##\s+)\S.*$" |
                 ForEach-Object Matches |
@@ -397,7 +390,7 @@ function New-ChattelTimeItem {
 
             $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
 
-            $setting = "$PsScriptRoot/../res/setting.json" |
+            $setting = "$PsScriptRoot/../res/chattel.setting.json" |
                 Get-Item |
                 Get-Content |
                 ConvertFrom-Json
@@ -459,12 +452,11 @@ function New-ChattelTimeItem {
             return
         }
 
-        $path = "$PsScriptRoot/../res/setting.json" |
+        $path = "$PsScriptRoot/../res/chattel.setting.json" |
             Get-Item |
             Get-Content |
             ConvertFrom-Json |
-            ForEach-Object { Join-Path $PsScriptRoot $_.NotebookPath } |
-            ForEach-Object { Join-Path $_ 'item' } |
+            ForEach-Object { Join-Path $_.NotebookPath 'item' } |
             ForEach-Object { Join-Path $_ "item_-_$($ItemId).md" }
 
         $tree = if (Test-Path $path) {
@@ -535,12 +527,11 @@ function Get-ChattelMatrix {
     # Uses DateTimeFormat
     $idPattern = "\d{4}-\d{2}-\d{2}-\d{6}"
 
-    $path = "$PsScriptRoot/../res/setting.json" |
+    $path = "$PsScriptRoot/../res/chattel.setting.json" |
         Get-Item |
         Get-Content |
         ConvertFrom-Json |
-        ForEach-Object { Join-Path $PsScriptRoot $_.NotebookPath } |
-        ForEach-Object { Join-Path $_ 'matrix/*.md' } |
+        ForEach-Object { Join-Path $_.NotebookPath 'matrix/*.md' } |
         Get-Item
 
     if (-not $Name) {
@@ -687,3 +678,9 @@ function New-ChattelMatrixRow {
         return $row
     }
 }
+
+# function New-ChattelItem {
+#     Param(
+# 
+#     )
+# }

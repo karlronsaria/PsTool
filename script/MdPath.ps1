@@ -9,7 +9,7 @@ function Find-MdPath {
         [Parameter(ValueFromPipeline = $true)]
         $InputObject,
         
-        [ValidateSet('code', 'link')]
+        [ValidateSet('code', 'link', '__')]
         [Parameter(
             ParameterSetName = 'All',
             Position = 0
@@ -74,6 +74,31 @@ function Find-MdPath {
         $Recurse
     )
 
+    DynamicParam {
+        $commonHeadings = @('itemid', 'when', 'name', 'itemdescriptor')
+
+        if ($Name) {
+            $paramDictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
+
+            Get-ChattelMatrix -Name $Name |
+                ForEach-Object Table |
+                Get-Member -MemberType NoteProperty |
+                ForEach-Object Name |
+                Where-Object { $_.ToLower() -notin $commonHeadings } |
+                Where-Object { $_.ToLower() -notin $PsBoundParameters.Keys.ToLower() } |
+                ForEach-Object {
+                    $paramName = $_
+                    $attr = New-Object System.Management.Automation.ParameterAttribute
+                    $attrs = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
+                    $attrs.Add($attr)
+                    $param = New-Object System.Management.Automation.RuntimeDefinedParameter($paramName, [string], $attrs)
+                    $paramDictionary.Add($paramName, $param)
+                }
+
+            return $paramDictionary
+        }
+    }
+    
     Begin {
         function Get-Forest {
             Param(
@@ -132,9 +157,12 @@ function Find-MdPath {
             Get-Content |
             ConvertFrom-Json |
             ForEach-Object Notebooks
+            
+        $defaultDefinition = [BranchDefinition]::new()
 
         $types = @{
-            '' = [BranchDefinition]::new()
+            '' = $defaultDefinition
+            '-' = $defaultDefinition
             'code' = [BranchDefinition]@{
                 Find = { $args[0] -is [MarkdownTree.Parse.CodeBlock] }
                 Post = { $args[0] }
