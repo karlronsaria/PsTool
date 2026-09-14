@@ -1,3 +1,33 @@
+function Write-ChattelMdTable {
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        $List,
+
+        [int]
+        $Level,
+
+        [int]
+        $Indent
+    )
+    
+    Begin {
+        $tempList = @()
+    }
+    
+    Process {
+        $tempList += @($List)
+    }
+
+    End {
+        return @(
+            $tempList |
+                Write-MdTable |
+                ForEach-Object { "$(' ' * ($Level * $Indent))$_" }
+        )
+    }
+}
+
+# (karlr 2026-09-13): Please make private
 function Compare-ChattelDescriptor {
     Param(
         [Parameter(Position = 0)]
@@ -225,26 +255,35 @@ function New-ChattelStory {
 
     Process {
         $row = @{
-            Id = Get-Date -f yyyy-MM-dd-HHmmss # Uses DateTimeFormat
+            Id = Get-Date -f 'yyyy-MM-dd-HHmmss' # Uses DateTimeFormat
             ItemId = $ItemId
-            start = if ($Start) { $Start } else { Get-Date -f yyyy-MM-dd } # Uses DateTimeFormat
+            start = if ($Start) { $Start } else { Get-Date -f 'yyyy-MM-dd' } # Uses DateTimeFormat
             end = if ($End) { $End } else { $null }
             what = $What
         }
+        
+        # # todo: remove
 
-        $orderedRow = [pscustomobject]@{}
+        # $orderedRow = [pscustomobject]@{}
 
-        $cells = Get-Headings -StoryPath $storyPath |
-            ForEach-Object {
-                $row[$_]
-            }
+        # $cells = Get-Headings -StoryPath $storyPath |
+        #     ForEach-Object {
+        #         $row[$_]
+        #     }
 
-        $line = "| $($cells -join ' | ') |"
+        # $line = "| $($cells -join ' | ') |"
 
-        $line |
-            Out-File `
+        # $line | Out-File `
+        #     -FilePath $storyPath `
+        #     -Append
+
+        $append, $content =
+            Get-ChattelRow `
+                -Row $row `
                 -FilePath $storyPath `
-                -Append
+                -HeadingName 'story' `
+                -WhatIf:$WhatIf |
+            ForEach-Object { $_.Append, $_.Content }
 
         return [pscustomobject]@{
             Path = $storyPath |
@@ -438,12 +477,15 @@ function New-ChattelTimeItem {
             return $CompletionResults
         })]
         [string]
-        $When
+        $When,
+
+        [switch]
+        $WhatIf
     )
 
     Begin {
         if (-not $When) {
-            $When = Get-Date -Format yyyy-MM-dd # Uses DateTimeFormat
+            $When = Get-Date -Format 'yyyy-MM-dd' # Uses DateTimeFormat
         }
     }
 
@@ -458,7 +500,7 @@ function New-ChattelTimeItem {
             ConvertFrom-Json |
             ForEach-Object { Join-Path $_.NotebookPath 'item' } |
             ForEach-Object { Join-Path $_ "item_-_$($ItemId).md" }
-
+            
         $tree = if (Test-Path $path) {
             $path |
                 Get-Item |
@@ -468,12 +510,10 @@ function New-ChattelTimeItem {
         }
         else {
             [pscustomobject]@{
-                item = [pscustomobject]@{
-                    "item $ItemId" = [pscustomobject]@{}
-                }
+                "item $ItemId" = [pscustomobject]@{}
             }
         }
-
+        
         $itemTree = $tree."item $ItemId"
 
         $row = @([pscustomobject]@{
@@ -485,16 +525,24 @@ function New-ChattelTimeItem {
             $itemTree | Add-Member `
                 -MemberType 'NoteProperty' `
                 -Name $TableName `
-                -Value $row
+                -Value $([pscustomobject]@{
+                    _Table = $row
+                })
         }
         else {
-            $itemTree.$TableName += $row
+            $itemTree.$TableName._Table += $row
         }
 
-        $tree |
-        Write-MarkdownTree `
-            -HeadingLevels 2 |
-        Out-File $path
+        $output = $tree |
+            Write-MarkdownTree `
+                -HeadingLevels 2 `
+                -WriteTable { Write-ChattelMdTable @args }
+
+        if ($WhatIf) {
+            return $output
+        }
+
+        $output | Out-File $path
     }
 }
 
@@ -679,8 +727,513 @@ function New-ChattelMatrixRow {
     }
 }
 
-# function New-ChattelItem {
-#     Param(
-# 
-#     )
-# }
+# (karlr 2026-09-13): Please make private
+function Get-ChattelSuggestion {
+    Param(
+        [string]
+        $TableName,
+
+        [string]
+        $ColumnName,
+
+        [string]
+        $WordToComplete
+    )
+    
+    if ($TableName -eq 'item') {
+        return "$PsScriptRoot/../res/chattel.setting.json" |
+            Get-Item |
+            Get-Content |
+            ConvertFrom-Json |
+            ForEach-Object { Join-Path $_.NotebookPath 'item.md' } |
+            Get-Item |
+            Get-Content |
+            Get-MarkdownTree |
+            ForEach-Object 'item' |
+            ForEach-Object '_Table' |
+            ForEach-Object $ColumnName |
+            Where-Object { $_ } |
+            Sort-Object |
+            Select-Object -Unique |
+            Where-Object { $_ -like "$WordToComplete*" } |
+            ForEach-Object {
+                if ($_ -like "* *") {
+                    "`"$_`""
+                }
+                else {
+                    $_
+                }
+            }
+    }
+
+    "$PsScriptRoot/../res/chattel.setting.json" |
+        Get-Item |
+        Get-Content |
+        ConvertFrom-Json |
+        ForEach-Object { Join-Path $_.NotebookPath 'item' } |
+        ForEach-Object { Join-Path $_ '*.md' } |
+        Get-ChildItem |
+        Get-Content |
+        Get-MarkdownTree |
+        Get-NextTree |
+        ForEach-Object $TableName |
+        ForEach-Object '_Table' |
+        ForEach-Object $ColumnName |
+        Where-Object { $_ } |
+        Sort-Object |
+        Select-Object -Unique |
+        Where-Object { $_ -like "$WordToComplete*" } |
+        ForEach-Object {
+            if ($_ -like "* *") {
+                "`"$_`""
+            }
+            else {
+                $_
+            }
+        }
+}
+
+function New-ChattelItem {
+    Param(
+        [string[]]
+        $Descriptor,
+
+        [ArgumentCompleter({
+            [OutputType([System.Management.Automation.CompletionResult])]
+            param(
+                [string] $CommandName,
+                [string] $ParameterName,
+                [string] $WordToComplete,
+                [System.Management.Automation.Language.CommandAst] $CommandAst,
+                [System.Collections.IDictionary] $FakeBoundParameters
+            )
+            
+            $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
+
+            # # todo: remove
+            # "$PsScriptRoot/../res/chattel.setting.json" |
+            #     Get-Item |
+            #     Get-Content |
+            #     ConvertFrom-Json |
+            #     ForEach-Object { Join-Path $_.NotebookPath 'item.md' } |
+            #     Get-Item |
+            #     Get-Content |
+            #     Get-MarkdownTree |
+            #     ForEach-Object 'item' |
+            #     ForEach-Object '_Table' |
+            #     ForEach-Object 'model' |
+            #     Where-Object { $_ } |
+            #     Sort-Object |
+            #     Select-Object -Unique |
+            #     Where-Object { $_ -like "$WordToComplete*" } |
+            #     ForEach-Object {
+            #         if ($_ -like "* *") {
+            #             "`"$_`""
+            #         }
+            #         else {
+            #             $_
+            #         }
+            #     } |
+
+            Get-ChattelSuggestion `
+                -TableName 'item' `
+                -ColumnName 'model' `
+                -WordToComplete $WordToComplete |
+            ForEach-Object { $CompletionResults.Add($_) } |
+            Out-Null
+            
+            return $CompletionResults
+        })]
+        [string]
+        $Model,
+        
+        [ArgumentCompleter({
+            [OutputType([System.Management.Automation.CompletionResult])]
+            param(
+                [string] $CommandName,
+                [string] $ParameterName,
+                [string] $WordToComplete,
+                [System.Management.Automation.Language.CommandAst] $CommandAst,
+                [System.Collections.IDictionary] $FakeBoundParameters
+            )
+            
+            $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
+
+            # todo: remove
+            # "$PsScriptRoot/../res/chattel.setting.json" |
+            #     Get-Item |
+            #     Get-Content |
+            #     ConvertFrom-Json |
+            #     ForEach-Object { Join-Path $_.NotebookPath 'item' } |
+            #     ForEach-Object { Join-Path $_ '*.md' } |
+            #     Get-ChildItem |
+            #     Get-Content |
+            #     Get-MarkdownTree |
+            #     Get-NextTree |
+            #     ForEach-Object 'locate' |
+            #     ForEach-Object '_Table' |
+            #     ForEach-Object 'where' |
+            #     Where-Object { $_ } |
+            #     Sort-Object |
+            #     Select-Object -Unique |
+            #     Where-Object { $_ -like "$WordToComplete*" } |
+            #     ForEach-Object {
+            #         if ($_ -like "* *") {
+            #             "`"$_`""
+            #         }
+            #         else {
+            #             $_
+            #         }
+            #     } |
+
+            Get-ChattelSuggestion `
+                -TableName 'locate' `
+                -ColumnName 'where' `
+                -WordToComplete $WordToComplete |
+            ForEach-Object { $CompletionResults.Add($_) } |
+            Out-Null
+            
+            return $CompletionResults
+        })]
+        [string]
+        $Location,
+        
+        [ArgumentCompleter({
+            [OutputType([System.Management.Automation.CompletionResult])]
+            param(
+                [string] $CommandName,
+                [string] $ParameterName,
+                [string] $WordToComplete,
+                [System.Management.Automation.Language.CommandAst] $CommandAst,
+                [System.Collections.IDictionary] $FakeBoundParameters
+            )
+            
+            $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
+
+            # # todo: remove
+            # "$PsScriptRoot/../res/chattel.setting.json" |
+            #     Get-Item |
+            #     Get-Content |
+            #     ConvertFrom-Json |
+            #     ForEach-Object { Join-Path $_.NotebookPath 'item' } |
+            #     ForEach-Object { Join-Path $_ '*.md' } |
+            #     Get-ChildItem |
+            #     Get-Content |
+            #     Get-MarkdownTree |
+            #     Get-NextTree |
+            #     ForEach-Object 'owner' |
+            #     ForEach-Object '_Table' |
+            #     ForEach-Object 'where' |
+            #     Where-Object { $_ } |
+            #     Sort-Object |
+            #     Select-Object -Unique |
+            #     Where-Object { $_ -like "$WordToComplete*" } |
+            #     ForEach-Object {
+            #         if ($_ -like "* *") {
+            #             "`"$_`""
+            #         }
+            #         else {
+            #             $_
+            #         }
+            #     } |
+            #     ForEach-Object { $CompletionResults.Add($_) } |
+            #     Out-Null
+            
+            Get-ChattelSuggestion `
+                -TableName 'owner' `
+                -ColumnName 'who' `
+                -WordToComplete $WordToComplete |
+            ForEach-Object { $CompletionResults.Add($_) } |
+            Out-Null
+            
+            return $CompletionResults
+        })]
+        [string]
+        $Owner,
+
+        [ArgumentCompleter({
+            [OutputType([System.Management.Automation.CompletionResult])]
+            param(
+                [string] $CommandName,
+                [string] $ParameterName,
+                [string] $WordToComplete,
+                [System.Management.Automation.Language.CommandAst] $CommandAst,
+                [System.Collections.IDictionary] $FakeBoundParameters
+            )
+
+            $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
+
+            $date = Get-Date
+
+            @(@(0 .. 62) + @(-61 .. -1)) |
+                ForEach-Object {
+                    Get-Date ($date.AddDays($_)) -Format 'yyyy-MM-dd' # Uses DateTimeFormat
+                } |
+                Where-Object { $_ -like "$wordToComplete*" } |
+                ForEach-Object { $CompletionResults.Add($_) } |
+                Out-Null
+
+            return $CompletionResults
+        })]
+        [string]
+        $Retrieved,
+
+        [ArgumentCompleter({
+            [OutputType([System.Management.Automation.CompletionResult])]
+            param(
+                [string] $CommandName,
+                [string] $ParameterName,
+                [string] $WordToComplete,
+                [System.Management.Automation.Language.CommandAst] $CommandAst,
+                [System.Collections.IDictionary] $FakeBoundParameters
+            )
+            
+            $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
+
+            # # todo: remove
+            # "$PsScriptRoot/../res/chattel.setting.json" |
+            #     Get-Item |
+            #     Get-Content |
+            #     ConvertFrom-Json |
+            #     ForEach-Object { Join-Path $_.NotebookPath 'item.md' } |
+            #     Get-Item |
+            #     Get-Content |
+            #     Get-MarkdownTree |
+            #     ForEach-Object 'item' |
+            #     ForEach-Object '_Table' |
+            #     ForEach-Object 'note' |
+            #     Where-Object { $_ } |
+            #     Sort-Object |
+            #     Select-Object -Unique |
+            #     Where-Object { $_ -like "$WordToComplete*" } |
+            #     ForEach-Object {
+            #         if ($_ -like "* *") {
+            #             "`"$_`""
+            #         }
+            #         else {
+            #             $_
+            #         }
+            #     } |
+
+            Get-ChattelSuggestion `
+                -TableName 'item' `
+                -ColumnName 'note' `
+                -WordToComplete $WordToComplete |
+            ForEach-Object { $CompletionResults.Add($_) } |
+            Out-Null
+            
+            return $CompletionResults
+        })]
+        [string[]]
+        $Note,
+
+        [switch]
+        $WhatIf
+    )
+    
+    $id = Get-Date -f 'yyyy-MM-dd-HHmmss' # Uses DateTimeFormat
+    
+    $row = [PSCustomObject]@{
+        id = $id
+        descriptor = $Descriptor
+        retrieved =
+            if ($Retrieved) {
+                $Retrieved
+            }
+            else {
+                Get-Date -f 'yyyy-MM-dd' # Uses DateTimeFormat
+            }
+        model = $Model
+        note = $Note
+    }
+    
+    $timeItem = [PSCustomObject]@{
+        "item $id" = [PSCustomObject]@{
+            owner = [PSCustomObject]@{
+                _Table = @(
+                    [PSCustomObject]@{
+                        when = $Retrieved
+                        who = $Owner
+                    }
+                )
+            }
+
+            locate = [PSCustomObject]@{
+                _Table = @(
+                    [PSCustomObject]@{
+                        when = $Retrieved
+                        where = $Location
+                    }
+                )
+            }
+        }
+    }
+
+    $itemRowPath = "$PsScriptRoot/../res/chattel.setting.json" |
+        Get-Item |
+        Get-Content |
+        ConvertFrom-Json |
+        ForEach-Object { Join-Path $_.NotebookPath 'item.md' }
+        
+    $append, $content =
+        Get-ChattelRow `
+            -Row $row `
+            -FilePath $itemRowPath `
+            -HeadingName 'item' `
+            -WhatIf:$WhatIf |
+        ForEach-Object { $_.Append, $_.Content }
+
+    ""
+    
+    Write-ChattelMessage `
+        -Content $content `
+        -FilePath 'item.md' `
+        -Append:$append `
+        -WhatIf:$WhatIf
+
+    ""
+
+    if (-not $WhatIf) {
+        $content | Out-File `
+            -FilePath $itemRowPath `
+            -Append:$append
+    }
+    
+    $timeItemSegment = "item/item_-_$($id).md"
+
+    $timeItemPath = "$PsScriptRoot/../res/chattel.setting.json" |
+        Get-Item |
+        Get-Content |
+        ConvertFrom-Json |
+        ForEach-Object { Join-Path $_.NotebookPath $timeItemSegment }
+
+    $content =
+        $timeItem |
+        Write-MarkdownTree `
+            -HeadingLevels 2 `
+            -WriteTable { Write-ChattelMdTable @args } |
+        Select-Object `
+            -SkipLast 1
+
+    Write-ChattelMessage `
+        -Content $content `
+        -FilePath $timeItemSegment `
+        -WhatIf:$WhatIf
+
+    ""
+
+    if (-not $WhatIf) {
+        $content | Out-File `
+            -FilePath $timeItemPath
+    }
+}
+
+# (karlr 2026-09-13): Please make private
+function Write-ChattelMessage {
+    Param(
+        [string[]]
+        $Content,
+        
+        [string]
+        $FilePath,
+
+        [switch]
+        $Append,
+
+        [switch]
+        $WhatIf
+    )
+    
+    if (-not $WhatIf) {
+        $notebookPath = "$PsScriptRoot/../res/chattel.setting.json" |
+            Get-Item |
+            Get-Content |
+            ConvertFrom-Json |
+            ForEach-Object NotebookPath
+
+        $fullPath = Join-Path $notebookPath $FilePath
+        $FilePath = $PsStyle.FormatHyperlink($FilePath, $fullPath)
+    }
+
+    "$(
+        if ($Append) {
+            "$($PsStyle.Foreground.Magenta)~ "
+        }
+        else {
+            "$($PsStyle.Foreground.Yellow)+ "
+        }
+    )$FilePath$($PsStyle.Reset) ($($Content.Count) lines)"
+
+    $Content | ForEach-Object {
+        "$($PsStyle.Foreground.Green)  + $_$($PsStyle.Reset)"
+    }
+}
+
+# (karlr 2026-09-13): Please make private
+function Get-ChattelRow {
+    Param(
+        [pscustomobject]
+        $Row,
+
+        $FilePath,
+
+        [string]
+        $HeadingName,
+
+        [switch]
+        $WhatIf
+    )
+
+    if (-not (Test-Path $FilePath) -or (Get-Content $FilePath).Count -eq 0) {
+        $content =
+            [pscustomobject]@{
+                $HeadingName = [pscustomobject]@{
+                    _Table = @($Row)
+                }
+            } |
+            Write-MarkdownTree `
+                -HeadingLevels 1 `
+                -WriteTable { Write-ChattelMdTable @args }
+    }
+    else {
+        $cat = $FilePath |
+            Get-Item |
+            Get-Content
+
+        $lines = $cat.Count
+
+        while ($lines -le 0 -and $cat[$lines - 1] -match "^\s*$") {
+            $lines--
+        }
+        
+        if ($lines -ne $cat.Count) {
+            $tree = $cat | Get-MarkdownTree
+            $tree.item._Table += @($Row)
+
+            $content = $tree | Write-MarkdownTree `
+                -HeadingLevels 1 `
+                -WriteTable { Write-ChattelMdTable @args }
+        }
+        else {
+            $content =
+                [pscustomobject]@{
+                    _Table = @($Row)
+                } |
+                Write-MarkdownTree `
+                    -WriteTable { Write-ChattelMdTable @args }
+
+            $append = $true
+        }
+    }
+    
+    if ($append) {
+        $content = $content | Select-Object -Skip 2
+    }
+    
+    $content = $content | Select-Object -SkipLast 1
+    
+    return [pscustomobject]@{
+        Append = $append
+        Content = $content
+    }
+}
