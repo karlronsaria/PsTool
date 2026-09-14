@@ -1,3 +1,4 @@
+# (karlr 2026-09-14): Please make private
 function Write-ChattelMdTable {
     Param(
         [Parameter(ValueFromPipeline = $true)]
@@ -55,6 +56,7 @@ function Compare-ChattelDescriptor {
     return $A.CompareTo($B)
 }
 
+# (karlr 2026-09-13): Please make private
 function Get-ChattelItemDescriptor {
     Param(
         [string] $WordToComplete,
@@ -97,10 +99,10 @@ function Get-ChattelItemDescriptor {
         ForEach-Object { $list.Add($_) } |
         Out-Null
 
-    $list.Sort({ return Compare-ChattelDescriptor $args[0] $args[1] })
+    $list.Sort({ Compare-ChattelDescriptor $args[0] $args[1] })
 
     $list |
-        ForEach-Object { $CompletionResults.Add($_)  } |
+        ForEach-Object { $CompletionResults.Add($_) } |
         Out-Null
 
     return $CompletionResults
@@ -131,16 +133,21 @@ function Get-ChattelItem {
         [string[]]
         $Id
     )
-
-    $tree = Get-Item "$PsScriptRoot/../res/chattel.setting.json" |
+    
+    $setting =
+        Get-Item "$PsScriptRoot/../res/chattel.setting.json" |
         Get-Content |
-        ConvertFrom-Json |
-        ForEach-Object { Join-Path $_.NotebookPath 'item.md' } |
+        ConvertFrom-Json
+
+    $table = 
+        Join-Path $setting.NotebookPath 'item.md' |
         Get-Item |
         Get-Content |
         Get-MarkdownTree |
         ForEach-Object item |
-        ForEach-Object _Table |
+        ForEach-Object _Table
+        
+    $tree = $table |
         ForEach-Object -Begin {
             $row = $null
         } -Process {
@@ -154,6 +161,43 @@ function Get-ChattelItem {
                 $row.descriptor += $_.descriptor
             }
         } -End { $row }
+        
+    $tree | ForEach-Object {
+        $properties =
+            Join-Path `
+                $setting.NotebookPath `
+                "item/item_-_$($_.id).md" |
+            Where-Object { Test-Path $_ } |
+            Get-Item |
+            Get-Content |
+            Get-MarkdownTree |
+            Get-NextTree |
+            ForEach-Object PsObject |
+            ForEach-Object Properties
+
+        foreach ($property in $properties) {
+            $name = $property.Name
+            
+            $value = $property.Value |
+                ForEach-Object _Table |
+                Sort-Object -Property when |
+                Select-Object -Last 1
+                
+            if (-not $value) {
+                continue
+            }
+            
+            $value = $value.PsObject.Properties |
+                Where-Object { $_.Name.ToLower() -ne 'when' } |
+                Select-Object -First 1 |
+                ForEach-Object Value
+
+            $tree | Add-Member `
+                -MemberType NoteProperty `
+                -Name $name `
+                -Value $value
+        }
+    }
 
     return $(switch ($PsCmdlet.ParameterSetName) {
         'All' {
@@ -262,21 +306,6 @@ function New-ChattelStory {
             what = $What
         }
         
-        # # todo: remove
-
-        # $orderedRow = [pscustomobject]@{}
-
-        # $cells = Get-Headings -StoryPath $storyPath |
-        #     ForEach-Object {
-        #         $row[$_]
-        #     }
-
-        # $line = "| $($cells -join ' | ') |"
-
-        # $line | Out-File `
-        #     -FilePath $storyPath `
-        #     -Append
-
         $append, $content =
             Get-ChattelRow `
                 -Row $row `
@@ -810,31 +839,6 @@ function New-ChattelItem {
             
             $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
 
-            # # todo: remove
-            # "$PsScriptRoot/../res/chattel.setting.json" |
-            #     Get-Item |
-            #     Get-Content |
-            #     ConvertFrom-Json |
-            #     ForEach-Object { Join-Path $_.NotebookPath 'item.md' } |
-            #     Get-Item |
-            #     Get-Content |
-            #     Get-MarkdownTree |
-            #     ForEach-Object 'item' |
-            #     ForEach-Object '_Table' |
-            #     ForEach-Object 'model' |
-            #     Where-Object { $_ } |
-            #     Sort-Object |
-            #     Select-Object -Unique |
-            #     Where-Object { $_ -like "$WordToComplete*" } |
-            #     ForEach-Object {
-            #         if ($_ -like "* *") {
-            #             "`"$_`""
-            #         }
-            #         else {
-            #             $_
-            #         }
-            #     } |
-
             Get-ChattelSuggestion `
                 -TableName 'item' `
                 -ColumnName 'model' `
@@ -858,33 +862,6 @@ function New-ChattelItem {
             )
             
             $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
-
-            # todo: remove
-            # "$PsScriptRoot/../res/chattel.setting.json" |
-            #     Get-Item |
-            #     Get-Content |
-            #     ConvertFrom-Json |
-            #     ForEach-Object { Join-Path $_.NotebookPath 'item' } |
-            #     ForEach-Object { Join-Path $_ '*.md' } |
-            #     Get-ChildItem |
-            #     Get-Content |
-            #     Get-MarkdownTree |
-            #     Get-NextTree |
-            #     ForEach-Object 'locate' |
-            #     ForEach-Object '_Table' |
-            #     ForEach-Object 'where' |
-            #     Where-Object { $_ } |
-            #     Sort-Object |
-            #     Select-Object -Unique |
-            #     Where-Object { $_ -like "$WordToComplete*" } |
-            #     ForEach-Object {
-            #         if ($_ -like "* *") {
-            #             "`"$_`""
-            #         }
-            #         else {
-            #             $_
-            #         }
-            #     } |
 
             Get-ChattelSuggestion `
                 -TableName 'locate' `
@@ -910,35 +887,6 @@ function New-ChattelItem {
             
             $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
 
-            # # todo: remove
-            # "$PsScriptRoot/../res/chattel.setting.json" |
-            #     Get-Item |
-            #     Get-Content |
-            #     ConvertFrom-Json |
-            #     ForEach-Object { Join-Path $_.NotebookPath 'item' } |
-            #     ForEach-Object { Join-Path $_ '*.md' } |
-            #     Get-ChildItem |
-            #     Get-Content |
-            #     Get-MarkdownTree |
-            #     Get-NextTree |
-            #     ForEach-Object 'owner' |
-            #     ForEach-Object '_Table' |
-            #     ForEach-Object 'where' |
-            #     Where-Object { $_ } |
-            #     Sort-Object |
-            #     Select-Object -Unique |
-            #     Where-Object { $_ -like "$WordToComplete*" } |
-            #     ForEach-Object {
-            #         if ($_ -like "* *") {
-            #             "`"$_`""
-            #         }
-            #         else {
-            #             $_
-            #         }
-            #     } |
-            #     ForEach-Object { $CompletionResults.Add($_) } |
-            #     Out-Null
-            
             Get-ChattelSuggestion `
                 -TableName 'owner' `
                 -ColumnName 'who' `
@@ -989,31 +937,6 @@ function New-ChattelItem {
             )
             
             $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
-
-            # # todo: remove
-            # "$PsScriptRoot/../res/chattel.setting.json" |
-            #     Get-Item |
-            #     Get-Content |
-            #     ConvertFrom-Json |
-            #     ForEach-Object { Join-Path $_.NotebookPath 'item.md' } |
-            #     Get-Item |
-            #     Get-Content |
-            #     Get-MarkdownTree |
-            #     ForEach-Object 'item' |
-            #     ForEach-Object '_Table' |
-            #     ForEach-Object 'note' |
-            #     Where-Object { $_ } |
-            #     Sort-Object |
-            #     Select-Object -Unique |
-            #     Where-Object { $_ -like "$WordToComplete*" } |
-            #     ForEach-Object {
-            #         if ($_ -like "* *") {
-            #             "`"$_`""
-            #         }
-            #         else {
-            #             $_
-            #         }
-            #     } |
 
             Get-ChattelSuggestion `
                 -TableName 'item' `
