@@ -1,5 +1,16 @@
 # issue
 
+- [ ] issue 2026-09-15-021647
+  - where: chattel
+  - howto
+
+    ```powershell
+    Get-ChattelItem | where retrieved -eq '2026-06-15' | Get-ChattelTimeItem -TableName locate
+    ```
+
+  - actual
+    No output
+
 - [ ] issue 2026-04-29-153821
   - system
     - vscode
