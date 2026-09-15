@@ -449,8 +449,8 @@ function Get-ChattelTimeItem {
             Get-Item |
             Get-Content |
             Get-MarkdownTree |
-            Remove-TrivialBranch |
-            ForEach-Object _Table
+            Get-NextTree
+            # ForEach-Object _Table
 
         if (-not $TableName) {
             return [pscustomobject]@{
@@ -460,7 +460,7 @@ function Get-ChattelTimeItem {
         }
 
         foreach ($name in @(@($TableName) | Where-Object { $_ })) {
-            $tree.$name
+            $tree.$name._Table
         }
     }
 }
