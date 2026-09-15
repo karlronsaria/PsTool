@@ -205,7 +205,7 @@ function Get-ChattelItem {
         ForEach-Object item |
         ForEach-Object _Table
         
-    $tree = $table |
+    $forest = $table |
         ForEach-Object -Begin {
             $row = $null
         } -Process {
@@ -220,13 +220,13 @@ function Get-ChattelItem {
             }
         } -End { $row }
         
-    $tree = $(switch ($PsCmdlet.ParameterSetName) {
+    $forest = $(switch ($PsCmdlet.ParameterSetName) {
         'All' {
-            $tree
+            $forest
         }
 
         'ByDescriptor' {
-            $tree |
+            $forest |
                 Where-Object {
                     @($_.descriptor).Count -ge @($Descriptor).Count -and
                     @(Compare-Object @($Descriptor) @($_.descriptor) |
@@ -235,16 +235,16 @@ function Get-ChattelItem {
         }
 
         'ById' {
-            $tree |
+            $forest |
                 Where-Object id -in $Id
         }
     })
     
-    $tree | ForEach-Object {
+    foreach ($tree in $forest) {
         $properties =
             Join-Path `
                 $setting.NotebookPath `
-                "item/item_-_$($_.id).md" |
+                "item/item_-_$($tree.id).md" |
             Where-Object { Test-Path $_ } |
             Get-Item |
             Get-Content |
@@ -277,7 +277,7 @@ function Get-ChattelItem {
         }
     }
     
-    return $tree
+    return $forest
 }
 
 function Get-ChattelStory {
