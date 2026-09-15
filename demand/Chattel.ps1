@@ -1,3 +1,61 @@
+function Clear-ChattelStaleItem {
+    Param(
+        [switch]
+        $WhatIf
+    )
+    
+    $notebookPath = "$PsScriptRoot/../res/chattel.setting.json" |
+        Get-Item |
+        Get-Content |
+        ConvertFrom-Json |
+        ForEach-Object NotebookPath
+
+    $list = $notebookPath |
+        ForEach-Object { Join-Path $_ 'item/item_-_*.md' } |
+        Get-ChildItem |
+        Where-Object {
+            $id = [regex]::Match($_.Name, "(?<=^item_-_)(\d|-)+(?=\.md$)").Value
+            -not (Get-ChattelItem -Id $id)
+        }
+
+    if (-not $list) {
+        return
+    }
+    
+    $trash = Join-Path $notebookPath '__OLD'
+    $dt = Get-Date -Format yyyy-MM-dd-HHmmss # Uses DateTimeFormat
+    
+    ""
+    
+    if (-not (Test-Path $trash)) {
+        "$($PsStyle.Foreground.Yellow)+ __OLD/$($PsStyle.Reset)"
+        
+        if (-not $WhatIf) {
+            mkdir $trash | Out-Null
+        }
+    }
+
+    "$($PsStyle.Foreground.Yellow)+ __OLD/$dt/$($PsStyle.Reset)"
+
+    $list | ForEach-Object {
+        "$($PsStyle.Foreground.Yellow)+ __OLD/$dt/$($_.Name)$($PsStyle.Reset)"
+    }
+    
+    $list | ForEach-Object {
+        "$($PsStyle.Foreground.Red)- item/$($_.Name)$($PsStyle.Reset)"
+    }
+    
+    ""
+    
+    if (-not $WhatIf) {
+        mkdir "$trash/$dt" | Out-Null
+
+        $list | ForEach-Object {
+            Move-Item $_ "$trash/$dt"
+        }
+    }
+}
+
 # (karlr 2026-09-14): Please make private
 function Write-ChattelMdTable {
     Param(
@@ -162,6 +220,26 @@ function Get-ChattelItem {
             }
         } -End { $row }
         
+    $tree = $(switch ($PsCmdlet.ParameterSetName) {
+        'All' {
+            $tree
+        }
+
+        'ByDescriptor' {
+            $tree |
+                Where-Object {
+                    @($_.descriptor).Count -ge @($Descriptor).Count -and
+                    @(Compare-Object @($Descriptor) @($_.descriptor) |
+                        ForEach-Object SideIndicator) -notcontains "<="
+                }
+        }
+
+        'ById' {
+            $tree |
+                Where-Object id -in $Id
+        }
+    })
+    
     $tree | ForEach-Object {
         $properties =
             Join-Path `
@@ -198,26 +276,8 @@ function Get-ChattelItem {
                 -Value $value
         }
     }
-
-    return $(switch ($PsCmdlet.ParameterSetName) {
-        'All' {
-            $tree
-        }
-
-        'ByDescriptor' {
-            $tree |
-                Where-Object {
-                    @($_.descriptor).Count -ge @($Descriptor).Count -and
-                    @(Compare-Object @($Descriptor) @($_.descriptor) |
-                        ForEach-Object SideIndicator) -notcontains "<="
-                }
-        }
-
-        'ById' {
-            $tree |
-                Where-Object id -in $Id
-        }
-    })
+    
+    return $tree
 }
 
 function Get-ChattelStory {
@@ -975,7 +1035,7 @@ function New-ChattelItem {
             owner = [PSCustomObject]@{
                 _Table = @(
                     [PSCustomObject]@{
-                        when = $Retrieved
+                        when = $row.retrieved
                         who = $Owner
                     }
                 )
@@ -984,7 +1044,7 @@ function New-ChattelItem {
             locate = [PSCustomObject]@{
                 _Table = @(
                     [PSCustomObject]@{
-                        when = $Retrieved
+                        when = $row.retrieved
                         where = $Location
                     }
                 )
@@ -997,7 +1057,7 @@ function New-ChattelItem {
         Get-Content |
         ConvertFrom-Json |
         ForEach-Object { Join-Path $_.NotebookPath 'item.md' }
-        
+
     $append, $content =
         Get-ChattelRow `
             -Row $row `
@@ -1106,6 +1166,8 @@ function Get-ChattelRow {
         [switch]
         $WhatIf
     )
+    
+    $append = $false
 
     if (-not (Test-Path $FilePath) -or (Get-Content $FilePath).Count -eq 0) {
         $content =
@@ -1124,8 +1186,8 @@ function Get-ChattelRow {
             Get-Content
 
         $lines = $cat.Count
-
-        while ($lines -le 0 -and $cat[$lines - 1] -match "^\s*$") {
+        
+        while ($lines -gt 0 -and $cat[$lines - 1] -match "^\s*$") {
             $lines--
         }
         
