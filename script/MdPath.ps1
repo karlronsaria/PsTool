@@ -9,7 +9,7 @@ function Find-MdPath {
         [Parameter(ValueFromPipeline = $true)]
         $InputObject,
         
-        [ValidateSet('code', 'link', '__')]
+        [ValidateSet('code', 'link', 'issue', 'todo', '__')]
         [Parameter(
             ParameterSetName = 'All',
             Position = 0
@@ -170,6 +170,14 @@ function Find-MdPath {
             'link' = [BranchDefinition]@{
                 Find = { $args[0].Content -and $args[0].Content.WhereAll({ $args[0].TokenType -eq 'Hyperlink' }).Count -gt 0 }
                 Post = { $args[0].Content[0].Content }
+            }
+            'issue' = [BranchDefinition]@{
+                Find = { $args[0].Content -match "^issue (\d|-)+$" }
+                Post = { $args[0] }
+            }
+            'todo' = [BranchDefinition]@{
+                Find = { $args[0].Completed -eq $false }
+                Post = { $args[0] }
             }
         }
 

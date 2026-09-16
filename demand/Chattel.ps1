@@ -658,7 +658,7 @@ function Get-ChattelMatrix {
             return $CompletionResults
         })]
         [string]
-        $Name
+        $MatrixName
     )
 
     # Uses DateTimeFormat
@@ -669,10 +669,11 @@ function Get-ChattelMatrix {
         Get-Content |
         ConvertFrom-Json |
         ForEach-Object { Join-Path $_.NotebookPath 'matrix/*.md' } |
-        Get-Item
+        Get-Item -ErrorAction SilentlyContinue
 
-    if (-not $Name) {
+    if (-not $MatrixName) {
         return $path |
+            Where-Object { $_ } |
             Get-Content |
             Get-MarkdownTree |
             ForEach-Object { $_.PsObject.Properties } |
@@ -681,7 +682,7 @@ function Get-ChattelMatrix {
             ForEach-Object { $_.PsObject.Properties.Name } |
             Where-Object { $_ }
     }
-
+    
     $path |
         ForEach-Object {
             $root = $_ |
@@ -695,11 +696,28 @@ function Get-ChattelMatrix {
 
                 $branch = $root.Value |
                     ForEach-Object { $_.PsObject.Properties }
-
-                if ($branch.Name -eq $Name) {
+                    
+                if ($branch.Name -eq $MatrixName) {
                     $table = $branch.Value |
                         Select-Object -First 1 |
                         ForEach-Object _Table
+                        
+                    if (-not $table) {
+                        $table = [pscustomobject]@{}
+
+                        $_ |
+                            Get-Content |
+                            Get-MarkdownTree -AsMarkdown |
+                            ForEach-Object {
+                                $_.Children[0].Children[0].Headings.Content.Trim()
+                            } |
+                            ForEach-Object {
+                                $table | Add-Member `
+                                    -MemberType NoteProperty `
+                                    -Name $_ `
+                                    -Value $null
+                            }
+                    }
 
                     [pscustomobject]@{
                         Id = $id
@@ -744,36 +762,79 @@ function New-ChattelMatrixRow {
         })]
         [Parameter(Position = 0)]
         [string]
-        $Name,
+        $MatrixName,
 
         [string]
-        $User
+        $Who
     )
     
     Begin {
-        $commonHeadings = @('itemid', 'when', 'name', 'itemdescriptor')
+        $commonHeadings = @('itemid', 'when', 'matrixname', 'descriptor', 'who')
     }
     
     DynamicParam {
-        $commonHeadings = @('itemid', 'when', 'name', 'itemdescriptor')
+        $commonHeadings = @('itemid', 'when', 'matrixname', 'descriptor', 'who')
 
-        if ($Name) {
+        if ($MatrixName) {
             $paramDictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
 
-            Get-ChattelMatrix -Name $Name |
+            Get-ChattelMatrix -MatrixName $MatrixName |
                 ForEach-Object Table |
+                Where-Object { $_ } |
                 Get-Member -MemberType NoteProperty |
                 ForEach-Object Name |
                 Where-Object { $_.ToLower() -notin $commonHeadings } |
                 Where-Object { $_.ToLower() -notin $PsBoundParameters.Keys.ToLower() } |
                 ForEach-Object {
                     $paramName = $_
+                    
+                    $script = {
+                        [OutputType([System.Management.Automation.CompletionResult])]
+                        param(
+                            [string] $CommandName,
+                            [string] $ParameterName,
+                            [string] $WordToComplete,
+                            [System.Management.Automation.Language.CommandAst] $CommandAst,
+                            [System.Collections.IDictionary] $FakeBoundParameters
+                        )
+                        
+                        $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
+                        
+                        Get-ChattelMatrix -MatrixName $FakeBoundParameters['MatrixName'] |
+                            ForEach-Object Table |
+                            Where-Object { $_ } |
+                            ForEach-Object $paramName |
+                            Where-Object { $_ -like "$WordToComplete*" } |
+                            ForEach-Object {
+                                if ($_ -like "* *") {
+                                    "`"$_`""
+                                }
+                                else {
+                                    $_
+                                }
+                            } |
+                            ForEach-Object {
+                                $CompletionResults.Add($_)
+                            } |
+                            Out-Null
+                        
+                        return $CompletionResults
+                    }
+                    
                     $attr = New-Object System.Management.Automation.ParameterAttribute
                     $attrs = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
                     $attrs.Add($attr)
+                    $argCompleter = New-Object System.Management.Automation.ArgumentCompleterAttribute($script.GetNewClosure())
+                    $attrs.Add($argCompleter)
                     $param = New-Object System.Management.Automation.RuntimeDefinedParameter($paramName, [string], $attrs)
                     $paramDictionary.Add($paramName, $param)
                 }
+
+            $attr = New-Object System.Management.Automation.ParameterAttribute
+            $attrs = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
+            $attrs.Add($attr)
+            $param = New-Object System.Management.Automation.RuntimeDefinedParameter('EndOfParams', [switch], $attrs)
+            $paramDictionary.Add('EndOfParams', $param)
 
             return $paramDictionary
         }
@@ -793,15 +854,16 @@ function New-ChattelMatrixRow {
         $descriptors.Sort({ return Compare-ChattelDescriptor $args[0] $args[1] })
 
         $row = [pscustomobject]@{
-            ItemId = $ItemId
-            When = Get-Date -f $dateTimeFormat
-            Name = $Name
-            ItemDescriptor = $descriptors |
+            itemid = $ItemId
+            when = Get-Date -f $dateTimeFormat
+            who = $Who
+            descriptor = $descriptors |
                 Select-Object -First 1
         }
-
-        Get-ChattelMatrix -Name $Name |
+        
+        Get-ChattelMatrix -MatrixName $MatrixName |
             ForEach-Object Table |
+            Where-Object { $_ } |
             Get-Member -MemberType NoteProperty |
             ForEach-Object Name |
             Where-Object { $_.ToLower() -notin $commonHeadings } |
