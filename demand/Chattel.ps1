@@ -28,17 +28,17 @@ function Clear-ChattelStaleItem {
     ""
     
     if (-not (Test-Path $trash)) {
-        "$($PsStyle.Foreground.Yellow)+ __OLD/$($PsStyle.Reset)"
+        "$($PsStyle.Foreground.BrightYellow)+ __OLD/$($PsStyle.Reset)"
         
         if (-not $WhatIf) {
             mkdir $trash | Out-Null
         }
     }
 
-    "$($PsStyle.Foreground.Yellow)+ __OLD/$dt/$($PsStyle.Reset)"
+    "$($PsStyle.Foreground.BrightYellow)+ __OLD/$dt/$($PsStyle.Reset)"
 
     $list | ForEach-Object {
-        "$($PsStyle.Foreground.Yellow)+ __OLD/$dt/$($_.Name)$($PsStyle.Reset)"
+        "$($PsStyle.Foreground.BrightYellow)+ __OLD/$dt/$($_.Name)$($PsStyle.Reset)"
     }
     
     $list | ForEach-Object {
@@ -636,6 +636,7 @@ function New-ChattelTimeItem {
 }
 
 function Get-ChattelMatrix {
+    [CmdletBinding(DefaultParameterSetName = 'NamesOnly')]
     Param(
         [ArgumentCompleter({
             [OutputType([System.Management.Automation.CompletionResult])]
@@ -657,12 +658,14 @@ function Get-ChattelMatrix {
 
             return $CompletionResults
         })]
+        [Parameter(ParameterSetName = 'ByName')]
         [string]
-        $MatrixName
-    )
+        $MatrixName,
 
-    # Uses DateTimeFormat
-    $idPattern = "\d{4}-\d{2}-\d{2}-\d{6}"
+        [Parameter(ParameterSetName = 'ByName')]
+        [switch]
+        $Full
+    )
 
     $path = "$PsScriptRoot/../res/chattel.setting.json" |
         Get-Item |
@@ -685,48 +688,102 @@ function Get-ChattelMatrix {
     
     $path |
         ForEach-Object {
-            $root = $_ |
+            $path = $_
+            
+            $tree = $path |
+                Get-Item |
                 Get-Content |
-                Get-MarkdownTree |
-                ForEach-Object { $_.PsObject.Properties }
+                Get-MarkdownTree -AsMarkdown
 
-            if ($root.Name -like "matrix*") {
-                $capture = [regex]::Match($root.Name, "^matrix( (?<id>$idPattern))?")
-                $id = $capture.Groups['id'].Value
+            $matrix = $tree.ForEach({
+                # Uses DateTimeFormat
+                $capture = [regex]::Match($args[0].Content, "(?<=matrix )(\d|\-)+")
 
-                $branch = $root.Value |
-                    ForEach-Object { $_.PsObject.Properties }
+                if ($capture.Success) {
+                    $branch = $args[0].Children[0]
                     
-                if ($branch.Name -eq $MatrixName) {
-                    $table = $branch.Value |
-                        Select-Object -First 1 |
-                        ForEach-Object _Table
-                        
-                    if (-not $table) {
-                        $table = [pscustomobject]@{}
-
-                        $_ |
-                            Get-Content |
-                            Get-MarkdownTree -AsMarkdown |
-                            ForEach-Object {
-                                $_.Children[0].Children[0].Headings.Content.Trim()
-                            } |
-                            ForEach-Object {
-                                $table | Add-Member `
-                                    -MemberType NoteProperty `
-                                    -Name $_ `
-                                    -Value $null
-                            }
-                    }
-
-                    [pscustomobject]@{
-                        Id = $id
-                        Name = $branch.Name
-                        Path = $_
-                        Table = $table
+                    return [pscustomobject]@{
+                        id = $capture.Value
+                        name = $branch.Name
+                        table = $branch.WhereFirst({ $args[0] -is [MarkdownTree.Parse.Table] })
+                        pstable = [PsMarkdownTree.Tables]::ToPSTable($branch.Children[0])
                     }
                 }
+            })
+
+            if ($matrix.Name -eq $MatrixName) {
+                if (-not $matrix.pstable) {
+                    $matrix.pstable = [pscustomobject]@{}
+
+                    $matrix.table.Headings.Content.Trim() |
+                        ForEach-Object {
+                            $matrix.pstable | Add-Member `
+                                -MemberType NoteProperty `
+                                -Name $_ `
+                                -Value $null
+                        }
+                }
+
+                if ($Full) {
+                    [pscustomobject]@{
+                        Id = $matrix.id
+                        Name = $matrix.Name
+                        Path = $path
+                        Table = $matrix.table
+                        PsTable = $matrix.pstable
+                    }
+                }
+                else {
+                    $matrix.pstable | Write-ChattelMdTable
+                }
             }
+
+            
+
+            
+
+            # $root = $_ |
+            #     Get-Content |
+            #     Get-MarkdownTree |
+            #     ForEach-Object { $_.PsObject.Properties }
+
+            # if ($root.Name -like "matrix*") {
+            #     $capture = [regex]::Match($root.Name, "^matrix( (?<id>$idPattern))?")
+            #     $id = $capture.Groups['id'].Value
+
+            #     $branch = $root.Value |
+            #         ForEach-Object { $_.PsObject.Properties }
+            #         
+            #     if ($branch.Name -eq $MatrixName) {
+            #         $table = $branch.Value |
+            #             Select-Object -First 1 |
+            #             ForEach-Object _Table
+            #             
+            #         if (-not $table) {
+            #             $table = [pscustomobject]@{}
+
+            #             $_ |
+            #                 Get-Content |
+            #                 Get-MarkdownTree -AsMarkdown |
+            #                 ForEach-Object {
+            #                     $_.Children[0].Children[0].Headings.Content.Trim()
+            #                 } |
+            #                 ForEach-Object {
+            #                     $table | Add-Member `
+            #                         -MemberType NoteProperty `
+            #                         -Name $_ `
+            #                         -Value $null
+            #                 }
+            #         }
+
+            #         [pscustomobject]@{
+            #             Id = $id
+            #             Name = $branch.Name
+            #             Path = $_
+            #             Table = $table
+            #         }
+            #     }
+            # }
         }
 }
 
@@ -778,8 +835,8 @@ function New-ChattelMatrixRow {
         if ($MatrixName) {
             $paramDictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
 
-            Get-ChattelMatrix -MatrixName $MatrixName |
-                ForEach-Object Table |
+            Get-ChattelMatrix -MatrixName $MatrixName -Full |
+                ForEach-Object PsTable |
                 Where-Object { $_ } |
                 Get-Member -MemberType NoteProperty |
                 ForEach-Object Name |
@@ -800,23 +857,25 @@ function New-ChattelMatrixRow {
                         
                         $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
                         
-                        Get-ChattelMatrix -MatrixName $FakeBoundParameters['MatrixName'] |
-                            ForEach-Object Table |
-                            Where-Object { $_ } |
-                            ForEach-Object $paramName |
-                            Where-Object { $_ -like "$WordToComplete*" } |
-                            ForEach-Object {
-                                if ($_ -like "* *") {
-                                    "`"$_`""
-                                }
-                                else {
-                                    $_
-                                }
-                            } |
-                            ForEach-Object {
-                                $CompletionResults.Add($_)
-                            } |
-                            Out-Null
+                        Get-ChattelMatrix `
+                            -MatrixName $FakeBoundParameters['MatrixName'] `
+                            -Full |
+                        ForEach-Object PsTable |
+                        Where-Object { $_ } |
+                        ForEach-Object $paramName |
+                        Where-Object { $_ -like "$WordToComplete*" } |
+                        ForEach-Object {
+                            if ($_ -like "* *") {
+                                "`"$_`""
+                            }
+                            else {
+                                $_
+                            }
+                        } |
+                        ForEach-Object {
+                            $CompletionResults.Add($_)
+                        } |
+                        Out-Null
                         
                         return $CompletionResults
                     }
@@ -835,9 +894,15 @@ function New-ChattelMatrixRow {
             $attrs.Add($attr)
             $param = New-Object System.Management.Automation.RuntimeDefinedParameter('EndOfParams', [switch], $attrs)
             $paramDictionary.Add('EndOfParams', $param)
-
-            return $paramDictionary
         }
+        
+        $attr = New-Object System.Management.Automation.ParameterAttribute
+        $attrs = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
+        $attrs.Add($attr)
+        $param = New-Object System.Management.Automation.RuntimeDefinedParameter('WhatIf', [switch], $attrs)
+        $paramDictionary.Add('WhatIf', $param)
+
+        return $paramDictionary
     }
     
     End {
@@ -850,7 +915,7 @@ function New-ChattelMatrixRow {
             ForEach-Object Descriptor |
             ForEach-Object { $descriptors.Add($_) } |
             Out-Null
-            
+
         $descriptors.Sort({ return Compare-ChattelDescriptor $args[0] $args[1] })
 
         $row = [pscustomobject]@{
@@ -861,8 +926,12 @@ function New-ChattelMatrixRow {
                 Select-Object -First 1
         }
         
-        Get-ChattelMatrix -MatrixName $MatrixName |
-            ForEach-Object Table |
+        $matrix = Get-ChattelMatrix `
+            -MatrixName $MatrixName `
+            -Full
+        
+        $matrix |
+            ForEach-Object PsTable |
             Where-Object { $_ } |
             Get-Member -MemberType NoteProperty |
             ForEach-Object Name |
@@ -874,7 +943,65 @@ function New-ChattelMatrixRow {
                     -Value $PSBoundParameters[$_]
             }
             
-        return $row
+        $table = $matrix.PsTable
+        
+        $matrix.PsTable = if (-not $table -or -not @($table.PsObject.Properties.Value | Where-Object { $_ })) {
+            @($row)
+        }
+        else {
+            @($table) + @($row)
+        }
+        
+        $cat = $matrix.Path | Get-Item | Get-Content
+        $psmdtable = $matrix.PsTable | Write-ChattelMdTable
+        $lineNumber = $matrix.Table.LineNumber + $matrix.Table.Rows.Count + 2
+
+        # ""
+
+        # Write-ChattelMessage `
+        #     -Content $psmdtable[-1] `
+        #     -LineNumber $lineNumber `
+        #     -FilePath  `
+        #     -Append `
+        #     -WhatIf:$WhatIf
+            
+        $pathSegment = "matrix/$($matrix.Path | Split-Path -Leaf)"
+        $leadLength = 5
+
+        if (-not $WhatIf) {
+            $path = $PsStyle.FormatHyperlink($pathSegment, $path)
+        }
+        
+        ""
+
+        "$($PsStyle.Foreground.BrightMagenta)~ $path$($PsStyle.Reset) (1 lines)"
+        
+        ""
+        
+        ' ' * ($leadLength + 3) + $psmdtable[0]
+        ' ' * ($leadLength + 3) + $psmdtable[1]
+        
+        ""
+        
+        ("{0,$leadLength}" -f "[$lineNumber]") +
+            " $($PsStyle.Foreground.BrightGreen)+ $($psmdtable[-1])$($PsStyle.Reset)"
+
+        ""
+
+        if (-not $PsBoundParameters['WhatIf']) {
+            $(
+                -1 .. ($matrix.Table.LineNumber - 1) |
+                    Where-Object { $_ -ge 0 } |
+                    ForEach-Object { $cat[$_] }
+                
+                $psmdtable
+
+                $lineNumber .. $cat.Count |
+                    Where-Object { $_ -lt $cat.Count } |
+                    ForEach-Object { $cat[$_] }
+            ) |
+            Out-File -FilePath $matrix.Path
+        }
     }
 }
 
@@ -1182,9 +1309,15 @@ function Write-ChattelMessage {
         [string]
         $FilePath,
 
+        [string[]]
+        $Context,
+        
+        [int]
+        $LineNumber = -1,
+
         [switch]
         $Append,
-
+        
         [switch]
         $WhatIf
     )
@@ -1202,15 +1335,24 @@ function Write-ChattelMessage {
 
     "$(
         if ($Append) {
-            "$($PsStyle.Foreground.Magenta)~ "
+            "$($PsStyle.Foreground.BrightMagenta)~ "
         }
         else {
-            "$($PsStyle.Foreground.Yellow)+ "
+            "$($PsStyle.Foreground.BrightYellow)+ "
         }
     )$FilePath$($PsStyle.Reset) ($($Content.Count) lines)"
+    
+    if ($LineNumber -gt -1) {
+        $Content | ForEach-Object {
+            "  [$LineNumber] $($PsStyle.Foreground.BrightGreen)+ $_$($PsStyle.Reset)"
+            $LineNumber = $LineNumber + 1
+        }
+        
+        return
+    }
 
     $Content | ForEach-Object {
-        "$($PsStyle.Foreground.Green)  + $_$($PsStyle.Reset)"
+        "$($PsStyle.Foreground.BrightGreen)  + $_$($PsStyle.Reset)"
     }
 }
 
