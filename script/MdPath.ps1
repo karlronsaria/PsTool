@@ -252,7 +252,8 @@ function Find-MdPath {
             'Or' {
                 foreach ($subpath in $TreePath) {
                     $forest |
-                        Where-Object { $_.TreePath -like "*$subpath*" }
+                        Where-Object { $_.TreePath -like "*$subpath*" } |
+                        Select-Object -Unique
                 }
             }
         }
