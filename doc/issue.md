@@ -160,6 +160,26 @@
 
 ## complete
 
+- [x] issue 2026-09-22-175509
+  - where: PsTool(Chattel)
+  - howto
+
+    1. Run the command
+
+       ```powershell
+       Get-ChattelItem -Descriptor "FirstName", "#17" | New-ChattelMatrixRow -MatrixName "Club Name (location)" -Who "firstname initial" -mail "name@domain.com" -EndOfParams
+       ```
+
+    2. Click or Ctrl-click on the link in standard out
+
+       ```text
+       ~ matrix/matrix_-_2026-08-17_location_ClubName.md (1 lines)
+       ```
+
+  - actual
+
+    Nothing happens.
+
 - [x] issue 2026-09-15-021647
   - where: chattel
   - howto

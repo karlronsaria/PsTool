@@ -561,7 +561,7 @@ function Rename-Item {
 
                 return $paramDictionary
             }
-        } 
+        }
         catch {
             Write-Error $_.Exception.ErrorRecord
             return

@@ -834,8 +834,14 @@ function New-ChattelMatrixRow {
 
         if ($MatrixName) {
             $paramDictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
+            
+            $matrix = Get-ChattelMatrix -MatrixName $MatrixName -Full
+            
+            if (-not $matrix) {
+                return
+            }
 
-            Get-ChattelMatrix -MatrixName $MatrixName -Full |
+            $matrix |
                 ForEach-Object PsTable |
                 Where-Object { $_ } |
                 Get-Member -MemberType NoteProperty |
@@ -910,11 +916,30 @@ function New-ChattelMatrixRow {
         $dateTimeFormat = 'ddd yyyy-MM-dd'
         
         $descriptors = [System.Collections.Generic.List[string]]::new()
+        $invalid = $false
 
         Get-ChattelItem -Id $ItemId |
             ForEach-Object Descriptor |
             ForEach-Object { $descriptors.Add($_) } |
             Out-Null
+            
+        $matrix = Get-ChattelMatrix `
+            -MatrixName $MatrixName `
+            -Full
+        
+        if ($descriptors.Count -eq 0) {
+            "Item ID could not be found"
+            $invalid = $true
+        }
+
+        if (-not $matrix) {
+            "Matrix `"$MatrixName`" could not be found"
+            $invalid = $true
+        }
+        
+        if ($invalid) {
+            return
+        }
 
         $descriptors.Sort({ return Compare-ChattelDescriptor $args[0] $args[1] })
 
@@ -925,10 +950,6 @@ function New-ChattelMatrixRow {
             descriptor = $descriptors |
                 Select-Object -First 1
         }
-        
-        $matrix = Get-ChattelMatrix `
-            -MatrixName $MatrixName `
-            -Full
         
         $matrix |
             ForEach-Object PsTable |
@@ -955,21 +976,11 @@ function New-ChattelMatrixRow {
         $cat = $matrix.Path | Get-Item | Get-Content
         $psmdtable = $matrix.PsTable | Write-ChattelMdTable
         $lineNumber = $matrix.Table.LineNumber + $matrix.Table.Rows.Count + 2
-
-        # ""
-
-        # Write-ChattelMessage `
-        #     -Content $psmdtable[-1] `
-        #     -LineNumber $lineNumber `
-        #     -FilePath  `
-        #     -Append `
-        #     -WhatIf:$WhatIf
-            
         $pathSegment = "matrix/$($matrix.Path | Split-Path -Leaf)"
         $leadLength = 5
 
-        if (-not $WhatIf) {
-            $path = $PsStyle.FormatHyperlink($pathSegment, $path)
+        if ((Test-Path $matrix.Path)) {
+            $path = $PsStyle.FormatHyperlink($pathSegment, [uri]::new($matrix.Path))
         }
         
         ""
