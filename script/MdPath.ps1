@@ -228,15 +228,14 @@ function Find-MdPath {
                             FilePath = $file
                         }
                     }
-                } |
-                Select-Object -Unique -Property TreePath
+                }
         }
         
         if ($PsCmdlet.ParameterSetName -eq 'All') {
             return $forest
         }
         
-        switch ($Mode) {
+        $(switch ($Mode) {
             'And' {
                 $forest |
                 Where-Object {
@@ -251,12 +250,18 @@ function Find-MdPath {
             }
             
             'Or' {
-                foreach ($subpath in $TreePath) {
+                $TreePath |
+                ForEach-Object {
+                    $subpath = $_
+
                     $forest |
                         Where-Object { $_.TreePath -like "*$subpath*" }
                 }
             }
-        }
+        }) |
+        Sort-Object `
+            -Property TreePath `
+            -Unique
     }
 }
 

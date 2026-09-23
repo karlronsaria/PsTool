@@ -160,6 +160,18 @@
 
 ## complete
 
+- [x] issue 2026-09-22-153333
+  - where: pathto
+  - howto
+
+    ```powershell
+    pathto code "howto: Veracrypt: recommended: prompt securely" | what Needle
+    ```
+
+  - actual
+
+    Nothing
+
 - [x] issue 2026-09-22-175509
   - where: PsTool(Chattel)
   - howto
