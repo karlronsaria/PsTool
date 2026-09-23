@@ -958,10 +958,17 @@ function New-ChattelMatrixRow {
             ForEach-Object Name |
             Where-Object { $_.ToLower() -notin $commonHeadings } |
             ForEach-Object {
+                $value = $PSBoundParameters[$_]
+                
+                # Detect and auto-format email strings
+                if ($value -match "\S+@\S+\.\S+") {
+                    $value = "<$value>"
+                }
+
                 $row | Add-Member `
                     -MemberType NoteProperty `
                     -Name $_ `
-                    -Value $PSBoundParameters[$_]
+                    -Value $value
             }
             
         $table = $matrix.PsTable
