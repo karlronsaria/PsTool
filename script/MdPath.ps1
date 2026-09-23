@@ -9,7 +9,7 @@ function Find-MdPath {
         [Parameter(ValueFromPipeline = $true)]
         $InputObject,
         
-        [ValidateSet('code', 'link', 'issue', 'todo', '__')]
+        [ValidateSet('code', 'issue', 'link', 'todo', '__')]
         [Parameter(
             ParameterSetName = 'All',
             Position = 0
@@ -63,6 +63,54 @@ function Find-MdPath {
         )]
         [string[]]
         $TreePath,
+        
+        [ArgumentCompleter({
+            [OutputType([System.Management.Automation.CompletionResult])]
+            param(
+                [string] $CommandName,
+                [string] $ParameterName,
+                [string] $WordToComplete,
+                [System.Management.Automation.Language.CommandAst] $CommandAst,
+                [System.Collections.IDictionary] $FakeBoundParameters
+            )
+            
+            $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
+            
+            "$PsScriptRoot/../res/howtotree.setting.json" |
+                Get-Item |
+                Get-Content |
+                ConvertFrom-Json |
+                ForEach-Object Notebooks |
+                Get-ChildDocumentItem `
+                    -Recurse:$Recurse |
+                Get-Content |
+                Get-MarkdownTree -AsMarkdown |
+                ForEach-Object {
+                    $_.WhereAll({ $args[0].Name -eq 'tag' })
+                } |
+                ForEach-Object {
+                    $_.ForEach({ $args[0].Children[0].Name })
+                } |
+                Where-Object { $_ } |
+                ForEach-Object { $_.Split("#").Trim() } |
+                Where-Object { $_ } |
+                Sort-Object |
+                Where-Object { $_ -like "*$WordToComplete*" } |
+                ForEach-Object {
+                    if ($_ -like "* *") {
+                        "`"$_`""
+                    }
+                    else {
+                        $_
+                    }
+                } |
+                ForEach-Object { $CompletionResults.Add($_) } |
+                Out-Null
+                
+            return $CompletionResults
+        })]
+        [string[]]
+        $Tag,
 
         [Parameter(ParameterSetName = 'ByTreePath')]
         [Parameter(ParameterSetName = 'ByTreePathCustom')]
@@ -75,35 +123,76 @@ function Find-MdPath {
     )
 
     DynamicParam {
-        $commonHeadings = @('itemid', 'when', 'name', 'itemdescriptor')
+        # # todo: Modify argument completion based on the syntax tree
 
-        if ($Name) {
-            $paramDictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
 
-            Get-ChattelMatrix -Name $Name |
-                ForEach-Object Table |
-                Get-Member -MemberType NoteProperty |
-                ForEach-Object Name |
-                Where-Object { $_.ToLower() -notin $commonHeadings } |
-                Where-Object { $_.ToLower() -notin $PsBoundParameters.Keys.ToLower() } |
-                ForEach-Object {
-                    $paramName = $_
-                    $attr = New-Object System.Management.Automation.ParameterAttribute
-                    $attrs = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
-                    $attrs.Add($attr)
-                    $param = New-Object System.Management.Automation.RuntimeDefinedParameter($paramName, [string], $attrs)
-                    $paramDictionary.Add($paramName, $param)
-                }
+        # $commonHeadings = @('itemid', 'when', 'name', 'itemdescriptor')
 
-            return $paramDictionary
-        }
+        # if ($Name) {
+        #     $paramDictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
+
+        #     Get-ChattelMatrix -Name $Name |
+        #         ForEach-Object Table |
+        #         Get-Member -MemberType NoteProperty |
+        #         ForEach-Object Name |
+        #         Where-Object { $_.ToLower() -notin $commonHeadings } |
+        #         Where-Object { $_.ToLower() -notin $PsBoundParameters.Keys.ToLower() } |
+        #         ForEach-Object {
+        #             $paramName = $_
+        #             $attr = New-Object System.Management.Automation.ParameterAttribute
+        #             $attrs = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
+        #             $attrs.Add($attr)
+        #             $param = New-Object System.Management.Automation.RuntimeDefinedParameter($paramName, [string], $attrs)
+        #             $paramDictionary.Add($paramName, $param)
+        #         }
+
+        #     return $paramDictionary
+        # }
     }
     
     Begin {
+        function Get-Tagged {
+            Param(
+                [Parameter(ValueFromPipeline = $true)]
+                $InputObject,
+
+                [string[]]
+                $Tag
+            )
+
+            Process {
+                if (-not $Tag) {
+                    return $InputObject
+                }
+                
+                foreach ($tree in @($InputObject | Where-Object { $_ })) {
+                    $tagged = $tree.WhereAll({ $args[0].Name -eq 'tag' })
+                    
+                    if (-not $tagged) {
+                        continue
+                    }
+                    
+                    $tagged |
+                    ForEach-Object {
+                        $_.ForEach({ $args[0].Children.Name })
+                    } |
+                    Where-Object { $_ } |
+                    ForEach-Object {
+                        $_.Split("#").Trim()
+                    } |
+                    ForEach-Object {
+                        if ($_ -in @($Tag)) {
+                            $tree
+                        }
+                    }
+                }
+            }
+        }
+        
         function Get-Forest {
             Param(
                 [Parameter(ValueFromPipeline = $true)]
-                $InputString,
+                $InputObject,
 
                 [scriptblock]
                 $Where
@@ -114,12 +203,11 @@ function Find-MdPath {
             }
                 
             Process {
-                $content += @($InputString)
+                $content += @($InputObject)
             }
             
             End {
                 $content | 
-                Get-MarkdownTree -AsMarkdown |
                 ForEach-Object {
                     $tree = $_
                     $tree.PathOfAll($Where)
@@ -162,7 +250,7 @@ function Find-MdPath {
 
         $types = @{
             '' = $defaultDefinition
-            '-' = $defaultDefinition
+            '__' = $defaultDefinition
             'code' = [BranchDefinition]@{
                 Find = { $args[0] -is [MarkdownTree.Parse.CodeBlock] }
                 Post = { $args[0] }
@@ -219,6 +307,10 @@ function Find-MdPath {
 
                     $file |
                     Get-Content |
+                    Get-MarkdownTree `
+                        -AsMarkdown |
+                    Get-Tagged `
+                        -Tag:$Tag |
                     Get-Forest `
                         -Where:$definition.Find |
                     ForEach-Object {
