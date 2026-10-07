@@ -1033,7 +1033,10 @@ function ConvertTo-PsPath {
         $with = "`$env:$($cap.Value)"
 
         while ($cap.Success) {
-            $Path = $Path -replace "%$cap%", $(if ($Resolve) { iex $with } else { "`$($with)" })
+            $Path = $Path -replace "%$cap%", $(
+                if ($Resolve) { iex $with } else { "`$($with)" }
+            )
+
             $cap = [Regex]::Match($Path, $pattern)
         }
 

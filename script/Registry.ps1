@@ -336,7 +336,50 @@ function Open-ItemProperty {
     & sudo regjump.exe $ItemPath
 }
 
+function Resolve-ItemProperty {
+    [CmdletBinding()]
+    Param(
+        [Parameter(ValueFromPipeline = $true)]
+        [Alias('Path')]
+        [String]
+        $ItemPath,
+
+        [Switch]
+        $NoExpansion
+    )
+    
+    Process {
+        $provider = Get-PsDrive -Name $ItemPath.Split(':')[0] |
+            ForEach-Object Provider |
+            ForEach-Object Name
+            
+        if ($provider -ne 'Registry') {
+            return Get-Item $ItemPath
+        }
+        
+        if ((Test-Path $ItemPath)) {
+            Get-Item $ItemPath
+        }
+        else {
+            $parent = Split-Path $ItemPath -Parent
+            $leaf = Split-Path $ItemPath -Leaf
+            $item = Get-ItemProperty -Path $parent -Name $leaf
+
+            if ($NoExpansion) {
+                $item | ForEach-Object $leaf
+            }
+            else {
+                $item
+            }
+        }
+    }
+}
+
 New-Alias `
     -Name 'regjump' `
     -Value 'Open-ItemProperty'
+
+New-Alias `
+    -Name 'regget' `
+    -Value 'Resolve-ItemProperty'
 
