@@ -314,10 +314,13 @@ function Find-MdPath {
                     Get-Forest `
                         -Where:$definition.Find |
                     ForEach-Object {
+                        $needle = & $definition.Post $_.Needle
+
                         [pscustomobject]@{
                             TreePath = $_.TreePath
-                            Needle = & $definition.Post $_.Needle
+                            Command = $needle.Lines | Out-String
                             FilePath = $file
+                            Needle = $needle
                         }
                     }
                 }
