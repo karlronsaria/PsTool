@@ -158,7 +158,22 @@
     20 Type.ps1:441:                            New-Closure `
     ```
 
-## complete
+## resolved
+
+- [x] issue 2026-10-06-140321
+  - description: ``myurllink`` does not have a satisfying way to interrogate registry items
+  - solution: ``Registry#Resolve-ItemProperty``
+  - howto
+
+    ```powershell
+    myurllink -Tag wallpaper -NoExpansion | tops -Resolve | foreach { Get-ItemProperty -Path $_ }
+    ```
+
+  - actual
+
+    ```text
+    Get-ItemProperty: Cannot find path 'HKCU:\Control Panel\Desktop\Wallpaper' because it does not exist.
+    ```
 
 - [x] issue 2026-09-22-153333
   - where: pathto
